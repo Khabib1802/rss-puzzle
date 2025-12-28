@@ -6,11 +6,40 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "format": "prettier --write src",
+    "ci:format": "prettier --check src",
+    "lint": "eslint src",
+    "prepare": "cd .. && husky rss-puzzle/.husky",
+    "test": "echo TEST TEST TEST TEST "
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write",
+      "eslint"
+    ],
+    "*.{css,scss,md,json}": [
+      "prettier --write"
+    ]
+  },
+  "validate-branch-name": {
+    "pattern": "^(feat|fix|refactor|docs|style|chore)/RSS-PZ-\\d{2}_.*$"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.50.1",
+    "eslint": "^8.57.1",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-import-resolver-typescript": "^4.4.4",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-prettier": "^5.5.4",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
+    "prettier": "^3.7.4",
     "sass": "^1.97.1",
     "typescript": "~5.9.3",
+    "validate-branch-name": "^1.3.2",
     "vite": "^7.2.4"
   }
 }
