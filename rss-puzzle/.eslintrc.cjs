@@ -23,7 +23,7 @@ module.exports = {
   noInlineConfig: true,
   rules: {
     '@typescript-eslint/no-explicit-any': 'error',
-    'no-magic-numbers': 'error',
+    'no-magic-numbers': ['error', { ignore: [0, 1] }],
     'max-lines-per-function': ['error', 40],
   },
 };
