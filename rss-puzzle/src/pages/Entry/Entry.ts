@@ -18,8 +18,13 @@ class Entry implements Page {
   constructor(handleClick: () => void) {
     this.wrapper = document.createElement('div');
     this.wrapper.classList.add(styles.wrapper);
-    this.nameInput = new Input({ label: 'Enter Your First Name', required: true, placeholder: 'name' });
-    this.surnameInput = new Input({ label: 'Enter Your Surname', required: true, placeholder: 'surname' });
+    this.nameInput = new Input({ label: 'Enter Your First Name', required: true, placeholder: 'name', minLength: 3 });
+    this.surnameInput = new Input({
+      label: 'Enter Your Surname',
+      required: true,
+      placeholder: 'surname',
+      minLength: 4,
+    });
     this.button = new Button('Login', ['login']);
     this.handleClick = handleClick;
     this.setupEvents();

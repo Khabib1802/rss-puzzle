@@ -24,7 +24,7 @@
     ]
   },
   "validate-branch-name": {
-    "pattern": "^(feat|fix|refactor|docs|style|chore)/RSS-PZ-\\d{2}_.*$"
+    "pattern": "^(feat|fix|refactor|docs|style|chore)/RSS-PZ-\\d{2}_.*$|^rss-puzzle$"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^8.50.1",
