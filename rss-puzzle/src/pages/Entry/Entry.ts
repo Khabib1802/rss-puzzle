@@ -3,6 +3,7 @@ import styles from './Entry.module.scss';
 import Button from '../../components/Button/Button.ts';
 import Input from '../../components/Input/Input.ts';
 import type { Page } from '../../types/interfaces.ts';
+import localStorageService from '../../services/localStorageService.ts';
 
 class Entry implements Page {
   private wrapper: HTMLDivElement;
@@ -46,6 +47,10 @@ class Entry implements Page {
     this.surnameInput.handleInput(validateInputs);
 
     this.button.handleClick(() => {
+      localStorageService.saveUser({
+        firstName: this.nameInput.getValue(),
+        surname: this.surnameInput.getValue(),
+      });
       this.handleClick();
     });
   }
