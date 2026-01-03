@@ -1,0 +1,17 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+  width: 50%;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.title {
+  font-size: 40px;
+}
+
+.description {
+  max-width: 500px;
+}
