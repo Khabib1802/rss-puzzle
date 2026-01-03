@@ -19,7 +19,9 @@ class Start implements Page {
 
   public handleLogoutBtn: () => void;
 
-  constructor(handleLogoutBtn: () => void) {
+  public handleStartBtn: () => void;
+
+  constructor(handleLogoutBtn: () => void, handleStartBtn: () => void) {
     this.wrapper = document.createElement('div');
     this.wrapper.classList.add(styles.wrapper);
     this.logoutButton = new Button('Logout', ['logout']);
@@ -40,6 +42,7 @@ class Start implements Page {
     this.startButton = new Button('Start', ['start']);
 
     this.handleLogoutBtn = handleLogoutBtn;
+    this.handleStartBtn = handleStartBtn;
 
     this.setupEvents();
     this.render();
@@ -48,6 +51,10 @@ class Start implements Page {
   private setupEvents() {
     this.logoutButton.handleClick(() => {
       this.handleLogoutBtn();
+    });
+
+    this.startButton.handleClick(() => {
+      this.handleStartBtn();
     });
 
     const greetUser = (): void => {

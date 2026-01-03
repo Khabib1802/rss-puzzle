@@ -3,6 +3,7 @@ import Entry from '../pages/Entry/Entry.ts';
 import Router from './router.ts';
 import Start from '../pages/Start/Start.ts';
 import localStorageService from '../services/localStorageService.ts';
+import Game from '../pages/Game/Game.ts';
 
 export default class App {
   private body: HTMLElement;
@@ -25,10 +26,15 @@ export default class App {
 
   private goToStart() {
     this.router.go(
-      new Start(() => {
-        localStorageService.removeUser();
-        this.goToEntry();
-      })
+      new Start(
+        () => {
+          localStorageService.removeUser();
+          this.goToEntry();
+        },
+        () => {
+          this.router.go(new Game());
+        }
+      )
     );
   }
 
