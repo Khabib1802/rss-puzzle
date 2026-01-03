@@ -2,6 +2,7 @@ import '../styles/global.scss';
 import Entry from '../pages/Entry/Entry.ts';
 import Router from './router.ts';
 import Start from '../pages/Start/Start.ts';
+import localStorageService from '../services/localStorageService.ts';
 
 export default class App {
   private body: HTMLElement;
@@ -18,7 +19,24 @@ export default class App {
     this.router = new Router(this.main);
   }
 
+  private goToEntry() {
+    this.router.go(new Entry(() => this.goToStart()));
+  }
+
+  private goToStart() {
+    this.router.go(
+      new Start(() => {
+        localStorageService.removeUser();
+        this.goToEntry();
+      })
+    );
+  }
+
   public start(): void {
-    this.router.go(new Entry(() => this.router.go(new Start())));
+    if (localStorageService.hasUser()) {
+      this.goToStart();
+    } else {
+      this.goToEntry();
+    }
   }
 }

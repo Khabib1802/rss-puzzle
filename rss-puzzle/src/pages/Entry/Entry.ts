@@ -12,51 +12,56 @@ class Entry implements Page {
 
   private surnameInput: Input;
 
-  private button: Button;
+  private loginBtn: Button;
 
-  private handleClick: () => void;
+  private handleLoginBtn: () => void;
 
-  constructor(handleClick: () => void) {
+  constructor(handleLoginBtn: () => void) {
     this.wrapper = document.createElement('div');
     this.wrapper.classList.add(styles.wrapper);
-    this.nameInput = new Input({ label: 'Enter Your First Name', required: true, placeholder: 'name', minLength: 3 });
+    this.nameInput = new Input({
+      label: 'Enter Your First Name',
+      required: true,
+      placeholder: 'name',
+      minLength: 3,
+    });
     this.surnameInput = new Input({
       label: 'Enter Your Surname',
       required: true,
       placeholder: 'surname',
       minLength: 4,
     });
-    this.button = new Button('Login', ['login']);
-    this.handleClick = handleClick;
+    this.loginBtn = new Button('Login', ['login']);
+    this.handleLoginBtn = handleLoginBtn;
     this.setupEvents();
     this.render();
   }
 
   private setupEvents() {
-    this.button.setDisabled(true);
+    this.loginBtn.setDisabled(true);
 
     const validateInputs = () => {
       if (this.nameInput.isValid() && this.surnameInput.isValid()) {
-        this.button.setDisabled(false);
+        this.loginBtn.setDisabled(false);
       } else {
-        this.button.setDisabled(true);
+        this.loginBtn.setDisabled(true);
       }
     };
 
     this.nameInput.handleInput(validateInputs);
     this.surnameInput.handleInput(validateInputs);
 
-    this.button.handleClick(() => {
+    this.loginBtn.handleClick(() => {
       localStorageService.saveUser({
         firstName: this.nameInput.getValue(),
         surname: this.surnameInput.getValue(),
       });
-      this.handleClick();
+      this.handleLoginBtn();
     });
   }
 
   private render() {
-    this.wrapper.append(this.nameInput.getElement(), this.surnameInput.getElement(), this.button.getElement());
+    this.wrapper.append(this.nameInput.getElement(), this.surnameInput.getElement(), this.loginBtn.getElement());
   }
 
   public getElement() {
