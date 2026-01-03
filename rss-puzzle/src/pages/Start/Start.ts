@@ -1,7 +1,8 @@
 import styles from './Start.module.scss';
 
 import Button from '../../components/Button/Button.ts';
-import type { Page } from '../../types/interfaces.ts';
+import type { Page, User } from '../../types/interfaces.ts';
+import localStorageService from '../../services/localStorageService.ts';
 
 class Start implements Page {
   private wrapper: HTMLDivElement;
@@ -9,6 +10,8 @@ class Start implements Page {
   private logoutButton: Button;
 
   private title: HTMLHeadingElement;
+
+  private greeting: HTMLParagraphElement;
 
   private description: HTMLParagraphElement;
 
@@ -24,6 +27,11 @@ class Start implements Page {
     this.title = document.createElement('h1');
     this.title.classList.add(styles.title);
     this.title.textContent = 'RSS Puzzle';
+
+    this.greeting = document.createElement('p');
+    this.greeting.classList.add(styles.greeting);
+    this.greeting.textContent = '';
+
     this.description = document.createElement('p');
     this.description.textContent =
       '“Start an engaging journey of learning English through interactive puzzles inspired by famous artworks”';
@@ -41,10 +49,27 @@ class Start implements Page {
     this.logoutButton.handleClick(() => {
       this.handleLogoutBtn();
     });
+
+    const greetUser = (): void => {
+      if (localStorageService.hasUser()) {
+        const userRaw = localStorageService.getUser();
+        if (userRaw !== null) {
+          const user: User = JSON.parse(userRaw);
+          this.greeting.textContent = `Hello, ${user.firstName} ${user.surname}!`;
+        }
+      }
+    };
+    greetUser();
   }
 
   private render() {
-    this.wrapper.append(this.logoutButton.getElement(), this.title, this.description, this.startButton.getElement());
+    this.wrapper.append(
+      this.logoutButton.getElement(),
+      this.title,
+      this.greeting,
+      this.description,
+      this.startButton.getElement()
+    );
   }
 
   getElement(): HTMLElement {
