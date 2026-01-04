@@ -8,7 +8,7 @@ import level6Data from '../data/levelData/wordCollectionLevel6.json';
 import type { Level, Round } from '../types/interfaces';
 
 class GameService {
-  private levelDataMap: Record<number, Level> = {
+  private static levelDataMap: Record<number, Level> = {
     1: level1Data,
     2: level2Data,
     3: level3Data,
@@ -17,9 +17,25 @@ class GameService {
     6: level6Data,
   };
 
-  public splitIntoWords(level: number, roundIndex: number, sentenceIndex: number): string[] {
+  public static getSentence(level: number, roundIndex: number, sentenceIndex: number): string {
     const round: Round = this.levelDataMap[level].rounds[roundIndex];
-    return round.words[sentenceIndex].textExample.split(' ');
+    return round.words[sentenceIndex].textExample;
+  }
+
+  public static splitIntoWords(sentence: string): string[] {
+    return sentence.split(' ');
+  }
+
+  public static isSentenceCorrect(userSentence: string, correctSentence: string): boolean {
+    return userSentence === correctSentence;
+  }
+
+  public static getRoundsCount(level: number): number {
+    return this.levelDataMap[level].roundsCount;
+  }
+
+  public static getSentencesCount(level: number, roundIndex: number): number {
+    return this.levelDataMap[level].rounds[roundIndex].words.length;
   }
 }
 

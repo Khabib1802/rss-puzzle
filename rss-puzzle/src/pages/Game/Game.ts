@@ -4,6 +4,7 @@ import type { Page } from '../../types/interfaces';
 import shuffleArray from '../../utils/shuffleArray.ts';
 import WordPuzzle from '../../components/WordPuzzle/WordPuzzle.ts';
 import GameService from '../../services/gameService.ts';
+import Button from '../../components/Button/Button.ts';
 
 class Game implements Page {
   private wrapper: HTMLDivElement;
@@ -11,6 +12,18 @@ class Game implements Page {
   private sourceBlock: HTMLDivElement;
 
   private resultBlock: HTMLDivElement;
+
+  private continueButton: Button;
+
+  private gameService = GameService;
+
+  private level = 1;
+
+  private roundIndex = 0;
+
+  private sentenceIndex = 0;
+
+  private correctSentence = '';
 
   constructor() {
     this.wrapper = document.createElement('div');
@@ -22,15 +35,24 @@ class Game implements Page {
     this.sourceBlock = document.createElement('div');
     this.sourceBlock.classList.add(styles.source);
 
+    this.continueButton = new Button('Continue');
+
     this.render();
     this.renderWordPuzzles();
+    this.setupEvents();
   }
 
-  private renderWordPuzzles() {
-    const gameService = new GameService();
-    const words = gameService.splitIntoWords(1, 0, 0);
+  private renderWordPuzzles(): void {
+    this.resultBlock.replaceChildren();
+    this.sourceBlock.replaceChildren();
+
+    this.correctSentence = this.gameService.getSentence(this.level, this.roundIndex, this.sentenceIndex);
+    const words = this.gameService.splitIntoWords(this.correctSentence);
+
+    this.continueButton.setDisabled(true);
 
     const shuffledWords = shuffleArray(words);
+
     shuffledWords.forEach((word) => {
       const wordPuzzle = new WordPuzzle(word);
       this.sourceBlock.append(wordPuzzle.getElement());
@@ -41,12 +63,59 @@ class Game implements Page {
         } else {
           this.sourceBlock.append(wordPuzzle.getElement());
         }
+        this.checkResultSentence();
       });
     });
   }
 
-  public render() {
-    this.wrapper.append(this.resultBlock, this.sourceBlock);
+  private setupEvents() {
+    this.continueButton.handleClick(() => this.nextSentence());
+  }
+
+  private checkResultSentence(): void {
+    const resultSentence = this.getResultSentence();
+
+    if (this.gameService.isSentenceCorrect(resultSentence, this.correctSentence)) {
+      this.continueButton.setDisabled(false);
+    }
+  }
+
+  private nextSentence() {
+    this.sentenceIndex += 1;
+
+    const rounds = this.gameService.getRoundsCount(this.level);
+    const sentences = this.gameService.getSentencesCount(this.level, this.roundIndex);
+    const levels = 6;
+
+    if (this.sentenceIndex < sentences) {
+      this.renderWordPuzzles();
+      return;
+    }
+
+    this.sentenceIndex = 0;
+    this.roundIndex += 1;
+
+    if (this.roundIndex < rounds) {
+      this.renderWordPuzzles();
+      return;
+    }
+
+    this.roundIndex = 0;
+    this.level += 1;
+
+    if (this.level <= levels) {
+      this.renderWordPuzzles();
+    }
+  }
+
+  private getResultSentence(): string {
+    return Array.from(this.resultBlock.children)
+      .map((wordPuzzle) => wordPuzzle.textContent)
+      .join(' ');
+  }
+
+  public render(): void {
+    this.wrapper.append(this.resultBlock, this.sourceBlock, this.continueButton.getElement());
   }
 
   getElement(): HTMLElement {
