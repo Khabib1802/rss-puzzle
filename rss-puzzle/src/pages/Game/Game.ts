@@ -3,6 +3,7 @@ import styles from './Game.module.scss';
 import type { Page } from '../../types/interfaces';
 import shuffleArray from '../../utils/shuffleArray.ts';
 import WordPuzzle from '../../components/WordPuzzle/WordPuzzle.ts';
+import GameService from '../../services/gameService.ts';
 
 class Game implements Page {
   private wrapper: HTMLDivElement;
@@ -26,8 +27,8 @@ class Game implements Page {
   }
 
   private renderWordPuzzles() {
-    const sentence = 'This is a temporary example';
-    const words = sentence.split(' ');
+    const gameService = new GameService();
+    const words = gameService.splitIntoWords(1, 0, 0);
 
     const shuffledWords = shuffleArray(words);
     shuffledWords.forEach((word) => {
