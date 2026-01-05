@@ -1,6 +1,7 @@
 {
   "name": "rss-puzzle",
   "private": true,
+  "homepage": "https://rolling-scopes-school.github.io/khabib1802-JSFE2025Q3/",
   "version": "0.0.0",
   "type": "module",
   "scripts": {
@@ -11,7 +12,7 @@
     "ci:format": "prettier --check src",
     "lint": "eslint src",
     "prepare": "cd .. && husky rss-puzzle/.husky",
-    "test": "echo TEST TEST TEST TEST "
+    "deploy": "gh-pages -d dist --no-history"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
@@ -34,6 +35,7 @@
     "eslint-import-resolver-typescript": "^4.4.4",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-prettier": "^5.5.4",
+    "gh-pages": "^6.3.0",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
     "normalize-scss": "^8.0.0",
