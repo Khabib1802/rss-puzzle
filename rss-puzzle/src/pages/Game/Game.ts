@@ -15,7 +15,11 @@ class Game implements Page {
 
   private continueButton: Button;
 
+  private checkButton: Button;
+
   private gameService = GameService;
+
+  private wordPuzzles: WordPuzzle[] = [];
 
   private level = 1;
 
@@ -24,6 +28,8 @@ class Game implements Page {
   private sentenceIndex = 0;
 
   private correctSentence = '';
+
+  private isChecked = false;
 
   constructor() {
     this.wrapper = document.createElement('div');
@@ -35,7 +41,8 @@ class Game implements Page {
     this.sourceBlock = document.createElement('div');
     this.sourceBlock.classList.add(styles.source);
 
-    this.continueButton = new Button('Continue');
+    this.checkButton = new Button('Check', [styles.checkBtn]);
+    this.continueButton = new Button('Continue', [styles.continueBtn, styles.hidden]);
 
     this.render();
     this.renderWordPuzzles();
@@ -45,42 +52,92 @@ class Game implements Page {
   private renderWordPuzzles(): void {
     this.resultBlock.replaceChildren();
     this.sourceBlock.replaceChildren();
+    this.wordPuzzles.length = 0;
 
     this.correctSentence = this.gameService.getSentence(this.level, this.roundIndex, this.sentenceIndex);
     const words = this.gameService.splitIntoWords(this.correctSentence);
 
-    this.continueButton.setDisabled(true);
+    this.checkButton.setDisabled(true);
 
     const shuffledWords = shuffleArray(words);
 
     shuffledWords.forEach((word) => {
       const wordPuzzle = new WordPuzzle(word);
+      this.wordPuzzles.push(wordPuzzle);
       this.sourceBlock.append(wordPuzzle.getElement());
 
       wordPuzzle.handleClick(() => {
-        if (this.sourceBlock.contains(wordPuzzle.getElement())) {
-          this.resultBlock.append(wordPuzzle.getElement());
-        } else {
-          this.sourceBlock.append(wordPuzzle.getElement());
+        if (!this.isChecked) {
+          if (this.sourceBlock.contains(wordPuzzle.getElement())) {
+            this.resultBlock.append(wordPuzzle.getElement());
+          } else {
+            this.sourceBlock.append(wordPuzzle.getElement());
+          }
         }
-        this.checkResultSentence();
+
+        if (this.sourceBlock.children.length === 0) {
+          this.checkButton.setDisabled(false);
+        } else {
+          this.checkButton.setDisabled(true);
+          this.removeHighlight();
+        }
       });
     });
   }
 
   private setupEvents() {
-    this.continueButton.handleClick(() => this.nextSentence());
+    this.continueButton.handleClick(() => {
+      this.nextSentence();
+      this.isChecked = false;
+    });
+    this.checkButton.handleClick(() => {
+      this.checkResultSentence();
+      this.highlightWords();
+    });
+  }
+
+  private highlightWords() {
+    const isCorrectWordArray = this.gameService.checkUserOrder(
+      this.getResultSentence().split(' '),
+      this.correctSentence.split(' ')
+    );
+    isCorrectWordArray.forEach((isCorrectWord, index) => {
+      const userOrderedPuzzles = Array.from(this.resultBlock.children).map((child) => {
+        return this.wordPuzzles.find((wordPuzzle) => {
+          return wordPuzzle.getElement() === child;
+        });
+      });
+
+      if (userOrderedPuzzles[index]) {
+        if (isCorrectWord) {
+          userOrderedPuzzles[index].setCorrect();
+        } else {
+          userOrderedPuzzles[index].setIncorrect();
+        }
+      }
+    });
+  }
+
+  private removeHighlight() {
+    this.wordPuzzles.forEach((wordPuzzle) => wordPuzzle.removeHighligh());
   }
 
   private checkResultSentence(): void {
     const resultSentence = this.getResultSentence();
 
     if (this.gameService.isSentenceCorrect(resultSentence, this.correctSentence)) {
-      this.continueButton.setDisabled(false);
+      this.toggleHidden();
+      this.isChecked = true;
     }
   }
 
+  private toggleHidden() {
+    this.checkButton.getElement().classList.toggle(styles.hidden);
+    this.continueButton.getElement().classList.toggle(styles.hidden);
+  }
+
   private nextSentence() {
+    this.toggleHidden();
     this.sentenceIndex += 1;
 
     const rounds = this.gameService.getRoundsCount(this.level);
@@ -115,7 +172,12 @@ class Game implements Page {
   }
 
   public render(): void {
-    this.wrapper.append(this.resultBlock, this.sourceBlock, this.continueButton.getElement());
+    this.wrapper.append(
+      this.resultBlock,
+      this.sourceBlock,
+      this.checkButton.getElement(),
+      this.continueButton.getElement()
+    );
   }
 
   getElement(): HTMLElement {

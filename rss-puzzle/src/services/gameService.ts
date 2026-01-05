@@ -37,6 +37,10 @@ class GameService {
   public static getSentencesCount(level: number, roundIndex: number): number {
     return this.levelDataMap[level].rounds[roundIndex].words.length;
   }
+
+  public static checkUserOrder(userOrder: string[], correctOrder: string[]): boolean[] {
+    return userOrder.map((word, index) => word === correctOrder[index]);
+  }
 }
 
 export default GameService;
