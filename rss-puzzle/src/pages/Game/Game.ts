@@ -9,6 +9,8 @@ import Button from '../../components/Button/Button.ts';
 class Game implements Page {
   private wrapper: HTMLDivElement;
 
+  private mainBlock: HTMLDivElement;
+
   private sourceBlock: HTMLDivElement;
 
   private resultBlock: HTMLDivElement;
@@ -33,13 +35,18 @@ class Game implements Page {
 
   constructor() {
     this.wrapper = document.createElement('div');
-    this.wrapper.classList.add(styles.wrapper);
+    this.wrapper.classList.add('wrapper');
+
+    this.mainBlock = document.createElement('div');
+    this.mainBlock.classList.add(styles.mainBlock);
 
     this.resultBlock = document.createElement('div');
     this.resultBlock.classList.add(styles.result);
 
     this.sourceBlock = document.createElement('div');
     this.sourceBlock.classList.add(styles.source);
+
+    this.mainBlock.append(this.resultBlock, this.sourceBlock);
 
     this.checkButton = new Button('Check', [styles.checkBtn]);
     this.continueButton = new Button('Continue', [styles.continueBtn, styles.hidden]);
@@ -172,12 +179,7 @@ class Game implements Page {
   }
 
   public render(): void {
-    this.wrapper.append(
-      this.resultBlock,
-      this.sourceBlock,
-      this.checkButton.getElement(),
-      this.continueButton.getElement()
-    );
+    this.wrapper.append(this.mainBlock, this.checkButton.getElement(), this.continueButton.getElement());
   }
 
   getElement(): HTMLElement {

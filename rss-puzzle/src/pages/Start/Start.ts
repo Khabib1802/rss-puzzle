@@ -7,13 +7,15 @@ import localStorageService from '../../services/localStorageService.ts';
 class Start implements Page {
   private wrapper: HTMLDivElement;
 
-  private logoutButton: Button;
-
   private title: HTMLHeadingElement;
 
   private greeting: HTMLParagraphElement;
 
   private description: HTMLParagraphElement;
+
+  private buttonWrapper: HTMLDivElement;
+
+  private logoutButton: Button;
 
   private startButton: Button;
 
@@ -23,8 +25,7 @@ class Start implements Page {
 
   constructor(handleLogoutBtn: () => void, handleStartBtn: () => void) {
     this.wrapper = document.createElement('div');
-    this.wrapper.classList.add(styles.wrapper);
-    this.logoutButton = new Button('Logout', ['logout']);
+    this.wrapper.classList.add('wrapper');
 
     this.title = document.createElement('h1');
     this.title.classList.add(styles.title);
@@ -39,7 +40,10 @@ class Start implements Page {
       '“Start an engaging journey of learning English through interactive puzzles inspired by famous artworks”';
     this.description.classList.add(styles.description);
 
+    this.buttonWrapper = document.createElement('div');
+    this.logoutButton = new Button('Logout', [styles.logout]);
     this.startButton = new Button('Start', ['start']);
+    this.buttonWrapper.append(this.logoutButton.getElement(), this.startButton.getElement());
 
     this.handleLogoutBtn = handleLogoutBtn;
     this.handleStartBtn = handleStartBtn;
@@ -70,13 +74,7 @@ class Start implements Page {
   }
 
   private render() {
-    this.wrapper.append(
-      this.logoutButton.getElement(),
-      this.title,
-      this.greeting,
-      this.description,
-      this.startButton.getElement()
-    );
+    this.wrapper.append(this.greeting, this.title, this.description, this.buttonWrapper);
   }
 
   getElement(): HTMLElement {

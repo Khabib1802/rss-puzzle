@@ -1,5 +1,3 @@
-import styles from './Entry.module.scss';
-
 import Button from '../../components/Button/Button.ts';
 import Input from '../../components/Input/Input.ts';
 import type { Page } from '../../types/interfaces.ts';
@@ -7,6 +5,10 @@ import localStorageService from '../../services/localStorageService.ts';
 
 class Entry implements Page {
   private wrapper: HTMLDivElement;
+
+  private title: HTMLHeadingElement;
+
+  private inputWrapper: HTMLDivElement;
 
   private nameInput: Input;
 
@@ -18,19 +20,28 @@ class Entry implements Page {
 
   constructor(handleLoginBtn: () => void) {
     this.wrapper = document.createElement('div');
-    this.wrapper.classList.add(styles.wrapper);
+    this.wrapper.classList.add('wrapper');
+
+    this.title = document.createElement('h2');
+    this.title.textContent = 'RSS Puzzle';
+
+    this.inputWrapper = document.createElement('div');
+
     this.nameInput = new Input({
       label: 'Enter Your First Name',
       required: true,
-      placeholder: 'name',
+      placeholder: 'John',
       minLength: 3,
     });
     this.surnameInput = new Input({
       label: 'Enter Your Surname',
       required: true,
-      placeholder: 'surname',
+      placeholder: 'Doe',
       minLength: 4,
     });
+
+    this.inputWrapper.append(this.nameInput.getElement(), this.surnameInput.getElement());
+
     this.loginBtn = new Button('Login', ['login']);
     this.handleLoginBtn = handleLoginBtn;
     this.setupEvents();
@@ -61,7 +72,7 @@ class Entry implements Page {
   }
 
   private render() {
-    this.wrapper.append(this.nameInput.getElement(), this.surnameInput.getElement(), this.loginBtn.getElement());
+    this.wrapper.append(this.title, this.inputWrapper, this.loginBtn.getElement());
   }
 
   public getElement() {

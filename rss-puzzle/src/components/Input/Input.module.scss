@@ -1,5 +1,7 @@
 .wrapper {
+  position: relative;
   display: flex;
+  align-items: start;
   flex-direction: column;
   padding: 15px;
   border-radius: 5px;
@@ -15,11 +17,14 @@
   color: #1a1a1a;
   font-size: 20px;
   padding: 10px 15px;
+  margin-bottom: 10px;
   border: 1px solid #aaaaaa;
   border-radius: 5px;
 }
 
 .error {
+  position: absolute;
+  bottom: 0;
   color: #ff0000;
   margin-top: 5px;
   bottom: 0;

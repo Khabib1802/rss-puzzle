@@ -1,0 +1,70 @@
+@import 'normalize-scss/fork-version/normalize';
+@import './variables.scss';
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+main {
+  height: 100%;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  color: $c-dark;
+  background: linear-gradient(to right, #e6e6fa, #add8e6);
+}
+
+main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 20px;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  row-gap: 10px;
+  text-align: center;
+  height: 100%;
+  max-height: 500px;
+  width: 100%;
+  max-width: 1000px;
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+button {
+  padding: 10px 15px;
+  background-color: transparent;
+  color: $c-dark;
+  border: 2px solid $c-dark;
+  border-radius: 5px;
+  font-family: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  outline-offset: 1px;
+}
+
+button:hover,
+button:focus {
+  background-color: $c-dark;
+  color: #ffffff;
+}
+
+button:disabled {
+  background-color: $c-disabled;
+  border-color: transparent;
+  color: inherit;
+  cursor: not-allowed;
+}

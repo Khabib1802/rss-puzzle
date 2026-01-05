@@ -1,4 +1,3 @@
-import '../styles/global.scss';
 import Entry from '../pages/Entry/Entry.ts';
 import Router from './router.ts';
 import Start from '../pages/Start/Start.ts';
