@@ -26,13 +26,4 @@ interface Level {
   roundsCount: number;
 }
 
-interface Page {
-  getElement(): HTMLElement;
-}
-
-interface User {
-  firstName: string;
-  surname: string;
-}
-
-export type { Page, User, Level, Round };
+export type { Level, Round };

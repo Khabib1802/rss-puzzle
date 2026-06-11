@@ -1,4 +1,4 @@
-import type { Page } from '../types/interfaces';
+import type { Page } from '../types/pages';
 
 class Router {
   private root: HTMLElement;
