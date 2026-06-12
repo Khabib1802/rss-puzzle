@@ -1,6 +1,6 @@
 import Button from '../../components/Button/Button.ts';
 import Input from '../../components/Input/Input.ts';
-import type { Page } from '../../types/interfaces.ts';
+import type { Page } from '../../types/pages.ts';
 import localStorageService from '../../services/localStorageService.ts';
 
 class Entry implements Page {
@@ -40,7 +40,7 @@ class Entry implements Page {
       minLength: 4,
     });
 
-    this.inputWrapper.append(this.nameInput.getElement(), this.surnameInput.getElement());
+    this.inputWrapper.append(this.nameInput.element, this.surnameInput.element);
 
     this.loginBtn = new Button('Login', ['login']);
     this.handleLoginBtn = handleLoginBtn;
@@ -72,7 +72,7 @@ class Entry implements Page {
   }
 
   private render() {
-    this.wrapper.append(this.title, this.inputWrapper, this.loginBtn.getElement());
+    this.wrapper.append(this.title, this.inputWrapper, this.loginBtn.element);
   }
 
   public getElement() {

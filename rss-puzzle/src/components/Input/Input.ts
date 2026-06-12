@@ -19,7 +19,7 @@ class Input extends BaseComponent<HTMLDivElement> {
   private errorMessage: string = '';
 
   constructor(options: InputOptions) {
-    super(() => document.createElement('div'), [styles.wrapper]);
+    super('div', [styles.wrapper]);
 
     this.wrapper = this.element;
 

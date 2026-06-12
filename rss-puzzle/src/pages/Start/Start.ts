@@ -1,8 +1,10 @@
 import styles from './Start.module.scss';
 
 import Button from '../../components/Button/Button.ts';
-import type { Page, User } from '../../types/interfaces.ts';
+import type { Page } from '../../types/pages.ts';
+
 import localStorageService from '../../services/localStorageService.ts';
+import type { User } from '../../types/user.ts';
 
 class Start implements Page {
   private wrapper: HTMLDivElement;
@@ -43,7 +45,7 @@ class Start implements Page {
     this.buttonWrapper = document.createElement('div');
     this.logoutButton = new Button('Logout', [styles.logout]);
     this.startButton = new Button('Start', ['start']);
-    this.buttonWrapper.append(this.logoutButton.getElement(), this.startButton.getElement());
+    this.buttonWrapper.append(this.logoutButton.element, this.startButton.element);
 
     this.handleLogoutBtn = handleLogoutBtn;
     this.handleStartBtn = handleStartBtn;

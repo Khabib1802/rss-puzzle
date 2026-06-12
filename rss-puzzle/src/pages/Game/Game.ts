@@ -1,6 +1,6 @@
 import styles from './Game.module.scss';
 
-import type { Page } from '../../types/interfaces';
+import type { Page } from '../../types/pages.ts';
 import shuffleArray from '../../utils/shuffleArray.ts';
 import WordPuzzle from '../../components/WordPuzzle/WordPuzzle.ts';
 import GameService from '../../services/gameService.ts';
@@ -71,14 +71,14 @@ class Game implements Page {
     shuffledWords.forEach((word) => {
       const wordPuzzle = new WordPuzzle(word);
       this.wordPuzzles.push(wordPuzzle);
-      this.sourceBlock.append(wordPuzzle.getElement());
+      this.sourceBlock.append(wordPuzzle.element);
 
       wordPuzzle.handleClick(() => {
         if (!this.isChecked) {
-          if (this.sourceBlock.contains(wordPuzzle.getElement())) {
-            this.resultBlock.append(wordPuzzle.getElement());
+          if (this.sourceBlock.contains(wordPuzzle.element)) {
+            this.resultBlock.append(wordPuzzle.element);
           } else {
-            this.sourceBlock.append(wordPuzzle.getElement());
+            this.sourceBlock.append(wordPuzzle.element);
           }
         }
 
@@ -111,7 +111,7 @@ class Game implements Page {
     isCorrectWordArray.forEach((isCorrectWord, index) => {
       const userOrderedPuzzles = Array.from(this.resultBlock.children).map((child) => {
         return this.wordPuzzles.find((wordPuzzle) => {
-          return wordPuzzle.getElement() === child;
+          return wordPuzzle.element === child;
         });
       });
 
@@ -139,8 +139,8 @@ class Game implements Page {
   }
 
   private toggleHidden() {
-    this.checkButton.getElement().classList.toggle(styles.hidden);
-    this.continueButton.getElement().classList.toggle(styles.hidden);
+    this.checkButton.element.classList.toggle(styles.hidden);
+    this.continueButton.element.classList.toggle(styles.hidden);
   }
 
   private nextSentence() {
@@ -179,7 +179,7 @@ class Game implements Page {
   }
 
   public render(): void {
-    this.wrapper.append(this.mainBlock, this.checkButton.getElement(), this.continueButton.getElement());
+    this.wrapper.append(this.mainBlock, this.checkButton.element, this.continueButton.element);
   }
 
   getElement(): HTMLElement {
