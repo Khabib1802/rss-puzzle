@@ -30,20 +30,20 @@ class Start implements Page {
     this.wrapper.classList.add('wrapper');
 
     this.title = document.createElement('h1');
-    this.title.classList.add(styles.title);
+    this.title.classList.add(styles['title']);
     this.title.textContent = 'RSS Puzzle';
 
     this.greeting = document.createElement('p');
-    this.greeting.classList.add(styles.greeting);
+    this.greeting.classList.add(styles['greeting']);
     this.greeting.textContent = '';
 
     this.description = document.createElement('p');
     this.description.textContent =
       '“Start an engaging journey of learning English through interactive puzzles inspired by famous artworks”';
-    this.description.classList.add(styles.description);
+    this.description.classList.add(styles['description']);
 
     this.buttonWrapper = document.createElement('div');
-    this.logoutButton = new Button('Logout', [styles.logout]);
+    this.logoutButton = new Button('Logout', [styles['logout']]);
     this.startButton = new Button('Start', ['start']);
     this.buttonWrapper.append(this.logoutButton.element, this.startButton.element);
 

@@ -38,18 +38,18 @@ class Game implements Page {
     this.wrapper.classList.add('wrapper');
 
     this.mainBlock = document.createElement('div');
-    this.mainBlock.classList.add(styles.mainBlock);
+    this.mainBlock.classList.add(styles['mainBlock']);
 
     this.resultBlock = document.createElement('div');
-    this.resultBlock.classList.add(styles.result);
+    this.resultBlock.classList.add(styles['result']);
 
     this.sourceBlock = document.createElement('div');
-    this.sourceBlock.classList.add(styles.source);
+    this.sourceBlock.classList.add(styles['source']);
 
     this.mainBlock.append(this.resultBlock, this.sourceBlock);
 
-    this.checkButton = new Button('Check', [styles.checkBtn]);
-    this.continueButton = new Button('Continue', [styles.continueBtn, styles.hidden]);
+    this.checkButton = new Button('Check', [styles['checkBtn']]);
+    this.continueButton = new Button('Continue', [styles['continueBtn'], styles['hidden']]);
 
     this.render();
     this.renderWordPuzzles();
@@ -126,7 +126,9 @@ class Game implements Page {
   }
 
   private removeHighlight() {
-    this.wordPuzzles.forEach((wordPuzzle) => wordPuzzle.removeHighligh());
+    this.wordPuzzles.forEach((wordPuzzle) => {
+      wordPuzzle.removeHighligh();
+    });
   }
 
   private checkResultSentence(): void {
@@ -139,8 +141,8 @@ class Game implements Page {
   }
 
   private toggleHidden() {
-    this.checkButton.element.classList.toggle(styles.hidden);
-    this.continueButton.element.classList.toggle(styles.hidden);
+    this.checkButton.element.classList.toggle(styles['hidden']);
+    this.continueButton.element.classList.toggle(styles['hidden']);
   }
 
   private nextSentence() {

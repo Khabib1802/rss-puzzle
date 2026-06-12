@@ -5,7 +5,7 @@ import level4Data from '../data/levelData/wordCollectionLevel4.json';
 import level5Data from '../data/levelData/wordCollectionLevel5.json';
 import level6Data from '../data/levelData/wordCollectionLevel6.json';
 
-import type { Level, Round } from '../types/interfaces';
+import type { Level, Round } from '../types/game';
 
 class GameService {
   private static levelDataMap: Record<number, Level> = {

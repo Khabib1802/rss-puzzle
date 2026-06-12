@@ -19,23 +19,23 @@ class Input extends BaseComponent<HTMLDivElement> {
   private errorMessage: string = '';
 
   constructor(options: InputOptions) {
-    super('div', [styles.wrapper]);
+    super('div', [styles['wrapper']]);
 
     this.wrapper = this.element;
 
     const label = document.createElement('label');
-    label.classList.add(styles.label);
+    label.classList.add(styles['label']);
     label.textContent = options.label;
 
     this.input = document.createElement('input');
-    this.input.classList.add(styles.input);
+    this.input.classList.add(styles['input']);
     this.input.type = 'text';
     this.input.placeholder = options.placeholder || '';
     this.input.minLength = options.minLength || 0;
     this.input.required = options.required || false;
 
     this.errorSpan = document.createElement('span');
-    this.errorSpan.classList.add(styles.error);
+    this.errorSpan.classList.add(styles['error']);
     this.errorSpan.textContent = this.errorMessage;
 
     this.wrapper.append(label, this.input, this.errorSpan);
@@ -48,7 +48,7 @@ class Input extends BaseComponent<HTMLDivElement> {
   public isValid() {
     this.errorMessage = this.validate(this.input.value);
     this.errorSpan.textContent = this.errorMessage;
-    return Boolean(!this.errorMessage);
+    return !this.errorMessage;
   }
 
   private validate(value: string): string {
@@ -66,7 +66,7 @@ class Input extends BaseComponent<HTMLDivElement> {
     }
 
     if (this.input.minLength > value.length) {
-      return `Minimul length is ${this.input.minLength}`;
+      return `Minimul length is ${String(this.input.minLength)}`;
     }
 
     return '';

@@ -4,7 +4,7 @@ import BaseComponent from '../BaseComponent.ts';
 
 class WordPuzzle extends BaseComponent<HTMLDivElement> {
   constructor(word: string) {
-    super('div', [styles.word]);
+    super('div', [styles['word']]);
 
     this.element.textContent = word;
   }
@@ -14,15 +14,15 @@ class WordPuzzle extends BaseComponent<HTMLDivElement> {
   }
 
   public setCorrect(): void {
-    this.element.classList.add(styles.correct);
+    this.element.classList.add(styles['correct']);
   }
 
   public setIncorrect(): void {
-    this.element.classList.add(styles.incorrect);
+    this.element.classList.add(styles['incorrect']);
   }
 
   public removeHighligh() {
-    this.element.classList.remove(styles.correct, styles.incorrect);
+    this.element.classList.remove(styles['correct'], styles['incorrect']);
   }
 }
 

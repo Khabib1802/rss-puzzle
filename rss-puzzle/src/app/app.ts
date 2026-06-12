@@ -20,7 +20,11 @@ export default class App {
   }
 
   private goToEntry() {
-    this.router.go(new Entry(() => this.goToStart()));
+    this.router.go(
+      new Entry(() => {
+        this.goToStart();
+      })
+    );
   }
 
   private goToStart() {

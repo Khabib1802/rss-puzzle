@@ -1,5 +1,25 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  base: '/khabib1802-JSFE2025Q3/',
+  base: '/rss-puzzle/',
+  server: {
+    host: '127.0.0.1',
+    port: 5173,
+    open: true,
+    strictPort: false,
+  },
+  build: {
+    target: 'ES2022',
+    minify: 'terser',
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['normalize-scss'],
+        },
+      },
+    },
+  },
+  preview: {
+    port: 4173,
+  },
 });

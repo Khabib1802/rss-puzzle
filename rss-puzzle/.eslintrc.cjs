@@ -10,7 +10,14 @@ module.exports = {
 
   plugins: ['@typescript-eslint', 'import'],
 
-  extends: ['airbnb-base', 'plugin:@typescript-eslint/recommended', 'plugin:prettier/recommended', 'prettier'],
+  extends: [
+    'airbnb-base',
+    'plugin:@typescript-eslint/recommended',
+    'plugin:@typescript-eslint/recommended-type-checked',
+    'plugin:@typescript-eslint/strict-type-checked',
+    'plugin:prettier/recommended',
+    'prettier',
+  ],
 
   settings: {
     'import/resolver': {
@@ -23,7 +30,23 @@ module.exports = {
   noInlineConfig: true,
   rules: {
     '@typescript-eslint/no-explicit-any': 'error',
-    'no-magic-numbers': ['error', { ignore: [0, 1] }],
-    'max-lines-per-function': ['error', 40],
+    '@typescript-eslint/no-unused-vars': 'error',
+    '@typescript-eslint/no-floating-promises': 'error',
+    '@typescript-eslint/await-thenable': 'error',
+    '@typescript-eslint/no-misused-promises': 'error',
+    '@typescript-eslint/no-unnecessary-type-conversion': 'error',
+    '@typescript-eslint/restrict-template-expressions': 'error',
+    '@typescript-eslint/no-unsafe-assignment': 'warn',
+    '@typescript-eslint/no-unsafe-member-access': 'warn',
+    '@typescript-eslint/no-unsafe-return': 'warn',
+    '@typescript-eslint/no-extraneous-class': 'warn',
+    '@typescript-eslint/no-confusing-void-expression': 'error',
+    'dot-notation': 'off',
+    '@typescript-eslint/dot-notation': ['error', { allowKeywords: true }],
+    'no-magic-numbers': ['error', { ignore: [0, 1, -1] }],
+    'max-lines-per-function': ['error', { max: 40, skipBlankLines: true, skipComments: true }],
+    'no-console': 'warn',
+    'prefer-const': 'error',
+    'no-var': 'error',
   },
 };
