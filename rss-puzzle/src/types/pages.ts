@@ -1,3 +1,3 @@
 export interface Page {
-  getElement(): HTMLElement;
+  element: HTMLDivElement;
 }

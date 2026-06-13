@@ -9,7 +9,7 @@
 
 html,
 body,
-main {
+.root {
   height: 100%;
 }
 
@@ -19,7 +19,7 @@ body {
   background: linear-gradient(to right, #e6e6fa, #add8e6);
 }
 
-main {
+.root {
   display: flex;
   align-items: center;
   justify-content: center;

@@ -1,19 +1,17 @@
 import styles from './Game.module.scss';
 
-import type { Page } from '../../types/pages.ts';
 import shuffleArray from '../../utils/shuffleArray.ts';
 import WordPuzzle from '../../components/WordPuzzle/WordPuzzle.ts';
 import GameService from '../../services/gameService.ts';
 import Button from '../../components/Button/Button.ts';
+import BaseComponent from '../../components/BaseComponent.ts';
 
-class Game implements Page {
-  private wrapper: HTMLDivElement;
+class GamePage extends BaseComponent<HTMLDivElement> {
+  private mainBlock: BaseComponent<HTMLDivElement>;
 
-  private mainBlock: HTMLDivElement;
+  private sourceBlock: BaseComponent<HTMLDivElement>;
 
-  private sourceBlock: HTMLDivElement;
-
-  private resultBlock: HTMLDivElement;
+  private resultBlock: BaseComponent<HTMLDivElement>;
 
   private continueButton: Button;
 
@@ -34,31 +32,26 @@ class Game implements Page {
   private isChecked = false;
 
   constructor() {
-    this.wrapper = document.createElement('div');
-    this.wrapper.classList.add('wrapper');
+    super('div', ['wrapper']);
 
-    this.mainBlock = document.createElement('div');
-    this.mainBlock.classList.add(styles['mainBlock']);
-
-    this.resultBlock = document.createElement('div');
-    this.resultBlock.classList.add(styles['result']);
-
-    this.sourceBlock = document.createElement('div');
-    this.sourceBlock.classList.add(styles['source']);
+    this.mainBlock = new BaseComponent('div', [styles['mainBlock']]);
+    this.resultBlock = new BaseComponent('div', [styles['result']]);
+    this.sourceBlock = new BaseComponent('div', [styles['source']]);
 
     this.mainBlock.append(this.resultBlock, this.sourceBlock);
 
     this.checkButton = new Button('Check', [styles['checkBtn']]);
     this.continueButton = new Button('Continue', [styles['continueBtn'], styles['hidden']]);
 
-    this.render();
     this.renderWordPuzzles();
     this.setupEvents();
+
+    this.append(this.mainBlock, this.checkButton, this.continueButton);
   }
 
   private renderWordPuzzles(): void {
-    this.resultBlock.replaceChildren();
-    this.sourceBlock.replaceChildren();
+    this.resultBlock.element.replaceChildren();
+    this.sourceBlock.element.replaceChildren();
     this.wordPuzzles.length = 0;
 
     this.correctSentence = this.gameService.getSentence(this.level, this.roundIndex, this.sentenceIndex);
@@ -75,14 +68,14 @@ class Game implements Page {
 
       wordPuzzle.handleClick(() => {
         if (!this.isChecked) {
-          if (this.sourceBlock.contains(wordPuzzle.element)) {
+          if (this.sourceBlock.element.contains(wordPuzzle.element)) {
             this.resultBlock.append(wordPuzzle.element);
           } else {
             this.sourceBlock.append(wordPuzzle.element);
           }
         }
 
-        if (this.sourceBlock.children.length === 0) {
+        if (this.sourceBlock.element.children.length === 0) {
           this.checkButton.setDisabled(false);
         } else {
           this.checkButton.setDisabled(true);
@@ -109,7 +102,7 @@ class Game implements Page {
       this.correctSentence.split(' ')
     );
     isCorrectWordArray.forEach((isCorrectWord, index) => {
-      const userOrderedPuzzles = Array.from(this.resultBlock.children).map((child) => {
+      const userOrderedPuzzles = Array.from(this.resultBlock.element.children).map((child) => {
         return this.wordPuzzles.find((wordPuzzle) => {
           return wordPuzzle.element === child;
         });
@@ -175,18 +168,10 @@ class Game implements Page {
   }
 
   private getResultSentence(): string {
-    return Array.from(this.resultBlock.children)
+    return Array.from(this.resultBlock.element.children)
       .map((wordPuzzle) => wordPuzzle.textContent)
       .join(' ');
   }
-
-  public render(): void {
-    this.wrapper.append(this.mainBlock, this.checkButton.element, this.continueButton.element);
-  }
-
-  getElement(): HTMLElement {
-    return this.wrapper;
-  }
 }
 
-export default Game;
+export default GamePage;

@@ -41,6 +41,16 @@ module.exports = {
     '@typescript-eslint/no-unsafe-return': 'warn',
     '@typescript-eslint/no-extraneous-class': 'warn',
     '@typescript-eslint/no-confusing-void-expression': 'error',
+    'no-use-before-define': 'off',
+
+    '@typescript-eslint/no-use-before-define': [
+      'error',
+      {
+        typedefs: false,
+        classes: false,
+      },
+    ],
+    'import/extensions': 'off',
     'dot-notation': 'off',
     '@typescript-eslint/dot-notation': ['error', { allowKeywords: true }],
     'no-magic-numbers': ['error', { ignore: [0, 1, -1] }],

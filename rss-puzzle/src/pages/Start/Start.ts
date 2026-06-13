@@ -1,66 +1,55 @@
 import styles from './Start.module.scss';
 
 import Button from '../../components/Button/Button.ts';
-import type { Page } from '../../types/pages.ts';
 
 import localStorageService from '../../services/localStorageService.ts';
 import type { User } from '../../types/user.ts';
+import BaseComponent from '../../components/BaseComponent.ts';
 
-class Start implements Page {
-  private wrapper: HTMLDivElement;
+class StartPage extends BaseComponent<HTMLDivElement> {
+  private title: BaseComponent<HTMLHeadingElement>;
 
-  private title: HTMLHeadingElement;
+  private greeting: BaseComponent<HTMLParagraphElement>;
 
-  private greeting: HTMLParagraphElement;
+  private description: BaseComponent<HTMLParagraphElement>;
 
-  private description: HTMLParagraphElement;
-
-  private buttonWrapper: HTMLDivElement;
+  private buttonWrapper: BaseComponent<HTMLDivElement>;
 
   private logoutButton: Button;
 
   private startButton: Button;
 
-  public handleLogoutBtn: () => void;
+  constructor() {
+    super('div', ['wrapper']);
 
-  public handleStartBtn: () => void;
+    this.title = new BaseComponent('h1', ['title']);
+    this.title.element.textContent = 'RSS Puzzle';
 
-  constructor(handleLogoutBtn: () => void, handleStartBtn: () => void) {
-    this.wrapper = document.createElement('div');
-    this.wrapper.classList.add('wrapper');
+    this.greeting = new BaseComponent('p', ['greeting']);
+    this.greeting.element.textContent = '';
 
-    this.title = document.createElement('h1');
-    this.title.classList.add(styles['title']);
-    this.title.textContent = 'RSS Puzzle';
-
-    this.greeting = document.createElement('p');
-    this.greeting.classList.add(styles['greeting']);
-    this.greeting.textContent = '';
-
-    this.description = document.createElement('p');
-    this.description.textContent =
+    this.description = new BaseComponent('p', ['description']);
+    this.description.element.textContent =
       '“Start an engaging journey of learning English through interactive puzzles inspired by famous artworks”';
-    this.description.classList.add(styles['description']);
 
-    this.buttonWrapper = document.createElement('div');
+    this.buttonWrapper = new BaseComponent('div');
     this.logoutButton = new Button('Logout', [styles['logout']]);
     this.startButton = new Button('Start', ['start']);
     this.buttonWrapper.append(this.logoutButton.element, this.startButton.element);
 
-    this.handleLogoutBtn = handleLogoutBtn;
-    this.handleStartBtn = handleStartBtn;
-
     this.setupEvents();
-    this.render();
+
+    this.append(this.title, this.greeting, this.description, this.buttonWrapper);
   }
 
   private setupEvents() {
     this.logoutButton.handleClick(() => {
-      this.handleLogoutBtn();
+      localStorageService.removeUser();
+      window.location.hash = '/entry';
     });
 
     this.startButton.handleClick(() => {
-      this.handleStartBtn();
+      window.location.hash = '/game';
     });
 
     const greetUser = (): void => {
@@ -68,20 +57,12 @@ class Start implements Page {
         const userRaw = localStorageService.getUser();
         if (userRaw !== null) {
           const user: User = JSON.parse(userRaw);
-          this.greeting.textContent = `Hello, ${user.firstName} ${user.surname}!`;
+          this.greeting.element.textContent = `Hello, ${user.firstName} ${user.surname}!`;
         }
       }
     };
     greetUser();
   }
-
-  private render() {
-    this.wrapper.append(this.greeting, this.title, this.description, this.buttonWrapper);
-  }
-
-  getElement(): HTMLElement {
-    return this.wrapper;
-  }
 }
 
-export default Start;
+export default StartPage;
