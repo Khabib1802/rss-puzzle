@@ -1,4 +1,4 @@
-import styles from './Start.module.scss';
+import styles from './StartPage.module.scss';
 
 import Button from '../../components/Button/Button.ts';
 

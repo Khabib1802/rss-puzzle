@@ -7,8 +7,15 @@ import level6Data from '../data/levelData/wordCollectionLevel6.json';
 
 import type { Level, Round } from '../types/game';
 
+interface GameState {
+  level: number;
+  roundIndex: number;
+  sentenceIndex: number;
+  isChecked: boolean;
+}
+
 class GameService {
-  private static levelDataMap: Record<number, Level> = {
+  private levelDataMap: Record<number, Level> = {
     1: level1Data,
     2: level2Data,
     3: level3Data,
@@ -17,30 +24,51 @@ class GameService {
     6: level6Data,
   };
 
-  public static getSentence(level: number, roundIndex: number, sentenceIndex: number): string {
+  public gameState: GameState = {
+    level: 1,
+    roundIndex: 0,
+    sentenceIndex: 0,
+    isChecked: false,
+  };
+
+  public getCurrentSentence(): string {
+    const { level, roundIndex, sentenceIndex } = this.gameState;
     const round: Round = this.levelDataMap[level].rounds[roundIndex];
     return round.words[sentenceIndex].textExample;
   }
 
-  public static splitIntoWords(sentence: string): string[] {
-    return sentence.split(' ');
+  public nextStep() {
+    const { level, roundIndex, sentenceIndex } = this.gameState;
+    const maxSentence = this.levelDataMap[level].rounds[roundIndex].words.length;
+    const maxRound = this.levelDataMap[level].roundsCount;
+    const maxLevel = 6;
+
+    this.gameState.isChecked = false;
+
+    if (sentenceIndex + 1 < maxSentence) {
+      this.gameState.sentenceIndex += 1;
+      return true;
+    }
+
+    this.gameState.sentenceIndex = 0;
+    if (roundIndex + 1 < maxRound) {
+      this.gameState.roundIndex += 1;
+      return true;
+    }
+
+    this.gameState.roundIndex = 0;
+    if (level + 1 <= maxLevel) {
+      this.gameState.level += 1;
+      return true;
+    }
+
+    return false;
   }
 
-  public static isSentenceCorrect(userSentence: string, correctSentence: string): boolean {
-    return userSentence === correctSentence;
-  }
-
-  public static getRoundsCount(level: number): number {
-    return this.levelDataMap[level].roundsCount;
-  }
-
-  public static getSentencesCount(level: number, roundIndex: number): number {
-    return this.levelDataMap[level].rounds[roundIndex].words.length;
-  }
-
-  public static checkUserOrder(userOrder: string[], correctOrder: string[]): boolean[] {
-    return userOrder.map((word, index) => word === correctOrder[index]);
+  public setChecked(value: boolean) {
+    this.gameState.isChecked = value;
   }
 }
 
-export default GameService;
+const gameService = new GameService();
+export default gameService;

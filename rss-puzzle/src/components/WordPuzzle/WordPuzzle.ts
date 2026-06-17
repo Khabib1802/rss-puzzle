@@ -3,10 +3,17 @@ import styles from './WordPuzzle.module.scss';
 import BaseComponent from '../BaseComponent.ts';
 
 class WordPuzzle extends BaseComponent<HTMLDivElement> {
+  private readonly word: string;
+
   constructor(word: string) {
     super('div', [styles['word']]);
 
+    this.word = word;
     this.element.textContent = word;
+  }
+
+  public getWord() {
+    return this.word;
   }
 
   public handleClick(callback: () => void): void {

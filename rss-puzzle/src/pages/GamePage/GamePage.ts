@@ -1,10 +1,10 @@
-import styles from './Game.module.scss';
+import styles from './GamePage.module.scss';
 
-import shuffleArray from '../../utils/shuffleArray.ts';
 import WordPuzzle from '../../components/WordPuzzle/WordPuzzle.ts';
-import GameService from '../../services/gameService.ts';
 import Button from '../../components/Button/Button.ts';
 import BaseComponent from '../../components/BaseComponent.ts';
+import { checkUserWordOrder, isSentenceCorrect, shuffleArray, splitIntoWords } from '../../utils/sentenceUtils.ts';
+import gameService from '../../services/gameService.ts';
 
 class GamePage extends BaseComponent<HTMLDivElement> {
   private mainBlock: BaseComponent<HTMLDivElement>;
@@ -17,19 +17,9 @@ class GamePage extends BaseComponent<HTMLDivElement> {
 
   private checkButton: Button;
 
-  private gameService = GameService;
-
   private wordPuzzles: WordPuzzle[] = [];
 
-  private level = 1;
-
-  private roundIndex = 0;
-
-  private sentenceIndex = 0;
-
   private correctSentence = '';
-
-  private isChecked = false;
 
   constructor() {
     super('div', ['wrapper']);
@@ -54,8 +44,8 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     this.sourceBlock.element.replaceChildren();
     this.wordPuzzles.length = 0;
 
-    this.correctSentence = this.gameService.getSentence(this.level, this.roundIndex, this.sentenceIndex);
-    const words = this.gameService.splitIntoWords(this.correctSentence);
+    this.correctSentence = gameService.getCurrentSentence();
+    const words = splitIntoWords(this.correctSentence);
 
     this.checkButton.setDisabled(true);
 
@@ -67,7 +57,7 @@ class GamePage extends BaseComponent<HTMLDivElement> {
       this.sourceBlock.append(wordPuzzle.element);
 
       wordPuzzle.handleClick(() => {
-        if (!this.isChecked) {
+        if (!gameService.gameState.isChecked) {
           if (this.sourceBlock.element.contains(wordPuzzle.element)) {
             this.resultBlock.append(wordPuzzle.element);
           } else {
@@ -87,8 +77,7 @@ class GamePage extends BaseComponent<HTMLDivElement> {
 
   private setupEvents() {
     this.continueButton.handleClick(() => {
-      this.nextSentence();
-      this.isChecked = false;
+      this.handleNextStep();
     });
     this.checkButton.handleClick(() => {
       this.checkResultSentence();
@@ -97,11 +86,10 @@ class GamePage extends BaseComponent<HTMLDivElement> {
   }
 
   private highlightWords() {
-    const isCorrectWordArray = this.gameService.checkUserOrder(
-      this.getResultSentence().split(' '),
-      this.correctSentence.split(' ')
-    );
-    isCorrectWordArray.forEach((isCorrectWord, index) => {
+    const [userWords, correctWords] = [this.getResultSentence().split(' '), this.correctSentence.split(' ')];
+
+    const isCorrectOrder = checkUserWordOrder(userWords, correctWords);
+    isCorrectOrder.forEach((isCorrectWord, index) => {
       const userOrderedPuzzles = Array.from(this.resultBlock.element.children).map((child) => {
         return this.wordPuzzles.find((wordPuzzle) => {
           return wordPuzzle.element === child;
@@ -127,9 +115,9 @@ class GamePage extends BaseComponent<HTMLDivElement> {
   private checkResultSentence(): void {
     const resultSentence = this.getResultSentence();
 
-    if (this.gameService.isSentenceCorrect(resultSentence, this.correctSentence)) {
+    if (isSentenceCorrect(resultSentence, this.correctSentence)) {
       this.toggleHidden();
-      this.isChecked = true;
+      gameService.setChecked(true);
     }
   }
 
@@ -138,38 +126,24 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     this.continueButton.element.classList.toggle(styles['hidden']);
   }
 
-  private nextSentence() {
+  private handleNextStep() {
     this.toggleHidden();
-    this.sentenceIndex += 1;
 
-    const rounds = this.gameService.getRoundsCount(this.level);
-    const sentences = this.gameService.getSentencesCount(this.level, this.roundIndex);
-    const levels = 6;
+    const hasNextStep = gameService.nextStep();
 
-    if (this.sentenceIndex < sentences) {
+    if (hasNextStep) {
       this.renderWordPuzzles();
-      return;
-    }
-
-    this.sentenceIndex = 0;
-    this.roundIndex += 1;
-
-    if (this.roundIndex < rounds) {
-      this.renderWordPuzzles();
-      return;
-    }
-
-    this.roundIndex = 0;
-    this.level += 1;
-
-    if (this.level <= levels) {
-      this.renderWordPuzzles();
+    } else {
+      window.location.hash = '/';
     }
   }
 
   private getResultSentence(): string {
     return Array.from(this.resultBlock.element.children)
-      .map((wordPuzzle) => wordPuzzle.textContent)
+      .map((child) => {
+        const puzzle = this.wordPuzzles.find((p) => p.element === child);
+        return puzzle ? puzzle.getWord() : '';
+      })
       .join(' ');
   }
 }

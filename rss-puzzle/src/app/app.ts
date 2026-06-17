@@ -1,7 +1,7 @@
 import Router, { type Routes } from './router.ts';
-import EntryPage from '../pages/Entry/Entry.ts';
-import StartPage from '../pages/Start/Start.ts';
-import GamePage from '../pages/Game/Game.ts';
+import EntryPage from '../pages/EntryPage/EntryPage.ts';
+import StartPage from '../pages/StartPage/StartPage.ts';
+import GamePage from '../pages/GamePage/GamePage.ts';
 import NotFoundPage from '../pages/notFoundPage/notFoundPage.ts';
 
 export default class App {
