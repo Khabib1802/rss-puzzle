@@ -33,10 +33,18 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     this.checkButton = new Button('Check', [styles['checkBtn']]);
     this.continueButton = new Button('Continue', [styles['continueBtn'], styles['hidden']]);
 
-    this.renderWordPuzzles();
+    this.init().catch((error: unknown) => {
+      throw new Error(`Critical error during game initialization. Reason: ${String(error)}`);
+    });
+
     this.setupEvents();
 
     this.append(this.mainBlock, this.checkButton, this.continueButton);
+  }
+
+  private async init() {
+    await gameService.loadCurrentLevel();
+    this.renderWordPuzzles();
   }
 
   private renderWordPuzzles(): void {

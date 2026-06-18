@@ -1,9 +1,4 @@
-import level1Data from '../data/levelData/wordCollectionLevel1.json';
-import level2Data from '../data/levelData/wordCollectionLevel2.json';
-import level3Data from '../data/levelData/wordCollectionLevel3.json';
-import level4Data from '../data/levelData/wordCollectionLevel4.json';
-import level5Data from '../data/levelData/wordCollectionLevel5.json';
-import level6Data from '../data/levelData/wordCollectionLevel6.json';
+import fetchLevelData from '../api/gameApi';
 
 import type { Level, Round } from '../types/game';
 
@@ -15,15 +10,6 @@ interface GameState {
 }
 
 class GameService {
-  private levelDataMap: Record<number, Level> = {
-    1: level1Data,
-    2: level2Data,
-    3: level3Data,
-    4: level4Data,
-    5: level5Data,
-    6: level6Data,
-  };
-
   public gameState: GameState = {
     level: 1,
     roundIndex: 0,
@@ -31,16 +17,34 @@ class GameService {
     isChecked: false,
   };
 
+  currentLevelData: Level | null = null;
+
+  public async loadCurrentLevel() {
+    try {
+      const data = await fetchLevelData(this.gameState.level);
+
+      this.currentLevelData = data;
+    } catch {
+      throw new Error('Error loading level data');
+    }
+  }
+
   public getCurrentSentence(): string {
-    const { level, roundIndex, sentenceIndex } = this.gameState;
-    const round: Round = this.levelDataMap[level].rounds[roundIndex];
+    if (!this.currentLevelData) {
+      throw new Error('Level data is not loaded. Call loadCurrentLevel() first');
+    }
+    const { roundIndex, sentenceIndex } = this.gameState;
+    const round: Round = this.currentLevelData.rounds[roundIndex];
     return round.words[sentenceIndex].textExample;
   }
 
   public nextStep() {
+    if (!this.currentLevelData) {
+      throw new Error('Level data is not loaded. Call loadCurrentLevel() first');
+    }
     const { level, roundIndex, sentenceIndex } = this.gameState;
-    const maxSentence = this.levelDataMap[level].rounds[roundIndex].words.length;
-    const maxRound = this.levelDataMap[level].roundsCount;
+    const maxSentence = this.currentLevelData.rounds[roundIndex].words.length;
+    const maxRound = this.currentLevelData.roundsCount;
     const maxLevel = 6;
 
     this.gameState.isChecked = false;
