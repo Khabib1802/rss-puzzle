@@ -1,7 +1,7 @@
 import Button from '../../components/Button/Button.ts';
 import Input from '../../components/Input/Input.ts';
-import localStorageService from '../../services/localStorageService.ts';
 import BaseComponent from '../../components/BaseComponent.ts';
+import { saveUser } from '../../services/userService.ts';
 
 class EntryPage extends BaseComponent<HTMLDivElement> {
   private title: BaseComponent<HTMLHeadingElement>;
@@ -59,7 +59,7 @@ class EntryPage extends BaseComponent<HTMLDivElement> {
     this.surnameInput.handleInput(validateInputs);
 
     this.loginButton.handleClick(() => {
-      localStorageService.saveUser({
+      saveUser({
         firstName: this.nameInput.getValue(),
         surname: this.surnameInput.getValue(),
       });

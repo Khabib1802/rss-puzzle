@@ -3,12 +3,12 @@ import EntryPage from '../pages/EntryPage/EntryPage.ts';
 import StartPage from '../pages/StartPage/StartPage.ts';
 import GamePage from '../pages/GamePage/GamePage.ts';
 import NotFoundPage from '../pages/notFoundPage/notFoundPage.ts';
-import localStorageService from '../services/localStorageService.ts';
 import type { Page } from '../types/pages.ts';
+import { hasUser } from '../services/userService.ts';
 
 function protectedRoute(factory: () => Page): () => Page {
   return () => {
-    if (!localStorageService.hasUser()) {
+    if (!hasUser()) {
       window.location.hash = '/entry';
       return new EntryPage();
     }
