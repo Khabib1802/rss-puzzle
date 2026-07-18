@@ -3,7 +3,18 @@ import EntryPage from '../pages/EntryPage/EntryPage.ts';
 import StartPage from '../pages/StartPage/StartPage.ts';
 import GamePage from '../pages/GamePage/GamePage.ts';
 import NotFoundPage from '../pages/notFoundPage/notFoundPage.ts';
+import localStorageService from '../services/localStorageService.ts';
+import type { Page } from '../types/pages.ts';
 
+function protectedRoute(factory: () => Page): () => Page {
+  return () => {
+    if (!localStorageService.hasUser()) {
+      window.location.hash = '/entry';
+      return new EntryPage();
+    }
+    return factory();
+  };
+}
 export default class App {
   private root: HTMLDivElement;
 
@@ -15,9 +26,9 @@ export default class App {
 
   public start() {
     const routes: Routes = {
-      '/': () => new StartPage(),
+      '/': protectedRoute(() => new StartPage()),
       '/entry': () => new EntryPage(),
-      '/game': () => new GamePage(),
+      '/game': protectedRoute(() => new GamePage()),
       '/404': () => new NotFoundPage(),
     };
 
