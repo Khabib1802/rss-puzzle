@@ -6,7 +6,7 @@ class Button extends BaseComponent<HTMLButtonElement> {
   private button: HTMLButtonElement;
 
   constructor(text: string, additionalClasses: string[] = []) {
-    super(() => document.createElement('button'), [styles.button, ...additionalClasses]);
+    super('button', [styles['button'], ...additionalClasses]);
 
     this.button = this.element;
 

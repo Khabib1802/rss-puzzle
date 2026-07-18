@@ -1,4 +1,4 @@
-import type { User } from '../types/interfaces.ts';
+import type { User } from '../types/user';
 
 class localStorageService {
   public static saveUser(user: User): void {

@@ -1,47 +1,38 @@
-import Entry from '../pages/Entry/Entry.ts';
-import Router from './router.ts';
-import Start from '../pages/Start/Start.ts';
+import Router, { type Routes } from './router.ts';
+import EntryPage from '../pages/EntryPage/EntryPage.ts';
+import StartPage from '../pages/StartPage/StartPage.ts';
+import GamePage from '../pages/GamePage/GamePage.ts';
+import NotFoundPage from '../pages/notFoundPage/notFoundPage.ts';
 import localStorageService from '../services/localStorageService.ts';
-import Game from '../pages/Game/Game.ts';
+import type { Page } from '../types/pages.ts';
 
+function protectedRoute(factory: () => Page): () => Page {
+  return () => {
+    if (!localStorageService.hasUser()) {
+      window.location.hash = '/entry';
+      return new EntryPage();
+    }
+    return factory();
+  };
+}
 export default class App {
-  private body: HTMLElement;
-
-  private main: HTMLElement;
-
-  private router: Router;
+  private root: HTMLDivElement;
 
   constructor() {
-    this.body = document.body;
-    this.main = document.createElement('main');
-    this.body.append(this.main);
-
-    this.router = new Router(this.main);
+    this.root = document.createElement('div');
+    this.root.classList.add('root');
+    document.body.append(this.root);
   }
 
-  private goToEntry() {
-    this.router.go(new Entry(() => this.goToStart()));
-  }
+  public start() {
+    const routes: Routes = {
+      '/': protectedRoute(() => new StartPage()),
+      '/entry': () => new EntryPage(),
+      '/game': protectedRoute(() => new GamePage()),
+      '/404': () => new NotFoundPage(),
+    };
 
-  private goToStart() {
-    this.router.go(
-      new Start(
-        () => {
-          localStorageService.removeUser();
-          this.goToEntry();
-        },
-        () => {
-          this.router.go(new Game());
-        }
-      )
-    );
-  }
-
-  public start(): void {
-    if (localStorageService.hasUser()) {
-      this.goToStart();
-    } else {
-      this.goToEntry();
-    }
+    const router = new Router(this.root, routes);
+    router.init();
   }
 }
