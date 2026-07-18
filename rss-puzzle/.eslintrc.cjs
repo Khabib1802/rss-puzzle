@@ -58,5 +58,18 @@ module.exports = {
     'no-console': 'warn',
     'prefer-const': 'error',
     'no-var': 'error',
+
+    'import/no-extraneous-dependencies': [
+      'error',
+      {
+        devDependencies: [
+          '**/*.test.ts',
+          '**/*.test.tsx',
+          '**/vite.config.*',
+          '**/vitest.config.*',
+          '**/vitest.setup.*',
+        ],
+      },
+    ],
   },
 };
