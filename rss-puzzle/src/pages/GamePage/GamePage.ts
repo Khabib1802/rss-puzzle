@@ -17,7 +17,9 @@ class GamePage extends BaseComponent<HTMLDivElement> {
 
   private checkButton: Button;
 
-  private wordPuzzles: WordPuzzle[] = [];
+  private sourcePuzzles: WordPuzzle[] = [];
+
+  private resultPuzzles: WordPuzzle[] = [];
 
   private correctSentence = '';
 
@@ -33,60 +35,66 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     this.checkButton = new Button('Check', [styles['checkBtn']]);
     this.continueButton = new Button('Continue', [styles['continueBtn'], styles['hidden']]);
 
+    this.setupEvents();
+    this.append(this.mainBlock, this.checkButton, this.continueButton);
+
     this.init().catch((error: unknown) => {
       throw new Error(`Critical error during game initialization. Reason: ${String(error)}`);
     });
-
-    this.setupEvents();
-
-    this.append(this.mainBlock, this.checkButton, this.continueButton);
   }
 
   private async init() {
     await gameService.loadCurrentLevel();
-    this.renderWordPuzzles();
+    this.startNewRound();
   }
 
-  private renderWordPuzzles(): void {
-    this.resultBlock.element.replaceChildren();
-    this.sourceBlock.element.replaceChildren();
-    this.wordPuzzles.length = 0;
+  private startNewRound(): void {
+    this.clearContainers();
 
     this.correctSentence = gameService.getCurrentSentence();
     const words = splitIntoWords(this.correctSentence);
-
-    this.checkButton.setDisabled(true);
-
     const shuffledWords = shuffleArray(words);
 
-    shuffledWords.forEach((word) => {
-      const wordPuzzle = new WordPuzzle(word);
-      this.wordPuzzles.push(wordPuzzle);
-      this.sourceBlock.append(wordPuzzle.element);
-
-      wordPuzzle.handleClick(() => {
-        if (!gameService.gameState.isChecked) {
-          if (this.sourceBlock.element.contains(wordPuzzle.element)) {
-            this.resultBlock.append(wordPuzzle.element);
-          } else {
-            this.sourceBlock.append(wordPuzzle.element);
-          }
-        }
-
-        if (this.sourceBlock.element.children.length === 0) {
-          this.checkButton.setDisabled(false);
-        } else {
-          this.checkButton.setDisabled(true);
-          this.removeHighlight();
-        }
-      });
+    this.sourcePuzzles = shuffledWords.map((word) => this.createWordPuzzle(word));
+    this.sourcePuzzles.forEach((puzzle) => {
+      this.sourceBlock.append(puzzle.element);
     });
+
+    this.updateCheckButtonState();
+  }
+
+  private createWordPuzzle(word: string): WordPuzzle {
+    const puzzle = new WordPuzzle(word);
+
+    puzzle.handleClick(() => {
+      if (gameService.gameState.isChecked) return;
+      this.handlePuzzleClick(puzzle);
+    });
+
+    return puzzle;
+  }
+
+  private handlePuzzleClick(puzzle: WordPuzzle) {
+    this.removeHighlight();
+
+    if (this.sourcePuzzles.includes(puzzle)) {
+      this.sourcePuzzles = this.sourcePuzzles.filter((p) => p !== puzzle);
+      this.resultPuzzles.push(puzzle);
+      this.resultBlock.append(puzzle.element);
+    } else {
+      this.resultPuzzles = this.resultPuzzles.filter((p) => p !== puzzle);
+      this.sourcePuzzles.push(puzzle);
+      this.sourceBlock.append(puzzle.element);
+    }
+
+    this.updateCheckButtonState();
   }
 
   private setupEvents() {
     this.continueButton.handleClick(() => {
       this.handleNextStep();
     });
+
     this.checkButton.handleClick(() => {
       this.checkResultSentence();
       this.highlightWords();
@@ -94,65 +102,65 @@ class GamePage extends BaseComponent<HTMLDivElement> {
   }
 
   private highlightWords() {
-    const [userWords, correctWords] = [this.getResultSentence().split(' '), this.correctSentence.split(' ')];
+    const userWords = this.resultPuzzles.map((puzzle) => puzzle.getWord());
+    const correctWords = this.correctSentence.split(' ');
 
-    const isCorrectOrder = checkUserWordOrder(userWords, correctWords);
-    isCorrectOrder.forEach((isCorrectWord, index) => {
-      const userOrderedPuzzles = Array.from(this.resultBlock.element.children).map((child) => {
-        return this.wordPuzzles.find((wordPuzzle) => {
-          return wordPuzzle.element === child;
-        });
-      });
+    const wordHighlightMask = checkUserWordOrder(userWords, correctWords);
 
-      if (userOrderedPuzzles[index]) {
-        if (isCorrectWord) {
-          userOrderedPuzzles[index].setCorrect();
-        } else {
-          userOrderedPuzzles[index].setIncorrect();
-        }
+    wordHighlightMask.forEach((isCorrectWord, index) => {
+      const puzzle = this.resultPuzzles[index];
+
+      if (isCorrectWord) {
+        puzzle.setCorrect();
+      } else {
+        puzzle.setIncorrect();
       }
     });
   }
 
   private removeHighlight() {
-    this.wordPuzzles.forEach((wordPuzzle) => {
+    this.resultPuzzles.forEach((wordPuzzle) => {
       wordPuzzle.removeHighligh();
     });
   }
 
   private checkResultSentence(): void {
-    const resultSentence = this.getResultSentence();
+    const resultSentence = this.resultPuzzles.map((puzzle) => puzzle.getWord()).join(' ');
 
     if (isSentenceCorrect(resultSentence, this.correctSentence)) {
-      this.toggleHidden();
+      this.toggleButtonsVisibility();
       gameService.setChecked(true);
     }
   }
 
-  private toggleHidden() {
+  private toggleButtonsVisibility() {
     this.checkButton.element.classList.toggle(styles['hidden']);
     this.continueButton.element.classList.toggle(styles['hidden']);
   }
 
+  private updateCheckButtonState() {
+    const isSourceEmpty = this.sourcePuzzles.length === 0;
+
+    this.checkButton.setDisabled(!isSourceEmpty);
+  }
+
   private handleNextStep() {
-    this.toggleHidden();
+    this.toggleButtonsVisibility();
 
     const hasNextStep = gameService.nextStep();
 
     if (hasNextStep) {
-      this.renderWordPuzzles();
+      this.startNewRound();
     } else {
       window.location.hash = '/';
     }
   }
 
-  private getResultSentence(): string {
-    return Array.from(this.resultBlock.element.children)
-      .map((child) => {
-        const puzzle = this.wordPuzzles.find((p) => p.element === child);
-        return puzzle ? puzzle.getWord() : '';
-      })
-      .join(' ');
+  private clearContainers() {
+    this.resultBlock.element.replaceChildren();
+    this.sourceBlock.element.replaceChildren();
+    this.resultPuzzles = [];
+    this.sourcePuzzles = [];
   }
 }
 
