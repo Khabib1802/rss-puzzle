@@ -2,7 +2,7 @@ import Router, { type Routes } from './router.ts';
 import EntryPage from '../pages/EntryPage/EntryPage.ts';
 import StartPage from '../pages/StartPage/StartPage.ts';
 import GamePage from '../pages/GamePage/GamePage.ts';
-import NotFoundPage from '../pages/notFoundPage/notFoundPage.ts';
+import NotFoundPage from '../pages/NotFoundPage/NotFoundPage.ts';
 import type { Page } from '../types/pages.ts';
 import { hasUser } from '../services/userService.ts';
 
