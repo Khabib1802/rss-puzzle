@@ -1,21 +1,18 @@
-import type { User } from '../types/user';
+import type { User } from '../types/user.ts';
 
-class localStorageService {
-  public static saveUser(user: User): void {
-    localStorage.setItem('user', JSON.stringify(user));
-  }
-
-  public static removeUser(): void {
-    localStorage.removeItem('user');
-  }
-
-  public static getUser(): string | null {
-    return localStorage.getItem('user');
-  }
-
-  public static hasUser() {
-    return this.getUser() !== null;
-  }
+interface StorageSchema {
+  user: User;
 }
 
-export default localStorageService;
+export function getItem<K extends keyof StorageSchema>(key: K): StorageSchema[K] | null {
+  const raw = localStorage.getItem(key);
+  return raw ? (JSON.parse(raw) as StorageSchema[K]) : null;
+}
+
+export function setItem<K extends keyof StorageSchema>(key: K, value: StorageSchema[K]): void {
+  localStorage.setItem(key, JSON.stringify(value));
+}
+
+export function removeItem(key: keyof StorageSchema): void {
+  localStorage.removeItem(key);
+}

@@ -2,9 +2,8 @@ import styles from './StartPage.module.scss';
 
 import Button from '../../components/Button/Button.ts';
 
-import localStorageService from '../../services/localStorageService.ts';
-import type { User } from '../../types/user.ts';
 import BaseComponent from '../../components/BaseComponent.ts';
+import { getUser, hasUser, removeUser } from '../../services/userService.ts';
 
 class StartPage extends BaseComponent<HTMLDivElement> {
   private title: BaseComponent<HTMLHeadingElement>;
@@ -44,7 +43,7 @@ class StartPage extends BaseComponent<HTMLDivElement> {
 
   private setupEvents() {
     this.logoutButton.handleClick(() => {
-      localStorageService.removeUser();
+      removeUser();
       window.location.hash = '/entry';
     });
 
@@ -53,10 +52,9 @@ class StartPage extends BaseComponent<HTMLDivElement> {
     });
 
     const greetUser = (): void => {
-      if (localStorageService.hasUser()) {
-        const userRaw = localStorageService.getUser();
-        if (userRaw !== null) {
-          const user: User = JSON.parse(userRaw);
+      if (hasUser()) {
+        const user = getUser();
+        if (user) {
           this.greeting.element.textContent = `Hello, ${user.firstName} ${user.surname}!`;
         }
       }
