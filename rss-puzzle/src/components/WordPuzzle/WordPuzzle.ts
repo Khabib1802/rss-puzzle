@@ -10,6 +10,8 @@ class WordPuzzle extends BaseComponent<HTMLDivElement> {
 
     this.word = word;
     this.element.textContent = word;
+
+    this.element.style.setProperty('--word-length', String(word.length));
   }
 
   public getWord() {
