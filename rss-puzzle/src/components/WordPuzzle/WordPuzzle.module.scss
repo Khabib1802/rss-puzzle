@@ -8,14 +8,24 @@
   background-color: #eeeeee;
   user-select: none;
   cursor: pointer;
+  box-sizing: border-box;
+  text-align: center;
+  width: calc(var(--word-length) * 1.2ch + 32px);
+  min-width: 70px;
+  max-width: 220px;
+  font-size: clamp(12px, calc(18px - (var(--word-length) * 0.4px)), 16px);
+  word-break: normal;
+  overflow-wrap: break-word;
 }
 
 .correct {
   background-color: #4caf50;
   color: #fff;
+  border-color: #388e3c;
 }
 
 .incorrect {
   background-color: #f44336;
   color: #fff;
+  border-color: #d32f2f;
 }
