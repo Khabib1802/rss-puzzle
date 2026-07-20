@@ -4,6 +4,9 @@ import BaseComponent from '../BaseComponent.ts';
 import type { Point } from '../../utils/dragAndDrop.ts';
 
 const DRAG_THRESHOLD = 4;
+
+const DEFAULT_CAN_DRAG = () => true;
+
 class WordPuzzle extends BaseComponent<HTMLDivElement> {
   private readonly word: string;
 
@@ -14,6 +17,8 @@ class WordPuzzle extends BaseComponent<HTMLDivElement> {
   private startPoint: Point = { x: 0, y: 0 };
 
   private dragOffset: Point = { x: 0, y: 0 };
+
+  private canDrag: () => boolean = DEFAULT_CAN_DRAG;
 
   private onDragStartCallback: ((point: Point) => void) | null = null;
 
@@ -42,6 +47,10 @@ class WordPuzzle extends BaseComponent<HTMLDivElement> {
     this.element.addEventListener('click', callback);
   }
 
+  public setDragGuard(canDrag: () => boolean): void {
+    this.canDrag = canDrag;
+  }
+
   public onDragStart(callback: (point: Point) => void): void {
     this.onDragStartCallback = callback;
   }
@@ -62,6 +71,8 @@ class WordPuzzle extends BaseComponent<HTMLDivElement> {
   };
 
   private handlePointerDown = (event: PointerEvent): void => {
+    if (!this.canDrag()) return;
+
     this.justDragged = false;
 
     const rect = this.element.getBoundingClientRect();

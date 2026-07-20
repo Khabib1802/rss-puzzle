@@ -5,6 +5,9 @@ import Button from '../../components/Button/Button.ts';
 import BaseComponent from '../../components/BaseComponent.ts';
 import { checkUserWordOrder, isSentenceCorrect, shuffleArray, splitIntoWords } from '../../utils/sentenceUtils.ts';
 import gameService from '../../services/gameService.ts';
+import { findContainerAtPoint, getInsertionIndex, type Point } from '../../utils/dragAndDrop.ts';
+
+type ContainerId = 'source' | 'result';
 
 class GamePage extends BaseComponent<HTMLDivElement> {
   private mainBlock: BaseComponent<HTMLDivElement>;
@@ -64,17 +67,6 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     });
 
     this.updateCheckButtonState();
-  }
-
-  private createWordPuzzle(word: string): WordPuzzle {
-    const puzzle = new WordPuzzle(word);
-
-    puzzle.handleClick(() => {
-      if (gameService.gameState.isChecked) return;
-      this.handlePuzzleClick(puzzle);
-    });
-
-    return puzzle;
   }
 
   private handlePuzzleClick(puzzle: WordPuzzle) {
@@ -186,6 +178,73 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     this.sourceBlock.element.replaceChildren();
     this.resultPuzzles = [];
     this.sourcePuzzles = [];
+  }
+
+  private createWordPuzzle(word: string): WordPuzzle {
+    const puzzle = new WordPuzzle(word);
+
+    puzzle.handleClick(() => {
+      if (gameService.gameState.isChecked) return;
+      this.handlePuzzleClick(puzzle);
+    });
+
+    puzzle.setDragGuard(() => !gameService.gameState.isChecked);
+    puzzle.onDragStart(() => {
+      this.removeHighlight();
+    });
+    puzzle.onDragMove((point) => {
+      this.handleDragMove(point);
+    });
+    puzzle.onDragEnd((point) => {
+      this.handleDragEnd(puzzle, point);
+    });
+
+    return puzzle;
+  }
+
+  private getContainers(): { id: ContainerId; rect: DOMRect }[] {
+    return [
+      { id: 'source', rect: this.sourceBlock.element.getBoundingClientRect() },
+      { id: 'result', rect: this.resultBlock.element.getBoundingClientRect() },
+    ];
+  }
+
+  private handleDragMove(point: Point): void {
+    const hoveredId = findContainerAtPoint(point, this.getContainers());
+    this.setDropTargetHighlight(hoveredId);
+  }
+
+  private handleDragEnd(puzzle: WordPuzzle, point: Point): void {
+    this.setDropTargetHighlight(null);
+
+    const targetId = findContainerAtPoint(point, this.getContainers());
+    if (!targetId) return;
+
+    this.movePuzzleToContainer(puzzle, targetId, point);
+  }
+
+  private movePuzzleToContainer(puzzle: WordPuzzle, targetId: ContainerId, point: Point): void {
+    this.sourcePuzzles = this.sourcePuzzles.filter((p) => p !== puzzle);
+    this.resultPuzzles = this.resultPuzzles.filter((p) => p !== puzzle);
+
+    const targetBlock = targetId === 'source' ? this.sourceBlock : this.resultBlock;
+    const targetList = targetId === 'source' ? this.sourcePuzzles : this.resultPuzzles;
+
+    const siblingRects = targetList.map((p) => p.element.getBoundingClientRect());
+    const index = getInsertionIndex(point, siblingRects);
+
+    puzzle.element.remove();
+    const referenceElement = targetBlock.element.children[index] ?? null;
+    targetBlock.element.insertBefore(puzzle.element, referenceElement);
+
+    targetList.splice(index, 0, puzzle);
+
+    this.updateCheckButtonState();
+  }
+
+  private setDropTargetHighlight(id: ContainerId | null): void {
+    this.sourceBlock.element.classList.toggle(styles['dropTarget'], id === 'source');
+    this.resultBlock.element.classList.toggle(styles['dropTarget'], id === 'result');
   }
 }
 
