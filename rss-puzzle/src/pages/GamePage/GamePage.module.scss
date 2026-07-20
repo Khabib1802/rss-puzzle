@@ -36,7 +36,20 @@
   display: none;
 }
 
-.checkBtn,
-.continueBtn {
+.checkButton,
+.continueButton,
+.autoCompleteButton {
   width: 150px;
+}
+
+.autoCompleteButton {
+  align-self: center;
+  font-size: 0.85em;
+  opacity: 0.6;
+  border-style: dashed;
+}
+
+.autoCompleteButton:hover,
+.autoCompleteButton:focus {
+  opacity: 1;
 }
