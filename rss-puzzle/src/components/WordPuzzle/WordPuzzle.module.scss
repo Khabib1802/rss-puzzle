@@ -16,8 +16,10 @@
   min-width: 70px;
   max-width: 220px;
   font-size: clamp(12px, calc(18px - (var(--word-length) * 0.4px)), 16px);
+  line-height: 16px;
   word-break: normal;
   overflow-wrap: break-word;
+  cursor: grab;
   transition:
     background-color 0.15s ease,
     transform 0.1s ease,
@@ -41,4 +43,17 @@
 .incorrect {
   background-color: $c-incorrect;
   color: #fff;
+}
+
+.dragging {
+  position: fixed;
+  z-index: 100;
+  cursor: grabbing;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  transform: scale(1.05);
+  pointer-events: none;
+}
+
+.placeholder {
+  opacity: 0;
 }
