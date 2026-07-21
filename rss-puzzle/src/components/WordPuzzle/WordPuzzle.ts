@@ -18,6 +18,8 @@ class WordPuzzle extends BaseComponent<HTMLDivElement> {
 
   private dragOffset: Point = { x: 0, y: 0 };
 
+  private ghostElement: HTMLElement | null = null;
+
   private canDrag: () => boolean = DEFAULT_CAN_DRAG;
 
   private onDragStartCallback: ((point: Point) => void) | null = null;
@@ -35,7 +37,7 @@ class WordPuzzle extends BaseComponent<HTMLDivElement> {
     this.element.style.setProperty('--word-length', String(word.length));
     this.element.style.touchAction = 'none';
 
-    this.element.addEventListener('click', this.supppressClickAfterDrag, true);
+    this.element.addEventListener('click', this.suppressClickAfterDrag, true);
     this.element.addEventListener('pointerdown', this.handlePointerDown);
   }
 
@@ -63,7 +65,19 @@ class WordPuzzle extends BaseComponent<HTMLDivElement> {
     this.onDragEndCallback = callback;
   }
 
-  private supppressClickAfterDrag = (event: MouseEvent): void => {
+  public setCorrect(): void {
+    this.element.classList.add(styles['correct']);
+  }
+
+  public setIncorrect(): void {
+    this.element.classList.add(styles['incorrect']);
+  }
+
+  public removeHighligh() {
+    this.element.classList.remove(styles['correct'], styles['incorrect']);
+  }
+
+  private suppressClickAfterDrag = (event: MouseEvent): void => {
     if (this.justDragged) {
       event.stopImmediatePropagation();
       this.justDragged = false;
@@ -78,15 +92,12 @@ class WordPuzzle extends BaseComponent<HTMLDivElement> {
     const rect = this.element.getBoundingClientRect();
 
     this.startPoint = { x: event.clientX, y: event.clientY };
-    this.dragOffset = {
-      x: event.clientX - rect.left,
-      y: event.clientY - rect.top,
-    };
+    this.dragOffset = { x: event.clientX - rect.left, y: event.clientY - rect.top };
 
     this.element.setPointerCapture(event.pointerId);
-
     this.element.addEventListener('pointermove', this.handlePointerMove);
     this.element.addEventListener('pointerup', this.handlePointerUp);
+    this.element.addEventListener('pointercancel', this.handlePointerCancel);
   };
 
   private handlePointerMove = (event: PointerEvent): void => {
@@ -94,55 +105,31 @@ class WordPuzzle extends BaseComponent<HTMLDivElement> {
 
     if (!this.isDragging) {
       const distance = Math.hypot(currentPoint.x - this.startPoint.x, currentPoint.y - this.startPoint.y);
-
       if (distance < DRAG_THRESHOLD) return;
 
       this.isDragging = true;
       this.justDragged = true;
-
-      this.element.classList.add(styles['dragging']);
-
       this.onDragStartCallback?.(currentPoint);
+      this.startDragVisual(currentPoint);
     }
 
-    this.element.style.left = `${String(currentPoint.x - this.dragOffset.x)}px`;
-    this.element.style.top = `${String(currentPoint.y - this.dragOffset.y)}px`;
-
+    this.updateDragVisual(currentPoint);
     this.onDragMoveCallback?.(currentPoint);
   };
 
   private handlePointerUp = (event: PointerEvent): void => {
+    const wasDragging = this.isDragging;
+
     this.cleanupDrag(event.pointerId);
 
-    if (this.isDragging) {
+    if (wasDragging) {
       this.onDragEndCallback?.({ x: event.clientX, y: event.clientY });
     }
-
-    this.isDragging = false;
   };
 
   private handlePointerCancel = (event: PointerEvent): void => {
     this.cleanupDrag(event.pointerId);
-    this.isDragging = false;
   };
-
-  public setCorrect(): void {
-    this.element.classList.add(styles['correct']);
-  }
-
-  public setIncorrect(): void {
-    this.element.classList.add(styles['incorrect']);
-  }
-
-  public removeHighligh() {
-    this.element.classList.remove(styles['correct'], styles['incorrect']);
-  }
-
-  private resetDragStyles(): void {
-    this.element.classList.remove(styles['dragging']);
-    this.element.style.removeProperty('left');
-    this.element.style.removeProperty('top');
-  }
 
   private cleanupDrag(pointerId: number): void {
     if (this.element.hasPointerCapture(pointerId)) {
@@ -153,8 +140,36 @@ class WordPuzzle extends BaseComponent<HTMLDivElement> {
     this.element.removeEventListener('pointercancel', this.handlePointerCancel);
 
     if (this.isDragging) {
-      this.resetDragStyles();
+      this.endDragVisual();
     }
+
+    this.isDragging = false;
+  }
+
+  private startDragVisual(point: Point): void {
+    this.element.classList.add(styles['placeholder']);
+
+    const ghost = this.element.cloneNode(true) as HTMLElement;
+    ghost.classList.remove(styles['placeholder']);
+    ghost.classList.add(styles['dragging']);
+    ghost.style.left = `${String(point.x - this.dragOffset.x)}px`;
+    ghost.style.top = `${String(point.y - this.dragOffset.y)}px`;
+
+    document.body.append(ghost);
+    this.ghostElement = ghost;
+  }
+
+  private updateDragVisual(point: Point): void {
+    if (!this.ghostElement) return;
+
+    this.ghostElement.style.left = `${String(point.x - this.dragOffset.x)}px`;
+    this.ghostElement.style.top = `${String(point.y - this.dragOffset.y)}px`;
+  }
+
+  private endDragVisual(): void {
+    this.ghostElement?.remove();
+    this.ghostElement = null;
+    this.element.classList.remove(styles['placeholder']);
   }
 }
 
