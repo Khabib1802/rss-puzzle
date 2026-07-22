@@ -1,31 +1,24 @@
 import styles from './GamePage.module.scss';
 
 import WordPuzzle from '../../components/WordPuzzle/WordPuzzle.ts';
-import Button from '../../components/Button/Button.ts';
 import BaseComponent from '../../components/BaseComponent.ts';
 import { checkUserWordOrder, isSentenceCorrect, shuffleArray, splitIntoWords } from '../../utils/sentenceUtils.ts';
 import gameService from '../../services/gameService.ts';
 import { findContainerAtPoint, getInsertionIndex, type Point } from '../../utils/dragAndDrop.ts';
-import TranslationHint from '../../components/TranslationHint/TranslationHint.ts';
+import GameActions from '../../components/GameActions/GameActions.ts';
+import HintPanel from '../../components/HintPanel/HintPanel.ts';
+import SentenceBoard from '../../components/SentenceBoard/SentenceBoard.ts';
 
 type ContainerId = 'source' | 'result';
 
 class GamePage extends BaseComponent<HTMLDivElement> {
-  private translationHint: TranslationHint;
-
-  private hintToggleButton: Button;
+  private hintPanel: HintPanel;
 
   private mainBlock: BaseComponent<HTMLDivElement>;
 
-  private sourceBlock: BaseComponent<HTMLDivElement>;
+  private sentenceBoard: SentenceBoard;
 
-  private resultBlock: BaseComponent<HTMLDivElement>;
-
-  private continueButton: Button;
-
-  private autoCompleteButton: Button;
-
-  private checkButton: Button;
+  private gameActions: GameActions;
 
   private sourcePuzzles: WordPuzzle[] = [];
 
@@ -37,29 +30,17 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     super('div', ['wrapper']);
 
     this.mainBlock = new BaseComponent('div', [styles['mainBlock']]);
-    this.resultBlock = new BaseComponent('div', [styles['result']]);
-    this.sourceBlock = new BaseComponent('div', [styles['source']]);
-
-    this.translationHint = new TranslationHint('');
+    this.sentenceBoard = new SentenceBoard();
 
     const initialHintState = gameService.settings.isTranslationHintEnabled;
-    this.hintToggleButton = new Button(initialHintState ? 'Hint: ON' : 'Hint: OFF', [styles['hintToggleButton']]);
+    this.hintPanel = new HintPanel(initialHintState);
 
-    this.mainBlock.append(this.resultBlock, this.sourceBlock);
+    this.mainBlock.append(this.sentenceBoard.element);
 
-    this.checkButton = new Button('Check', [styles['checkButton']]);
-    this.autoCompleteButton = new Button('Auto-Complete', [styles['autoCompleteButton']]);
-    this.continueButton = new Button('Continue', [styles['continueButton'], styles['hidden']]);
+    this.gameActions = new GameActions();
 
     this.setupEvents();
-    this.append(
-      this.hintToggleButton,
-      this.translationHint,
-      this.mainBlock,
-      this.checkButton,
-      this.autoCompleteButton,
-      this.continueButton
-    );
+    this.append(this.hintPanel, this.mainBlock, this.gameActions);
 
     this.init().catch((error: unknown) => {
       throw new Error(`Critical error during game initialization. Reason: ${String(error)}`);
@@ -74,22 +55,50 @@ class GamePage extends BaseComponent<HTMLDivElement> {
   private startNewRound(): void {
     this.clearContainers();
 
+    gameService.setChecked(false);
     this.correctSentence = gameService.getCurrentSentence();
 
     const currentTranslation = gameService.getCurrentSentenceTranslation();
-    this.translationHint.updateTranslation(currentTranslation);
-
-    this.updateHintVisibility();
+    this.renderHint(currentTranslation);
 
     const words = splitIntoWords(this.correctSentence);
     const shuffledWords = shuffleArray(words);
 
-    this.sourcePuzzles = shuffledWords.map((word) => this.createWordPuzzle(word));
-    this.sourcePuzzles.forEach((puzzle) => {
-      this.sourceBlock.append(puzzle.element);
-    });
+    this.renderSourcePuzzles(shuffledWords);
+    this.renderState();
+  }
 
-    this.updateCheckButtonState();
+  private renderHint(currentTranslation: string): void {
+    this.hintPanel.setTranslation(currentTranslation);
+  }
+
+  private renderState(): void {
+    this.renderActionsState();
+    this.renderHintVisibility();
+    this.renderCheckButtonState();
+    this.updateEndpointConnectors();
+  }
+
+  private renderActionsState(): void {
+    const isSentenceChecked = gameService.gameState.isChecked;
+
+    this.gameActions.setVisibility({
+      check: !isSentenceChecked,
+      continue: isSentenceChecked,
+      autoComplete: !isSentenceChecked,
+    });
+  }
+
+  private renderSourcePuzzles(words: string[]): void {
+    this.sourcePuzzles = words.map((word) => this.createWordPuzzle(word));
+    this.sourcePuzzles.forEach((puzzle) => {
+      this.sentenceBoard.sourceBlock.append(puzzle.element);
+    });
+  }
+
+  private renderBoardState(): void {
+    this.renderCheckButtonState();
+    this.updateEndpointConnectors();
   }
 
   private handlePuzzleClick(puzzle: WordPuzzle) {
@@ -98,37 +107,36 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     if (this.sourcePuzzles.includes(puzzle)) {
       this.sourcePuzzles = this.sourcePuzzles.filter((p) => p !== puzzle);
       this.resultPuzzles.push(puzzle);
-      this.resultBlock.append(puzzle.element);
+      this.sentenceBoard.resultBlock.append(puzzle.element);
     } else {
       this.resultPuzzles = this.resultPuzzles.filter((p) => p !== puzzle);
       this.sourcePuzzles.push(puzzle);
-      this.sourceBlock.append(puzzle.element);
+      this.sentenceBoard.sourceBlock.append(puzzle.element);
 
       puzzle.setEdgeState(false, false);
     }
 
-    this.updateCheckButtonState();
-    this.updateEndpointConnectors();
+    this.renderBoardState();
   }
 
   private setupEvents() {
-    this.hintToggleButton.handleClick(() => {
+    this.hintPanel.toggleButton.handleClick(() => {
       const isEnabled = gameService.toggleTranslationHint();
-      this.hintToggleButton.setText(isEnabled ? 'Hint: ON' : 'Hint: OFF');
+      this.hintPanel.setToggleLabel(isEnabled);
 
-      this.updateHintVisibility();
+      this.renderHintVisibility();
     });
 
-    this.continueButton.handleClick(() => {
+    this.gameActions.continueButton.handleClick(() => {
       this.handleNextStep();
     });
 
-    this.checkButton.handleClick(() => {
+    this.gameActions.checkButton.handleClick(() => {
       this.checkResultSentence();
       this.highlightWords();
     });
 
-    this.autoCompleteButton.handleClick(() => {
+    this.gameActions.autoCompleteButton.handleClick(() => {
       this.handleAutoComplete();
     });
   }
@@ -160,32 +168,24 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     const resultSentence = this.resultPuzzles.map((puzzle) => puzzle.getWord()).join(' ');
 
     if (isSentenceCorrect(resultSentence, this.correctSentence)) {
-      this.toggleButtonsVisibility();
       gameService.setChecked(true);
-
-      this.updateHintVisibility();
+      this.renderState();
     }
   }
 
-  private toggleButtonsVisibility() {
-    [this.checkButton, this.continueButton, this.autoCompleteButton].forEach((button) => {
-      button.element.classList.toggle(styles['hidden']);
-    });
-  }
-
-  private updateHintVisibility(): void {
+  private renderHintVisibility(): void {
     const isHintEnabled = gameService.settings.isTranslationHintEnabled;
     const isSentenceChecked = gameService.gameState.isChecked;
 
     const shouldBeVisible = isHintEnabled || isSentenceChecked;
 
-    this.translationHint.setVisible(shouldBeVisible);
+    this.hintPanel.setVisible(shouldBeVisible);
   }
 
-  private updateCheckButtonState() {
+  private renderCheckButtonState() {
     const isSourceEmpty = this.sourcePuzzles.length === 0;
 
-    this.checkButton.setDisabled(!isSourceEmpty);
+    this.gameActions.setCheckDisabled(!isSourceEmpty);
   }
 
   private handleAutoComplete(): void {
@@ -197,20 +197,15 @@ class GamePage extends BaseComponent<HTMLDivElement> {
 
     this.resultPuzzles = correctWords.map((word) => this.createWordPuzzle(word));
     this.resultPuzzles.forEach((puzzle) => {
-      this.resultBlock.append(puzzle.element);
+      this.sentenceBoard.resultBlock.append(puzzle.element);
       puzzle.setCorrect();
     });
 
     gameService.setChecked(true);
-    this.updateEndpointConnectors();
-
-    this.translationHint.setVisible(true);
-    this.toggleButtonsVisibility();
+    this.renderState();
   }
 
   private handleNextStep() {
-    this.toggleButtonsVisibility();
-
     const hasNextStep = gameService.nextStep();
 
     if (hasNextStep) {
@@ -221,8 +216,7 @@ class GamePage extends BaseComponent<HTMLDivElement> {
   }
 
   private clearContainers() {
-    this.resultBlock.element.replaceChildren();
-    this.sourceBlock.element.replaceChildren();
+    this.sentenceBoard.clear();
     this.resultPuzzles = [];
     this.sourcePuzzles = [];
   }
@@ -250,10 +244,7 @@ class GamePage extends BaseComponent<HTMLDivElement> {
   }
 
   private getContainers(): { id: ContainerId; rect: DOMRect }[] {
-    return [
-      { id: 'source', rect: this.sourceBlock.element.getBoundingClientRect() },
-      { id: 'result', rect: this.resultBlock.element.getBoundingClientRect() },
-    ];
+    return this.sentenceBoard.getContainers();
   }
 
   private handleDragMove(point: Point): void {
@@ -274,7 +265,7 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     this.sourcePuzzles = this.sourcePuzzles.filter((p) => p !== puzzle);
     this.resultPuzzles = this.resultPuzzles.filter((p) => p !== puzzle);
 
-    const targetBlock = targetId === 'source' ? this.sourceBlock : this.resultBlock;
+    const targetBlock = targetId === 'source' ? this.sentenceBoard.sourceBlock : this.sentenceBoard.resultBlock;
     const targetList = targetId === 'source' ? this.sourcePuzzles : this.resultPuzzles;
 
     if (targetId === 'source') {
@@ -290,13 +281,11 @@ class GamePage extends BaseComponent<HTMLDivElement> {
 
     targetList.splice(index, 0, puzzle);
 
-    this.updateCheckButtonState();
-    this.updateEndpointConnectors();
+    this.renderBoardState();
   }
 
   private setDropTargetHighlight(id: ContainerId | null): void {
-    this.sourceBlock.element.classList.toggle(styles['dropTarget'], id === 'source');
-    this.resultBlock.element.classList.toggle(styles['dropTarget'], id === 'result');
+    this.sentenceBoard.setDropTarget(id);
   }
 
   private updateEndpointConnectors(): void {

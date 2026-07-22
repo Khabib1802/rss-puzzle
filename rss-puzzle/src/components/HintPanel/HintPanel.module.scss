@@ -1,0 +1,12 @@
+@import '../../styles/variables.scss';
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.toggleButton {
+  align-self: center;
+}
