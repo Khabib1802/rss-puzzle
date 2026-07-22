@@ -80,9 +80,12 @@ class GamePage extends BaseComponent<HTMLDivElement> {
       this.resultPuzzles = this.resultPuzzles.filter((p) => p !== puzzle);
       this.sourcePuzzles.push(puzzle);
       this.sourceBlock.append(puzzle.element);
+
+      puzzle.setEdgeState(false, false);
     }
 
     this.updateCheckButtonState();
+    this.updateEndpointConnectors();
   }
 
   private setupEvents() {
@@ -158,6 +161,8 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     });
 
     gameService.setChecked(true);
+    this.updateEndpointConnectors();
+
     this.toggleButtonsVisibility();
   }
 
@@ -230,6 +235,10 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     const targetBlock = targetId === 'source' ? this.sourceBlock : this.resultBlock;
     const targetList = targetId === 'source' ? this.sourcePuzzles : this.resultPuzzles;
 
+    if (targetId === 'source') {
+      puzzle.setEdgeState(false, false);
+    }
+
     const siblingRects = targetList.map((p) => p.element.getBoundingClientRect());
     const index = getInsertionIndex(point, siblingRects);
 
@@ -240,11 +249,31 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     targetList.splice(index, 0, puzzle);
 
     this.updateCheckButtonState();
+    this.updateEndpointConnectors();
   }
 
   private setDropTargetHighlight(id: ContainerId | null): void {
     this.sourceBlock.element.classList.toggle(styles['dropTarget'], id === 'source');
     this.resultBlock.element.classList.toggle(styles['dropTarget'], id === 'result');
+  }
+
+  private updateEndpointConnectors(): void {
+    this.resultPuzzles.forEach((puzzle) => {
+      puzzle.setEdgeState(false, false);
+    });
+
+    const total = this.resultPuzzles.length;
+    if (total === 0) return;
+
+    const first = this.resultPuzzles[0];
+    const last = this.resultPuzzles[total - 1];
+    const isSourceEmpty = this.sourcePuzzles.length === 0;
+
+    first.setEdgeState(true, isSourceEmpty && total === 1);
+
+    if (isSourceEmpty && total > 1) {
+      last.setEdgeState(false, true);
+    }
   }
 }
 

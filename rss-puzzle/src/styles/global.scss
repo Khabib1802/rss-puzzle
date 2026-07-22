@@ -68,3 +68,8 @@ button:disabled {
   color: inherit;
   cursor: not-allowed;
 }
+
+.is-dragging,
+.is-dragging * {
+  cursor: grabbing !important;
+}

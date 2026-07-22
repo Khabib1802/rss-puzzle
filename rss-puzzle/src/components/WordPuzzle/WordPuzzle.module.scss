@@ -1,16 +1,74 @@
 @import '../../styles/variables.scss';
 
+$tab-radius: 8px;
+$tab-offset: 11px;
+$notch-depth: 3px;
+
+.wordWrapper {
+  position: relative;
+  display: inline-flex;
+  cursor: grab;
+  margin-right: 1px;
+  margin-bottom: 1px;
+
+  &:last-child {
+    margin-right: 0;
+  }
+}
+
+.wordWrapper::after {
+  content: '';
+  position: absolute;
+  right: -#{$tab-offset};
+  top: 50%;
+  transform: translateY(-50%);
+  width: $tab-radius * 2;
+  height: $tab-radius * 2;
+  border-radius: 50%;
+  background-color: $c-light;
+  z-index: 2;
+  transition: background-color 0.15s ease;
+}
+
+.wordWrapper:hover {
+  .word {
+    background-color: $c-hover;
+  }
+  &::after {
+    background-color: $c-hover;
+  }
+}
+
+.wordWrapper.correct {
+  .word {
+    background-color: $c-correct;
+    color: #fff;
+  }
+  &::after {
+    background-color: $c-correct;
+  }
+}
+
+.wordWrapper.incorrect {
+  .word {
+    background-color: $c-incorrect;
+    color: #fff;
+  }
+  &::after {
+    background-color: $c-incorrect;
+  }
+}
+
 .word {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 10px 15px;
-  border: 1px solid $c-dark;
-  border-radius: 5px;
+  height: 44px;
+  padding: 0 15px;
   background-color: $c-light;
   user-select: none;
-  cursor: pointer;
   box-sizing: border-box;
+  color: $c-text;
   text-align: center;
   width: calc(var(--word-length) * 1.2ch + 32px);
   min-width: 70px;
@@ -19,41 +77,43 @@
   line-height: 16px;
   word-break: normal;
   overflow-wrap: break-word;
-  cursor: grab;
   transition:
     background-color 0.15s ease,
-    transform 0.1s ease,
-    box-shadow 0.15s ease;
-}
+    filter 0.1s ease,
+    transform 0.1s ease;
 
-.word:hover {
-  background-color: $c-hover;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  -webkit-mask-image: radial-gradient(
+    ellipse $tab-radius calc($tab-radius * 1.1) at $notch-depth 50%,
+    transparent 99%,
+    #000 100%
+  );
+  mask-image: radial-gradient(
+    ellipse $tab-radius calc($tab-radius * 1.1) at $notch-depth 50%,
+    transparent 99%,
+    #000 100%
+  );
 }
 
 .word:active {
-  transform: scale(0.96);
-}
-
-.correct {
-  background-color: $c-correct;
-  color: #fff;
-}
-
-.incorrect {
-  background-color: $c-incorrect;
-  color: #fff;
+  cursor: grabbing;
 }
 
 .dragging {
-  position: fixed;
-  z-index: 100;
-  cursor: grabbing;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  filter: drop-shadow(0 4px 5px rgba(0, 0, 0, 0.15));
   transform: scale(1.05);
+  cursor: grabbing;
   pointer-events: none;
 }
 
 .placeholder {
   opacity: 0;
+}
+
+.noTab::after {
+  display: none;
+}
+
+.noNotch {
+  -webkit-mask-image: none;
+  mask-image: none;
 }
