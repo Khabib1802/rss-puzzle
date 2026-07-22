@@ -29,13 +29,24 @@ class GameService {
     }
   }
 
-  public getCurrentSentence(): string {
+  private getCurrentRound(): Round {
     if (!this.currentLevelData) {
       throw new Error('Level data is not loaded. Call loadCurrentLevel() first');
     }
-    const { roundIndex, sentenceIndex } = this.gameState;
-    const round: Round = this.currentLevelData.rounds[roundIndex];
+    const { roundIndex } = this.gameState;
+    return this.currentLevelData.rounds[roundIndex];
+  }
+
+  public getCurrentSentence(): string {
+    const { sentenceIndex } = this.gameState;
+    const round = this.getCurrentRound();
     return round.words[sentenceIndex].textExample;
+  }
+
+  public getCurrentSentenceTranslation(): string {
+    const { sentenceIndex } = this.gameState;
+    const round = this.getCurrentRound();
+    return round.words[sentenceIndex].textExampleTranslate;
   }
 
   public nextStep() {
