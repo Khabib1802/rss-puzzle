@@ -6,10 +6,13 @@ import BaseComponent from '../../components/BaseComponent.ts';
 import { checkUserWordOrder, isSentenceCorrect, shuffleArray, splitIntoWords } from '../../utils/sentenceUtils.ts';
 import gameService from '../../services/gameService.ts';
 import { findContainerAtPoint, getInsertionIndex, type Point } from '../../utils/dragAndDrop.ts';
+import TranslationHint from '../../components/TranslationHint/TranslationHint.ts';
 
 type ContainerId = 'source' | 'result';
 
 class GamePage extends BaseComponent<HTMLDivElement> {
+  private translationHint: TranslationHint;
+
   private mainBlock: BaseComponent<HTMLDivElement>;
 
   private sourceBlock: BaseComponent<HTMLDivElement>;
@@ -35,6 +38,8 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     this.resultBlock = new BaseComponent('div', [styles['result']]);
     this.sourceBlock = new BaseComponent('div', [styles['source']]);
 
+    this.translationHint = new TranslationHint('');
+
     this.mainBlock.append(this.resultBlock, this.sourceBlock);
 
     this.checkButton = new Button('Check', [styles['checkButton']]);
@@ -42,7 +47,7 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     this.continueButton = new Button('Continue', [styles['continueButton'], styles['hidden']]);
 
     this.setupEvents();
-    this.append(this.mainBlock, this.checkButton, this.autoCompleteButton, this.continueButton);
+    this.append(this.translationHint, this.mainBlock, this.checkButton, this.autoCompleteButton, this.continueButton);
 
     this.init().catch((error: unknown) => {
       throw new Error(`Critical error during game initialization. Reason: ${String(error)}`);
@@ -58,6 +63,10 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     this.clearContainers();
 
     this.correctSentence = gameService.getCurrentSentence();
+
+    const currentTranslation = gameService.getCurrentSentenceTranslation();
+    this.translationHint.updateTranslation(currentTranslation);
+
     const words = splitIntoWords(this.correctSentence);
     const shuffledWords = shuffleArray(words);
 
