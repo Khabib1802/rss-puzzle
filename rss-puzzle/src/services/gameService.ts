@@ -9,12 +9,20 @@ interface GameState {
   isChecked: boolean;
 }
 
+interface GameSettings {
+  isTranslationHintEnabled: boolean;
+}
+
 class GameService {
   public gameState: GameState = {
     level: 1,
     roundIndex: 0,
     sentenceIndex: 0,
     isChecked: false,
+  };
+
+  public settings: GameSettings = {
+    isTranslationHintEnabled: true,
   };
 
   currentLevelData: Level | null = null;
@@ -82,6 +90,11 @@ class GameService {
 
   public setChecked(value: boolean) {
     this.gameState.isChecked = value;
+  }
+
+  public toggleTranslationHint(): boolean {
+    this.settings.isTranslationHintEnabled = !this.settings.isTranslationHintEnabled;
+    return this.settings.isTranslationHintEnabled;
   }
 }
 
