@@ -1,0 +1,43 @@
+@import '../../styles/variables.scss';
+
+.board {
+  flex: 1 0 auto;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.source,
+.result {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: start;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  margin-bottom: 10px;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.source {
+  min-height: 20%;
+  align-items: center;
+}
+
+.result {
+  align-items: start;
+  margin-bottom: 10px;
+  height: 80%;
+}
+
+.source,
+.result {
+  transition: box-shadow 0.15s ease;
+}
+
+.dropTarget {
+  box-shadow: 0 0 0 2px $c-hover inset;
+}
