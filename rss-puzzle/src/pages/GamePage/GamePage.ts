@@ -1,19 +1,17 @@
 import styles from './GamePage.module.scss';
 
 import WordPuzzle from '../../components/WordPuzzle/WordPuzzle.ts';
-import Button from '../../components/Button/Button.ts';
 import BaseComponent from '../../components/BaseComponent.ts';
 import { checkUserWordOrder, isSentenceCorrect, shuffleArray, splitIntoWords } from '../../utils/sentenceUtils.ts';
 import gameService from '../../services/gameService.ts';
 import { findContainerAtPoint, getInsertionIndex, type Point } from '../../utils/dragAndDrop.ts';
-import TranslationHint from '../../components/TranslationHint/TranslationHint.ts';
+import GameActions from '../../components/GameActions/GameActions.ts';
+import HintPanel from '../../components/HintPanel/HintPanel.ts';
 
 type ContainerId = 'source' | 'result';
 
 class GamePage extends BaseComponent<HTMLDivElement> {
-  private translationHint: TranslationHint;
-
-  private hintToggleButton: Button;
+  private hintPanel: HintPanel;
 
   private mainBlock: BaseComponent<HTMLDivElement>;
 
@@ -21,11 +19,7 @@ class GamePage extends BaseComponent<HTMLDivElement> {
 
   private resultBlock: BaseComponent<HTMLDivElement>;
 
-  private continueButton: Button;
-
-  private autoCompleteButton: Button;
-
-  private checkButton: Button;
+  private gameActions: GameActions;
 
   private sourcePuzzles: WordPuzzle[] = [];
 
@@ -40,26 +34,15 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     this.resultBlock = new BaseComponent('div', [styles['result']]);
     this.sourceBlock = new BaseComponent('div', [styles['source']]);
 
-    this.translationHint = new TranslationHint('');
-
     const initialHintState = gameService.settings.isTranslationHintEnabled;
-    this.hintToggleButton = new Button(initialHintState ? 'Hint: ON' : 'Hint: OFF', [styles['hintToggleButton']]);
+    this.hintPanel = new HintPanel(initialHintState);
 
     this.mainBlock.append(this.resultBlock, this.sourceBlock);
 
-    this.checkButton = new Button('Check', [styles['checkButton']]);
-    this.autoCompleteButton = new Button('Auto-Complete', [styles['autoCompleteButton']]);
-    this.continueButton = new Button('Continue', [styles['continueButton'], styles['hidden']]);
+    this.gameActions = new GameActions();
 
     this.setupEvents();
-    this.append(
-      this.hintToggleButton,
-      this.translationHint,
-      this.mainBlock,
-      this.checkButton,
-      this.autoCompleteButton,
-      this.continueButton
-    );
+    this.append(this.hintPanel, this.mainBlock, this.gameActions);
 
     this.init().catch((error: unknown) => {
       throw new Error(`Critical error during game initialization. Reason: ${String(error)}`);
@@ -73,6 +56,15 @@ class GamePage extends BaseComponent<HTMLDivElement> {
 
   private startNewRound(): void {
     this.clearContainers();
+
+    gameService.setChecked(false);
+
+    this.gameActions.setVisibility({
+      check: true,
+      continue: false,
+      autoComplete: true,
+    });
+
     this.correctSentence = gameService.getCurrentSentence();
 
     const currentTranslation = gameService.getCurrentSentenceTranslation();
@@ -86,7 +78,7 @@ class GamePage extends BaseComponent<HTMLDivElement> {
   }
 
   private renderHint(currentTranslation: string): void {
-    this.translationHint.updateTranslation(currentTranslation);
+    this.hintPanel.setTranslation(currentTranslation);
     this.renderHintVisibility();
   }
 
@@ -121,23 +113,23 @@ class GamePage extends BaseComponent<HTMLDivElement> {
   }
 
   private setupEvents() {
-    this.hintToggleButton.handleClick(() => {
+    this.hintPanel.toggleButton.handleClick(() => {
       const isEnabled = gameService.toggleTranslationHint();
-      this.hintToggleButton.setText(isEnabled ? 'Hint: ON' : 'Hint: OFF');
+      this.hintPanel.setToggleLabel(isEnabled);
 
       this.renderHintVisibility();
     });
 
-    this.continueButton.handleClick(() => {
+    this.gameActions.continueButton.handleClick(() => {
       this.handleNextStep();
     });
 
-    this.checkButton.handleClick(() => {
+    this.gameActions.checkButton.handleClick(() => {
       this.checkResultSentence();
       this.highlightWords();
     });
 
-    this.autoCompleteButton.handleClick(() => {
+    this.gameActions.autoCompleteButton.handleClick(() => {
       this.handleAutoComplete();
     });
   }
@@ -177,8 +169,10 @@ class GamePage extends BaseComponent<HTMLDivElement> {
   }
 
   private toggleButtonsVisibility() {
-    [this.checkButton, this.continueButton, this.autoCompleteButton].forEach((button) => {
-      button.element.classList.toggle(styles['hidden']);
+    this.gameActions.setVisibility({
+      check: false,
+      continue: true,
+      autoComplete: false,
     });
   }
 
@@ -188,13 +182,13 @@ class GamePage extends BaseComponent<HTMLDivElement> {
 
     const shouldBeVisible = isHintEnabled || isSentenceChecked;
 
-    this.translationHint.setVisible(shouldBeVisible);
+    this.hintPanel.setVisible(shouldBeVisible);
   }
 
   private renderCheckButtonState() {
     const isSourceEmpty = this.sourcePuzzles.length === 0;
 
-    this.checkButton.setDisabled(!isSourceEmpty);
+    this.gameActions.setCheckDisabled(!isSourceEmpty);
   }
 
   private handleAutoComplete(): void {
@@ -213,7 +207,7 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     gameService.setChecked(true);
     this.renderBoardState();
 
-    this.translationHint.setVisible(true);
+    this.hintPanel.setVisible(true);
     this.toggleButtonsVisibility();
   }
 
