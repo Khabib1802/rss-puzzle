@@ -1,7 +1,8 @@
+import DATA_BASE_URL from '../constants';
 import type { Level } from '../types/game';
 
 function fetchLevelData(levelNumber: number): Promise<Level> {
-  const url = `/rss-puzzle/data/levelData/wordCollectionLevel${String(levelNumber)}.json`;
+  const url = `${DATA_BASE_URL}levelData/wordCollectionLevel${String(levelNumber)}.json`;
 
   return fetch(url)
     .then((response: Response) => {

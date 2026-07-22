@@ -1,4 +1,5 @@
 import fetchLevelData from '../api/gameApi';
+import DATA_BASE_URL from '../constants';
 
 import type { Level, Round } from '../types/game';
 
@@ -55,6 +56,13 @@ class GameService {
     const { sentenceIndex } = this.gameState;
     const round = this.getCurrentRound();
     return round.words[sentenceIndex].textExampleTranslate;
+  }
+
+  public getCurrentSentenceAudio(): string {
+    const { sentenceIndex } = this.gameState;
+
+    const round = this.getCurrentRound();
+    return `${DATA_BASE_URL}${round.words[sentenceIndex].audioExample}`;
   }
 
   public nextStep() {
