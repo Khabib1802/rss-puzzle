@@ -1,4 +1,3 @@
-// src/utils/dragAndDrop.test.ts
 import { describe, it, expect } from 'vitest';
 import { findContainerAtPoint, getInsertionIndex } from './dragAndDrop.ts';
 import type { Rect } from './dragAndDrop.ts';
