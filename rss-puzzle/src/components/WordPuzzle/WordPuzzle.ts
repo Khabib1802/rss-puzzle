@@ -134,10 +134,6 @@ class WordPuzzle extends BaseComponent<HTMLDivElement> {
     }
   };
 
-  private handlePointerCancel = (event: PointerEvent): void => {
-    this.cleanupDrag(event.pointerId);
-  };
-
   private cleanupDrag(pointerId: number): void {
     if (this.wordElement.hasPointerCapture(pointerId)) {
       this.wordElement.releasePointerCapture(pointerId);
@@ -198,6 +194,10 @@ class WordPuzzle extends BaseComponent<HTMLDivElement> {
     this.wordElement.classList.toggle(styles['noNotch'], hideNotch);
     this.element.classList.toggle(styles['noTab'], hideTab);
   }
+
+  private handlePointerCancel = (event: PointerEvent): void => {
+    this.cleanupDrag(event.pointerId);
+  };
 }
 
 export default WordPuzzle;
