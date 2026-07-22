@@ -55,11 +55,13 @@ class GamePage extends BaseComponent<HTMLDivElement> {
   private startNewRound(): void {
     this.clearContainers();
 
+    this.hintPanel.stopAudio();
     gameService.setChecked(false);
     this.correctSentence = gameService.getCurrentSentence();
 
     const currentTranslation = gameService.getCurrentSentenceTranslation();
     this.renderHint(currentTranslation);
+    this.hintPanel.setAudioSource(gameService.getCurrentSentenceAudio());
 
     const words = splitIntoWords(this.correctSentence);
     const shuffledWords = shuffleArray(words);
