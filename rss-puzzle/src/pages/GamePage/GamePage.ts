@@ -13,6 +13,8 @@ type ContainerId = 'source' | 'result';
 class GamePage extends BaseComponent<HTMLDivElement> {
   private translationHint: TranslationHint;
 
+  private hintToggleButton: Button;
+
   private mainBlock: BaseComponent<HTMLDivElement>;
 
   private sourceBlock: BaseComponent<HTMLDivElement>;
@@ -40,6 +42,9 @@ class GamePage extends BaseComponent<HTMLDivElement> {
 
     this.translationHint = new TranslationHint('');
 
+    const initialHintState = gameService.settings.isTranslationHintEnabled;
+    this.hintToggleButton = new Button(initialHintState ? 'Hint: ON' : 'Hint: OFF', [styles['hintToggleButton']]);
+
     this.mainBlock.append(this.resultBlock, this.sourceBlock);
 
     this.checkButton = new Button('Check', [styles['checkButton']]);
@@ -47,7 +52,14 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     this.continueButton = new Button('Continue', [styles['continueButton'], styles['hidden']]);
 
     this.setupEvents();
-    this.append(this.translationHint, this.mainBlock, this.checkButton, this.autoCompleteButton, this.continueButton);
+    this.append(
+      this.hintToggleButton,
+      this.translationHint,
+      this.mainBlock,
+      this.checkButton,
+      this.autoCompleteButton,
+      this.continueButton
+    );
 
     this.init().catch((error: unknown) => {
       throw new Error(`Critical error during game initialization. Reason: ${String(error)}`);
@@ -66,6 +78,8 @@ class GamePage extends BaseComponent<HTMLDivElement> {
 
     const currentTranslation = gameService.getCurrentSentenceTranslation();
     this.translationHint.updateTranslation(currentTranslation);
+
+    this.updateHintVisibility();
 
     const words = splitIntoWords(this.correctSentence);
     const shuffledWords = shuffleArray(words);
@@ -98,6 +112,13 @@ class GamePage extends BaseComponent<HTMLDivElement> {
   }
 
   private setupEvents() {
+    this.hintToggleButton.handleClick(() => {
+      const isEnabled = gameService.toggleTranslationHint();
+      this.hintToggleButton.setText(isEnabled ? 'Hint: ON' : 'Hint: OFF');
+
+      this.updateHintVisibility();
+    });
+
     this.continueButton.handleClick(() => {
       this.handleNextStep();
     });
@@ -141,6 +162,8 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     if (isSentenceCorrect(resultSentence, this.correctSentence)) {
       this.toggleButtonsVisibility();
       gameService.setChecked(true);
+
+      this.updateHintVisibility();
     }
   }
 
@@ -148,6 +171,15 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     [this.checkButton, this.continueButton, this.autoCompleteButton].forEach((button) => {
       button.element.classList.toggle(styles['hidden']);
     });
+  }
+
+  private updateHintVisibility(): void {
+    const isHintEnabled = gameService.settings.isTranslationHintEnabled;
+    const isSentenceChecked = gameService.gameState.isChecked;
+
+    const shouldBeVisible = isHintEnabled || isSentenceChecked;
+
+    this.translationHint.setVisible(shouldBeVisible);
   }
 
   private updateCheckButtonState() {
@@ -172,6 +204,7 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     gameService.setChecked(true);
     this.updateEndpointConnectors();
 
+    this.translationHint.setVisible(true);
     this.toggleButtonsVisibility();
   }
 

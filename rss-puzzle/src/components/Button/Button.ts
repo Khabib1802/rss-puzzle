@@ -13,6 +13,10 @@ class Button extends BaseComponent<HTMLButtonElement> {
     this.button.textContent = text;
   }
 
+  public setText(text: string | null): void {
+    this.element.textContent = text;
+  }
+
   public setDisabled(state: boolean): void {
     this.element.disabled = state;
   }

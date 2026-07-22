@@ -1,35 +1,17 @@
 .hint {
-  position: relative;
-  display: inline-flex;
+  display: flex;
   align-items: center;
-}
+  justify-content: center;
+  margin: 0.5rem 0;
+  transition: opacity 0.3s ease;
 
-.toggle {
-  cursor: pointer;
-  border: none;
-  background: none;
-  font-size: 1.25rem;
-  line-height: 1;
-  padding: 0.25rem;
+  &.hidden {
+    display: none !important;
+  }
 }
 
 .text {
-  max-width: 0;
-  max-height: 0;
-  overflow: hidden;
-  opacity: 0;
-  margin-left: 0;
-  transition:
-    max-width 0.25s ease,
-    opacity 0.2s ease,
-    margin-left 0.25s ease;
-  white-space: nowrap;
-}
-
-.hint.visible .text {
-  max-width: 40rem;
-  max-height: 3rem;
-  opacity: 1;
-  margin-left: 0.5rem;
-  // white-space: normal;
+  font-size: 1.1rem;
+  color: #555; // Задайте ваш цвет
+  text-align: center;
 }
