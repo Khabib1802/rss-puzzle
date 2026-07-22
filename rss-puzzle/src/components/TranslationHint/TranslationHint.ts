@@ -1,4 +1,3 @@
-// src/components/TranslationHint/TranslationHint.ts
 import styles from './TranslationHint.module.scss';
 import BaseComponent from '../BaseComponent.ts';
 

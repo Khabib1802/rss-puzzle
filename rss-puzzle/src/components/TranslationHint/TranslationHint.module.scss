@@ -1,3 +1,5 @@
+@import '../../styles/variables.scss';
+
 .hint {
   display: flex;
   align-items: center;
@@ -6,12 +8,12 @@
   transition: opacity 0.3s ease;
 
   &.hidden {
-    display: none !important;
+    display: none;
   }
 }
 
 .text {
   font-size: 1.1rem;
-  color: #555; // Задайте ваш цвет
+  color: $c-text;
   text-align: center;
 }
