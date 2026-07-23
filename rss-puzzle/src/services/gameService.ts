@@ -1,5 +1,5 @@
 import fetchLevelData from '../api/gameApi';
-import { DATA_BASE_URL, HINT_KINDS } from '../constants';
+import { DATA_BASE_URL, HINT_KINDS, LEVELS_COUNT } from '../constants';
 
 import type { GameState, HintKind, HintSettings, Level, Round } from '../types/game';
 import { getItem, removeItem, setItem } from './localStorageService';
@@ -23,14 +23,42 @@ class GameService {
 
   currentLevelData: Level | null = null;
 
+  private levelCache = new Map<number, Level>();
+
+  private async loadLevel(level: number): Promise<Level> {
+    const cached = this.levelCache.get(level);
+    if (cached) return cached;
+
+    const data = await fetchLevelData(level);
+    this.levelCache.set(level, data);
+
+    return data;
+  }
+
   public async loadCurrentLevel() {
     try {
-      const data = await fetchLevelData(this.gameState.level);
-
-      this.currentLevelData = data;
+      this.currentLevelData = await this.loadLevel(this.gameState.level);
     } catch {
       throw new Error('Error loading level data');
     }
+  }
+
+  public async getRoundsCount(level: number): Promise<number> {
+    const data = await this.loadLevel(level);
+    return data.roundsCount;
+  }
+
+  public setLevel(level: number): void {
+    this.gameState.level = level;
+    this.gameState.roundIndex = 0;
+    this.gameState.sentenceIndex = 0;
+    this.gameState.isChecked = false;
+  }
+
+  public setRound(roundIndex: number): void {
+    this.gameState.roundIndex = roundIndex;
+    this.gameState.sentenceIndex = 0;
+    this.gameState.isChecked = false;
   }
 
   private getCurrentRound(): Round {
@@ -77,7 +105,7 @@ class GameService {
     const { level, roundIndex, sentenceIndex } = this.gameState;
     const maxSentence = this.currentLevelData.rounds[roundIndex].words.length;
     const maxRound = this.currentLevelData.roundsCount;
-    const maxLevel = 6;
+    const maxLevel = LEVELS_COUNT;
 
     this.gameState.isChecked = false;
 

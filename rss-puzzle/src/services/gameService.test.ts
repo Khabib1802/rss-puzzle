@@ -68,3 +68,46 @@ describe('gameService.nextStep', () => {
     expect(gameService.gameState.isChecked).toBe(false);
   });
 });
+
+describe('gameService.setLevel / setRound', () => {
+  const INITIAL_LEVEL = 3;
+  const INITIAL_ROUND = 2;
+  const INITIAL_SENTENCE = 1;
+
+  const RESET_INDEX = 0;
+
+  beforeEach(() => {
+    gameService.gameState = {
+      level: INITIAL_LEVEL,
+      roundIndex: INITIAL_ROUND,
+      sentenceIndex: INITIAL_SENTENCE,
+      isChecked: true,
+    };
+  });
+
+  it('sets the level and resets round, sentence and checked state', () => {
+    const NEW_LEVEL = 5;
+
+    gameService.setLevel(NEW_LEVEL);
+
+    expect(gameService.gameState).toEqual({
+      level: NEW_LEVEL,
+      roundIndex: RESET_INDEX,
+      sentenceIndex: RESET_INDEX,
+      isChecked: false,
+    });
+  });
+
+  it('sets the round and resets sentence and checked state, keeping the level', () => {
+    const NEW_ROUND = 4;
+
+    gameService.setRound(NEW_ROUND);
+
+    expect(gameService.gameState).toEqual({
+      level: INITIAL_LEVEL,
+      roundIndex: NEW_ROUND,
+      sentenceIndex: RESET_INDEX,
+      isChecked: false,
+    });
+  });
+});
