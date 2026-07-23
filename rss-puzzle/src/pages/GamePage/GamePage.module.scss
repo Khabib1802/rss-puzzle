@@ -1,4 +1,4 @@
-@import '../../styles/variables.scss';
+@use '@styles/variables.scss' as *;
 
 .mainBlock {
   flex: 1 0 auto;

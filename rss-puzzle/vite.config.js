@@ -1,7 +1,13 @@
 import { defineConfig } from 'vite';
+import path from 'path';
 
 export default defineConfig({
   base: '/rss-puzzle/',
+  resolve: {
+    alias: {
+      '@styles': path.resolve(__dirname, './src/styles'),
+    },
+  },
   server: {
     host: '127.0.0.1',
     port: 5173,
