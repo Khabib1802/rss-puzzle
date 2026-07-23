@@ -12,6 +12,7 @@ interface GameState {
 
 interface GameSettings {
   isTranslationHintEnabled: boolean;
+  isPronunciationHintEnabled: boolean;
 }
 
 class GameService {
@@ -24,6 +25,7 @@ class GameService {
 
   public settings: GameSettings = {
     isTranslationHintEnabled: true,
+    isPronunciationHintEnabled: true,
   };
 
   currentLevelData: Level | null = null;
@@ -103,6 +105,11 @@ class GameService {
   public toggleTranslationHint(): boolean {
     this.settings.isTranslationHintEnabled = !this.settings.isTranslationHintEnabled;
     return this.settings.isTranslationHintEnabled;
+  }
+
+  public togglePronunciationHint(): boolean {
+    this.settings.isPronunciationHintEnabled = !this.settings.isPronunciationHintEnabled;
+    return this.settings.isPronunciationHintEnabled;
   }
 }
 

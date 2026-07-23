@@ -35,6 +35,10 @@ class PronunciationHint extends BaseComponent<HTMLDivElement> {
     this.audioSrc = src;
   }
 
+  public setVisible(show: boolean): void {
+    this.element.classList.toggle(styles['hidden'], !show);
+  }
+
   public stop(): void {
     if (!this.currentAudio) return;
 

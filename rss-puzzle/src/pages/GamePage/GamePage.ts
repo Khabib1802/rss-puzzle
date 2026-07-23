@@ -32,8 +32,9 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     this.mainBlock = new BaseComponent('div', [styles['mainBlock']]);
     this.sentenceBoard = new SentenceBoard();
 
-    const initialHintState = gameService.settings.isTranslationHintEnabled;
-    this.hintPanel = new HintPanel(initialHintState);
+    const initialTranslationHintState = gameService.settings.isTranslationHintEnabled;
+    const initialPronunciationHintState = gameService.settings.isPronunciationHintEnabled;
+    this.hintPanel = new HintPanel(initialTranslationHintState, initialPronunciationHintState);
 
     this.mainBlock.append(this.sentenceBoard.element);
 
@@ -77,6 +78,7 @@ class GamePage extends BaseComponent<HTMLDivElement> {
   private renderState(): void {
     this.renderActionsState();
     this.renderHintVisibility();
+    this.renderPronunciationVisibility();
     this.renderCheckButtonState();
     this.updateEndpointConnectors();
   }
@@ -129,6 +131,12 @@ class GamePage extends BaseComponent<HTMLDivElement> {
       this.renderHintVisibility();
     });
 
+    this.hintPanel.pronunciationToggleButton.handleClick(() => {
+      const isEnabled = gameService.togglePronunciationHint();
+      this.hintPanel.setPronunciationToggleLabel(isEnabled);
+
+      this.renderPronunciationVisibility();
+    });
     this.gameActions.continueButton.handleClick(() => {
       this.handleNextStep();
     });
@@ -182,6 +190,15 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     const shouldBeVisible = isHintEnabled || isSentenceChecked;
 
     this.hintPanel.setVisible(shouldBeVisible);
+  }
+
+  private renderPronunciationVisibility(): void {
+    const isHintEnabled = gameService.settings.isPronunciationHintEnabled;
+    const isSentenceChecked = gameService.gameState.isChecked;
+
+    const shouldBeVisible = isHintEnabled || isSentenceChecked;
+
+    this.hintPanel.setPronunciationVisible(shouldBeVisible);
   }
 
   private renderCheckButtonState() {
