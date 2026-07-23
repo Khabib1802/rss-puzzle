@@ -1,19 +1,7 @@
 import fetchLevelData from '../api/gameApi';
-import DATA_BASE_URL from '../constants';
+import { DATA_BASE_URL } from '../constants';
 
-import type { Level, Round } from '../types/game';
-
-interface GameState {
-  level: number;
-  roundIndex: number;
-  sentenceIndex: number;
-  isChecked: boolean;
-}
-
-interface GameSettings {
-  isTranslationHintEnabled: boolean;
-  isPronunciationHintEnabled: boolean;
-}
+import type { GameState, HintKind, HintSettings, Level, Round } from '../types/game';
 
 class GameService {
   public gameState: GameState = {
@@ -23,9 +11,10 @@ class GameService {
     isChecked: false,
   };
 
-  public settings: GameSettings = {
-    isTranslationHintEnabled: true,
-    isPronunciationHintEnabled: true,
+  public settings: HintSettings = {
+    translation: true,
+    pronunciation: true,
+    image: true,
   };
 
   currentLevelData: Level | null = null;
@@ -112,14 +101,13 @@ class GameService {
     this.gameState.isChecked = value;
   }
 
-  public toggleTranslationHint(): boolean {
-    this.settings.isTranslationHintEnabled = !this.settings.isTranslationHintEnabled;
-    return this.settings.isTranslationHintEnabled;
+  public toggleHint(kind: HintKind): boolean {
+    this.settings[kind] = !this.settings[kind];
+    return this.settings[kind];
   }
 
-  public togglePronunciationHint(): boolean {
-    this.settings.isPronunciationHintEnabled = !this.settings.isPronunciationHintEnabled;
-    return this.settings.isPronunciationHintEnabled;
+  public shouldRevealHint(kind: HintKind): boolean {
+    return this.settings[kind] || this.gameState.isChecked;
   }
 }
 

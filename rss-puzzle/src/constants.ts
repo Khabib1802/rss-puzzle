@@ -1,3 +1,9 @@
-export const DATA_BASE_URL = '/rss-puzzle/data/';
+const DATA_BASE_URL = '/rss-puzzle/data/';
 
-export default DATA_BASE_URL;
+const HINT_KINDS = {
+  TRANSLATION: 'translation',
+  PRONUNCIATION: 'pronunciation',
+  IMAGE: 'image',
+} as const;
+
+export { DATA_BASE_URL, HINT_KINDS };

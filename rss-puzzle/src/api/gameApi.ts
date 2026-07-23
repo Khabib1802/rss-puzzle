@@ -1,4 +1,4 @@
-import DATA_BASE_URL from '../constants';
+import { DATA_BASE_URL } from '../constants';
 import type { Level } from '../types/game';
 
 function fetchLevelData(levelNumber: number): Promise<Level> {

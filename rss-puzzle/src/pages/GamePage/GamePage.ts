@@ -8,10 +8,16 @@ import { findContainerAtPoint, getInsertionIndex, type Point } from '../../utils
 import GameActions from '../../components/GameActions/GameActions.ts';
 import HintPanel from '../../components/HintPanel/HintPanel.ts';
 import SentenceBoard from '../../components/SentenceBoard/SentenceBoard.ts';
+import { HINT_KINDS } from '../../constants.ts';
+import type { HintKind } from '../../types/game.ts';
 
 type ContainerId = 'source' | 'result';
 
 const CARD_HEIGHT = 44;
+
+const ALL_HINT_KINDS = Object.values(HINT_KINDS);
+
+// const CONTENT_HINT_KINDS = [HINT_KINDS.TRANSLATION, HINT_KINDS.PRONUNCIATION] as const;
 
 class GamePage extends BaseComponent<HTMLDivElement> {
   private hintPanel: HintPanel;
@@ -34,12 +40,13 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     this.mainBlock = new BaseComponent('div', [styles['mainBlock']]);
     this.sentenceBoard = new SentenceBoard();
 
-    const initialTranslationHintState = gameService.settings.isTranslationHintEnabled;
-    const initialPronunciationHintState = gameService.settings.isPronunciationHintEnabled;
-    this.hintPanel = new HintPanel(initialTranslationHintState, initialPronunciationHintState);
+    this.hintPanel = new HintPanel({
+      translation: gameService.settings.translation,
+      pronunciation: gameService.settings.pronunciation,
+      image: gameService.settings.image,
+    });
 
     this.mainBlock.append(this.sentenceBoard.element);
-
     this.gameActions = new GameActions();
 
     this.setupEvents();
@@ -78,8 +85,9 @@ class GamePage extends BaseComponent<HTMLDivElement> {
 
   private renderState(): void {
     this.renderActionsState();
-    this.renderHintVisibility();
-    this.renderPronunciationVisibility();
+    ALL_HINT_KINDS.forEach((kind) => {
+      this.renderHintKindVisibility(kind);
+    });
     this.renderCheckButtonState();
     this.updateEndpointConnectors();
   }
@@ -153,19 +161,15 @@ class GamePage extends BaseComponent<HTMLDivElement> {
   }
 
   private setupEvents() {
-    this.hintPanel.toggleButton.handleClick(() => {
-      const isEnabled = gameService.toggleTranslationHint();
-      this.hintPanel.setToggleLabel(isEnabled);
+    ALL_HINT_KINDS.forEach((kind) => {
+      this.hintPanel.getToggleButton(kind).handleClick(() => {
+        const isEnabled = gameService.toggleHint(kind);
+        this.hintPanel.setToggleLabel(kind, isEnabled);
 
-      this.renderHintVisibility();
+        this.renderHintKindVisibility(kind);
+      });
     });
 
-    this.hintPanel.pronunciationToggleButton.handleClick(() => {
-      const isEnabled = gameService.togglePronunciationHint();
-      this.hintPanel.setPronunciationToggleLabel(isEnabled);
-
-      this.renderPronunciationVisibility();
-    });
     this.gameActions.continueButton.handleClick(() => {
       this.handleNextStep();
     });
@@ -212,22 +216,21 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     }
   }
 
-  private renderHintVisibility(): void {
-    const isHintEnabled = gameService.settings.isTranslationHintEnabled;
-    const isSentenceChecked = gameService.gameState.isChecked;
+  private renderHintKindVisibility(kind: HintKind): void {
+    if (kind === 'image') {
+      this.renderImageHintVisibility();
+      return;
+    }
 
-    const shouldBeVisible = isHintEnabled || isSentenceChecked;
-
-    this.hintPanel.setVisible(shouldBeVisible);
+    this.hintPanel.setHintVisible(kind, gameService.shouldRevealHint(kind));
   }
 
-  private renderPronunciationVisibility(): void {
-    const isHintEnabled = gameService.settings.isPronunciationHintEnabled;
-    const isSentenceChecked = gameService.gameState.isChecked;
+  private renderImageHintVisibility(): void {
+    const shouldBeVisible = gameService.shouldRevealHint('image');
 
-    const shouldBeVisible = isHintEnabled || isSentenceChecked;
-
-    this.hintPanel.setPronunciationVisible(shouldBeVisible);
+    [...this.sourcePuzzles, ...this.resultPuzzles].forEach((puzzle) => {
+      puzzle.setImageVisible(shouldBeVisible);
+    });
   }
 
   private renderCheckButtonState() {
