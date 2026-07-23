@@ -4,56 +4,73 @@ import BaseComponent from '../BaseComponent.ts';
 import Button from '../Button/Button.ts';
 import TranslationHint from '../TranslationHint/TranslationHint.ts';
 import PronunciationHint from '../PronunciationHint/PronunciationHint.ts';
+import type { ContentHintKind } from '../../types/game.ts';
+import { HINT_KINDS } from '../../constants.ts';
+
+const TOGGLE_LABELS: Record<ContentHintKind, string> = {
+  translation: 'Hint',
+  pronunciation: 'Audio hint',
+};
 
 class HintPanel extends BaseComponent<HTMLDivElement> {
-  public readonly toggleButton: Button;
+  private readonly toggleButtons: Record<ContentHintKind, Button>;
 
-  public readonly translationHint: TranslationHint;
+  private readonly hintContents: {
+    translation: TranslationHint;
+    pronunciation: PronunciationHint;
+  };
 
-  public readonly pronunciationToggleButton: Button;
-
-  private readonly pronunciationHint: PronunciationHint;
-
-  constructor(initialTranslationHintState: boolean, initialPronunciationHintState: boolean) {
+  constructor(initialHintStates: Record<ContentHintKind, boolean>) {
     super('div', [styles['panel']]);
 
-    this.toggleButton = new Button(initialTranslationHintState ? 'Hint: ON' : 'Hint: OFF', [styles['toggleButton']]);
-    this.pronunciationToggleButton = new Button(initialPronunciationHintState ? 'Audio hint: ON' : 'Audio hint: OFF', [
-      styles['toggleButton'],
-    ]);
+    this.toggleButtons = {
+      translation: HintPanel.createToggleButton(HINT_KINDS.TRANSLATION, initialHintStates.translation),
+      pronunciation: HintPanel.createToggleButton(HINT_KINDS.PRONUNCIATION, initialHintStates.pronunciation),
+    };
 
-    this.translationHint = new TranslationHint('');
-    this.pronunciationHint = new PronunciationHint();
+    this.hintContents = {
+      translation: new TranslationHint(''),
+      pronunciation: new PronunciationHint(),
+    };
 
-    this.append(this.toggleButton, this.pronunciationToggleButton, this.translationHint, this.pronunciationHint);
+    this.append(
+      this.toggleButtons.translation,
+      this.toggleButtons.pronunciation,
+      this.hintContents.translation,
+      this.hintContents.pronunciation
+    );
   }
 
-  public setToggleLabel(isEnabled: boolean): void {
-    this.toggleButton.setText(isEnabled ? 'Hint: ON' : 'Hint: OFF');
+  private static createToggleButton(kind: ContentHintKind, initialState: boolean): Button {
+    return new Button(HintPanel.getToggleLabel(kind, initialState), [styles['toggleButton']]);
   }
 
-  public setPronunciationToggleLabel(isEnabled: boolean): void {
-    this.pronunciationToggleButton.setText(isEnabled ? 'Audio hint: ON' : 'Audio hint: OFF');
+  private static getToggleLabel(kind: ContentHintKind, isEnabled: boolean): string {
+    return `${TOGGLE_LABELS[kind]}: ${isEnabled ? 'ON' : 'OFF'}`;
+  }
+
+  public getToggleButton(kind: ContentHintKind): Button {
+    return this.toggleButtons[kind];
+  }
+
+  public setToggleLabel(kind: ContentHintKind, isEnabled: boolean): void {
+    this.toggleButtons[kind].setText(HintPanel.getToggleLabel(kind, isEnabled));
+  }
+
+  public setHintVisible(kind: ContentHintKind, show: boolean): void {
+    this.hintContents[kind].setVisible(show);
   }
 
   public setTranslation(translation: string): void {
-    this.translationHint.updateTranslation(translation);
+    this.hintContents.translation.updateTranslation(translation);
   }
 
   public setAudioSource(src: string): void {
-    this.pronunciationHint.setAudioSource(src);
+    this.hintContents.pronunciation.setAudioSource(src);
   }
 
   public stopAudio(): void {
-    this.pronunciationHint.stop();
-  }
-
-  public setVisible(show: boolean): void {
-    this.translationHint.setVisible(show);
-  }
-
-  public setPronunciationVisible(show: boolean): void {
-    this.pronunciationHint.setVisible(show);
+    this.hintContents.pronunciation.stop();
   }
 }
 

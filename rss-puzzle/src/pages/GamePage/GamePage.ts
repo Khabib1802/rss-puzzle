@@ -9,10 +9,13 @@ import GameActions from '../../components/GameActions/GameActions.ts';
 import HintPanel from '../../components/HintPanel/HintPanel.ts';
 import SentenceBoard from '../../components/SentenceBoard/SentenceBoard.ts';
 import { HINT_KINDS } from '../../constants.ts';
+import type { ContentHintKind } from '../../types/game.ts';
 
 type ContainerId = 'source' | 'result';
 
 const CARD_HEIGHT = 44;
+
+const CONTENT_HINT_KINDS: ContentHintKind[] = [HINT_KINDS.TRANSLATION, HINT_KINDS.PRONUNCIATION];
 
 class GamePage extends BaseComponent<HTMLDivElement> {
   private hintPanel: HintPanel;
@@ -35,9 +38,10 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     this.mainBlock = new BaseComponent('div', [styles['mainBlock']]);
     this.sentenceBoard = new SentenceBoard();
 
-    const initialTranslationHintState = gameService.settings.translation;
-    const initialPronunciationHintState = gameService.settings.pronunciation;
-    this.hintPanel = new HintPanel(initialTranslationHintState, initialPronunciationHintState);
+    this.hintPanel = new HintPanel({
+      translation: gameService.settings.translation,
+      pronunciation: gameService.settings.pronunciation,
+    });
 
     this.mainBlock.append(this.sentenceBoard.element);
 
@@ -79,8 +83,9 @@ class GamePage extends BaseComponent<HTMLDivElement> {
 
   private renderState(): void {
     this.renderActionsState();
-    this.renderTranslationVisibility();
-    this.renderPronunciationVisibility();
+    CONTENT_HINT_KINDS.forEach((kind) => {
+      this.renderHintVisibility(kind);
+    });
     this.renderCheckButtonState();
     this.updateEndpointConnectors();
   }
@@ -154,18 +159,13 @@ class GamePage extends BaseComponent<HTMLDivElement> {
   }
 
   private setupEvents() {
-    this.hintPanel.toggleButton.handleClick(() => {
-      const isEnabled = gameService.toggleHint(HINT_KINDS.TRANSLATION);
-      this.hintPanel.setToggleLabel(isEnabled);
+    CONTENT_HINT_KINDS.forEach((kind) => {
+      this.hintPanel.getToggleButton(kind).handleClick(() => {
+        const isEnabled = gameService.toggleHint(kind);
+        this.hintPanel.setToggleLabel(kind, isEnabled);
 
-      this.renderTranslationVisibility();
-    });
-
-    this.hintPanel.pronunciationToggleButton.handleClick(() => {
-      const isEnabled = gameService.toggleHint(HINT_KINDS.PRONUNCIATION);
-      this.hintPanel.setPronunciationToggleLabel(isEnabled);
-
-      this.renderPronunciationVisibility();
+        this.renderHintVisibility(kind);
+      });
     });
 
     this.gameActions.continueButton.handleClick(() => {
@@ -214,12 +214,8 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     }
   }
 
-  private renderTranslationVisibility(): void {
-    this.hintPanel.setVisible(gameService.shouldRevealHint(HINT_KINDS.TRANSLATION));
-  }
-
-  private renderPronunciationVisibility(): void {
-    this.hintPanel.setPronunciationVisible(gameService.shouldRevealHint(HINT_KINDS.PRONUNCIATION));
+  private renderHintVisibility(kind: ContentHintKind): void {
+    this.hintPanel.setHintVisible(kind, gameService.shouldRevealHint(kind));
   }
 
   private renderCheckButtonState() {

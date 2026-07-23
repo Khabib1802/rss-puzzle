@@ -39,4 +39,6 @@ type HintKind = (typeof HINT_KINDS)[keyof typeof HINT_KINDS];
 
 type HintSettings = Record<HintKind, boolean>;
 
-export type { Level, Round, GameState, HintKind, HintSettings };
+type ContentHintKind = (typeof HINT_KINDS)['TRANSLATION' | 'PRONUNCIATION'];
+
+export type { Level, Round, GameState, HintKind, HintSettings, ContentHintKind };
