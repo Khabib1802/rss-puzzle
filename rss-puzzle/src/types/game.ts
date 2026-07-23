@@ -39,6 +39,6 @@ type HintKind = (typeof HINT_KINDS)[keyof typeof HINT_KINDS];
 
 type HintSettings = Record<HintKind, boolean>;
 
-type ContentHintKind = (typeof HINT_KINDS)['TRANSLATION' | 'PRONUNCIATION'];
+type ContentHintKind = Exclude<HintKind, typeof HINT_KINDS.IMAGE>;
 
 export type { Level, Round, GameState, HintKind, HintSettings, ContentHintKind };

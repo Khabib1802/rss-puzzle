@@ -17,8 +17,6 @@ const CARD_HEIGHT = 44;
 
 const ALL_HINT_KINDS = Object.values(HINT_KINDS);
 
-// const CONTENT_HINT_KINDS = [HINT_KINDS.TRANSLATION, HINT_KINDS.PRONUNCIATION] as const;
-
 class GamePage extends BaseComponent<HTMLDivElement> {
   private hintPanel: HintPanel;
 
@@ -217,7 +215,7 @@ class GamePage extends BaseComponent<HTMLDivElement> {
   }
 
   private renderHintKindVisibility(kind: HintKind): void {
-    if (kind === 'image') {
+    if (kind === HINT_KINDS.IMAGE) {
       this.renderImageHintVisibility();
       return;
     }
