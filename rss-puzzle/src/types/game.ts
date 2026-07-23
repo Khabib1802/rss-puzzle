@@ -1,3 +1,5 @@
+import type { HINT_KINDS } from '../constants';
+
 interface WordData {
   audioExample: string;
   textExample: string;
@@ -26,4 +28,15 @@ interface Level {
   roundsCount: number;
 }
 
-export type { Level, Round };
+interface GameState {
+  level: number;
+  roundIndex: number;
+  sentenceIndex: number;
+  isChecked: boolean;
+}
+
+type HintKind = (typeof HINT_KINDS)[keyof typeof HINT_KINDS];
+
+type HintSettings = Record<HintKind, boolean>;
+
+export type { Level, Round, GameState, HintKind, HintSettings };

@@ -8,6 +8,7 @@ import { findContainerAtPoint, getInsertionIndex, type Point } from '../../utils
 import GameActions from '../../components/GameActions/GameActions.ts';
 import HintPanel from '../../components/HintPanel/HintPanel.ts';
 import SentenceBoard from '../../components/SentenceBoard/SentenceBoard.ts';
+import { HINT_KINDS } from '../../constants.ts';
 
 type ContainerId = 'source' | 'result';
 
@@ -34,8 +35,8 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     this.mainBlock = new BaseComponent('div', [styles['mainBlock']]);
     this.sentenceBoard = new SentenceBoard();
 
-    const initialTranslationHintState = gameService.settings.isTranslationHintEnabled;
-    const initialPronunciationHintState = gameService.settings.isPronunciationHintEnabled;
+    const initialTranslationHintState = gameService.settings.translation;
+    const initialPronunciationHintState = gameService.settings.pronunciation;
     this.hintPanel = new HintPanel(initialTranslationHintState, initialPronunciationHintState);
 
     this.mainBlock.append(this.sentenceBoard.element);
@@ -78,7 +79,7 @@ class GamePage extends BaseComponent<HTMLDivElement> {
 
   private renderState(): void {
     this.renderActionsState();
-    this.renderHintVisibility();
+    this.renderTranslationVisibility();
     this.renderPronunciationVisibility();
     this.renderCheckButtonState();
     this.updateEndpointConnectors();
@@ -154,18 +155,19 @@ class GamePage extends BaseComponent<HTMLDivElement> {
 
   private setupEvents() {
     this.hintPanel.toggleButton.handleClick(() => {
-      const isEnabled = gameService.toggleTranslationHint();
+      const isEnabled = gameService.toggleHint(HINT_KINDS.TRANSLATION);
       this.hintPanel.setToggleLabel(isEnabled);
 
-      this.renderHintVisibility();
+      this.renderTranslationVisibility();
     });
 
     this.hintPanel.pronunciationToggleButton.handleClick(() => {
-      const isEnabled = gameService.togglePronunciationHint();
+      const isEnabled = gameService.toggleHint(HINT_KINDS.PRONUNCIATION);
       this.hintPanel.setPronunciationToggleLabel(isEnabled);
 
       this.renderPronunciationVisibility();
     });
+
     this.gameActions.continueButton.handleClick(() => {
       this.handleNextStep();
     });
@@ -212,22 +214,12 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     }
   }
 
-  private renderHintVisibility(): void {
-    const isHintEnabled = gameService.settings.isTranslationHintEnabled;
-    const isSentenceChecked = gameService.gameState.isChecked;
-
-    const shouldBeVisible = isHintEnabled || isSentenceChecked;
-
-    this.hintPanel.setVisible(shouldBeVisible);
+  private renderTranslationVisibility(): void {
+    this.hintPanel.setVisible(gameService.shouldRevealHint(HINT_KINDS.TRANSLATION));
   }
 
   private renderPronunciationVisibility(): void {
-    const isHintEnabled = gameService.settings.isPronunciationHintEnabled;
-    const isSentenceChecked = gameService.gameState.isChecked;
-
-    const shouldBeVisible = isHintEnabled || isSentenceChecked;
-
-    this.hintPanel.setPronunciationVisible(shouldBeVisible);
+    this.hintPanel.setPronunciationVisible(gameService.shouldRevealHint(HINT_KINDS.PRONUNCIATION));
   }
 
   private renderCheckButtonState() {
