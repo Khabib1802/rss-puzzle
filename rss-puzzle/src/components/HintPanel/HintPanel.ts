@@ -10,20 +10,30 @@ class HintPanel extends BaseComponent<HTMLDivElement> {
 
   public readonly translationHint: TranslationHint;
 
+  public readonly pronunciationToggleButton: Button;
+
   private readonly pronunciationHint: PronunciationHint;
 
-  constructor(initialHintState: boolean) {
+  constructor(initialTranslationHintState: boolean, initialPronunciationHintState: boolean) {
     super('div', [styles['panel']]);
 
-    this.toggleButton = new Button(initialHintState ? 'Hint: ON' : 'Hint: OFF', [styles['toggleButton']]);
+    this.toggleButton = new Button(initialTranslationHintState ? 'Hint: ON' : 'Hint: OFF', [styles['toggleButton']]);
+    this.pronunciationToggleButton = new Button(initialPronunciationHintState ? 'Audio hint: ON' : 'Audio hint: OFF', [
+      styles['toggleButton'],
+    ]);
+
     this.translationHint = new TranslationHint('');
     this.pronunciationHint = new PronunciationHint();
 
-    this.append(this.toggleButton, this.translationHint, this.pronunciationHint);
+    this.append(this.toggleButton, this.pronunciationToggleButton, this.translationHint, this.pronunciationHint);
   }
 
   public setToggleLabel(isEnabled: boolean): void {
     this.toggleButton.setText(isEnabled ? 'Hint: ON' : 'Hint: OFF');
+  }
+
+  public setPronunciationToggleLabel(isEnabled: boolean): void {
+    this.pronunciationToggleButton.setText(isEnabled ? 'Audio hint: ON' : 'Audio hint: OFF');
   }
 
   public setTranslation(translation: string): void {
@@ -40,6 +50,10 @@ class HintPanel extends BaseComponent<HTMLDivElement> {
 
   public setVisible(show: boolean): void {
     this.translationHint.setVisible(show);
+  }
+
+  public setPronunciationVisible(show: boolean): void {
+    this.pronunciationHint.setVisible(show);
   }
 }
 
