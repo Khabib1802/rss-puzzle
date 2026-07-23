@@ -1,7 +1,15 @@
 import fetchLevelData from '../api/gameApi';
-import { DATA_BASE_URL } from '../constants';
+import { DATA_BASE_URL, HINT_KINDS } from '../constants';
 
 import type { GameState, HintKind, HintSettings, Level, Round } from '../types/game';
+import { getItem, removeItem, setItem } from './localStorageService';
+
+const HINT_SETTINGS_KEY = 'hintSettings';
+
+function createDefaultHintSettings(): HintSettings {
+  const entries = Object.values(HINT_KINDS).map((kind) => [kind, true]);
+  return Object.fromEntries(entries) as HintSettings;
+}
 
 class GameService {
   public gameState: GameState = {
@@ -11,11 +19,7 @@ class GameService {
     isChecked: false,
   };
 
-  public settings: HintSettings = {
-    translation: true,
-    pronunciation: true,
-    image: true,
-  };
+  public settings: HintSettings = getItem(HINT_SETTINGS_KEY) ?? createDefaultHintSettings();
 
   currentLevelData: Level | null = null;
 
@@ -103,11 +107,17 @@ class GameService {
 
   public toggleHint(kind: HintKind): boolean {
     this.settings[kind] = !this.settings[kind];
+    setItem(HINT_SETTINGS_KEY, this.settings);
     return this.settings[kind];
   }
 
   public shouldRevealHint(kind: HintKind): boolean {
     return this.settings[kind] || this.gameState.isChecked;
+  }
+
+  public resetHintSettings(): void {
+    this.settings = createDefaultHintSettings();
+    removeItem(HINT_SETTINGS_KEY);
   }
 }
 

@@ -4,6 +4,7 @@ import Button from '../../components/Button/Button.ts';
 
 import BaseComponent from '../../components/BaseComponent.ts';
 import { getUser, hasUser, removeUser } from '../../services/userService.ts';
+import gameService from '../../services/gameService.ts';
 
 class StartPage extends BaseComponent<HTMLDivElement> {
   private title: BaseComponent<HTMLHeadingElement>;
@@ -44,6 +45,7 @@ class StartPage extends BaseComponent<HTMLDivElement> {
   private setupEvents() {
     this.logoutButton.handleClick(() => {
       removeUser();
+      gameService.resetHintSettings();
       window.location.hash = '/entry';
     });
 
