@@ -1,8 +1,8 @@
 import styles from './Header.module.scss';
 
 import BaseComponent from '../BaseComponent.ts';
-import Button from '../Button/Button.ts';
-import Select, { type SelectOption } from '../Select/Select.ts';
+import Button from '../ui/Button/Button.ts';
+import Select, { type SelectOption } from '../ui/Select/Select.ts';
 import HintControls from '../HintControls/HintControls.ts';
 import gameService from '../../services/gameService.ts';
 import { removeUser } from '../../services/userService.ts';

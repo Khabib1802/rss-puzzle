@@ -1,6 +1,6 @@
 import styles from './Select.module.scss';
 
-import BaseComponent from '../BaseComponent.ts';
+import BaseComponent from '../../BaseComponent.ts';
 
 export interface SelectOption {
   value: string;

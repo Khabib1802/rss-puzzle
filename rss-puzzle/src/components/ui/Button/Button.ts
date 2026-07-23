@@ -1,6 +1,6 @@
 import styles from './Button.module.scss';
 
-import BaseComponent from '../BaseComponent.ts';
+import BaseComponent from '../../BaseComponent.ts';
 
 class Button extends BaseComponent<HTMLButtonElement> {
   private button: HTMLButtonElement;

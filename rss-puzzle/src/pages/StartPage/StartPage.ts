@@ -1,6 +1,6 @@
 import styles from './StartPage.module.scss';
 
-import Button from '../../components/Button/Button.ts';
+import Button from '../../components/ui/Button/Button.ts';
 
 import BaseComponent from '../../components/BaseComponent.ts';
 import { getUser, hasUser, removeUser } from '../../services/userService.ts';

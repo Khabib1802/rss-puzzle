@@ -1,7 +1,7 @@
 import styles from './HintControls.module.scss';
 
 import BaseComponent from '../BaseComponent.ts';
-import Button from '../Button/Button.ts';
+import Button from '../ui/Button/Button.ts';
 import type { HintKind } from '../../types/game.ts';
 import { HINT_KINDS } from '../../constants.ts';
 

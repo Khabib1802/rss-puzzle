@@ -1,5 +1,5 @@
-import Button from '../../components/Button/Button.ts';
-import Input from '../../components/Input/Input.ts';
+import Button from '../../components/ui/Button/Button.ts';
+import Input from '../../components/ui/Input/Input.ts';
 import BaseComponent from '../../components/BaseComponent.ts';
 import { saveUser } from '../../services/userService.ts';
 
