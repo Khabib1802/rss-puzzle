@@ -9,13 +9,15 @@ import GameActions from '../../components/GameActions/GameActions.ts';
 import HintPanel from '../../components/HintPanel/HintPanel.ts';
 import SentenceBoard from '../../components/SentenceBoard/SentenceBoard.ts';
 import { HINT_KINDS } from '../../constants.ts';
-import type { ContentHintKind } from '../../types/game.ts';
+import type { HintKind } from '../../types/game.ts';
 
 type ContainerId = 'source' | 'result';
 
 const CARD_HEIGHT = 44;
 
-const CONTENT_HINT_KINDS: ContentHintKind[] = [HINT_KINDS.TRANSLATION, HINT_KINDS.PRONUNCIATION];
+const ALL_HINT_KINDS = Object.values(HINT_KINDS);
+
+// const CONTENT_HINT_KINDS = [HINT_KINDS.TRANSLATION, HINT_KINDS.PRONUNCIATION] as const;
 
 class GamePage extends BaseComponent<HTMLDivElement> {
   private hintPanel: HintPanel;
@@ -41,10 +43,10 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     this.hintPanel = new HintPanel({
       translation: gameService.settings.translation,
       pronunciation: gameService.settings.pronunciation,
+      image: gameService.settings.image,
     });
 
     this.mainBlock.append(this.sentenceBoard.element);
-
     this.gameActions = new GameActions();
 
     this.setupEvents();
@@ -83,8 +85,8 @@ class GamePage extends BaseComponent<HTMLDivElement> {
 
   private renderState(): void {
     this.renderActionsState();
-    CONTENT_HINT_KINDS.forEach((kind) => {
-      this.renderHintVisibility(kind);
+    ALL_HINT_KINDS.forEach((kind) => {
+      this.renderHintKindVisibility(kind);
     });
     this.renderCheckButtonState();
     this.updateEndpointConnectors();
@@ -159,12 +161,12 @@ class GamePage extends BaseComponent<HTMLDivElement> {
   }
 
   private setupEvents() {
-    CONTENT_HINT_KINDS.forEach((kind) => {
+    ALL_HINT_KINDS.forEach((kind) => {
       this.hintPanel.getToggleButton(kind).handleClick(() => {
         const isEnabled = gameService.toggleHint(kind);
         this.hintPanel.setToggleLabel(kind, isEnabled);
 
-        this.renderHintVisibility(kind);
+        this.renderHintKindVisibility(kind);
       });
     });
 
@@ -214,8 +216,21 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     }
   }
 
-  private renderHintVisibility(kind: ContentHintKind): void {
+  private renderHintKindVisibility(kind: HintKind): void {
+    if (kind === 'image') {
+      this.renderImageHintVisibility();
+      return;
+    }
+
     this.hintPanel.setHintVisible(kind, gameService.shouldRevealHint(kind));
+  }
+
+  private renderImageHintVisibility(): void {
+    const shouldBeVisible = gameService.shouldRevealHint('image');
+
+    [...this.sourcePuzzles, ...this.resultPuzzles].forEach((puzzle) => {
+      puzzle.setImageVisible(shouldBeVisible);
+    });
   }
 
   private renderCheckButtonState() {
