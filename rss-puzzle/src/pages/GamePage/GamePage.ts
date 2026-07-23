@@ -7,7 +7,7 @@ import gameService from '../../services/gameService.ts';
 import { findContainerAtPoint, getInsertionIndex, type Point } from '../../utils/dragAndDrop.ts';
 import GameActions from '../../components/GameActions/GameActions.ts';
 import HintPanel from '../../components/HintPanel/HintPanel.ts';
-import HintControls from '../../components/HintControls/HintControls.ts';
+import Header from '../../components/Header/Header.ts';
 import SentenceBoard from '../../components/SentenceBoard/SentenceBoard.ts';
 import { HINT_KINDS } from '../../constants.ts';
 import type { HintKind } from '../../types/game.ts';
@@ -21,7 +21,7 @@ const ALL_HINT_KINDS = Object.values(HINT_KINDS);
 class GamePage extends BaseComponent<HTMLDivElement> {
   private hintPanel: HintPanel;
 
-  private hintControls: HintControls;
+  private header: Header;
 
   private mainBlock: BaseComponent<HTMLDivElement>;
 
@@ -41,7 +41,7 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     this.mainBlock = new BaseComponent('div', [styles['mainBlock']]);
     this.sentenceBoard = new SentenceBoard();
 
-    this.hintControls = new HintControls({
+    this.header = new Header({
       translation: gameService.settings.translation,
       pronunciation: gameService.settings.pronunciation,
       image: gameService.settings.image,
@@ -52,7 +52,7 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     this.gameActions = new GameActions();
 
     this.setupEvents();
-    this.append(this.hintControls, this.hintPanel, this.mainBlock, this.gameActions);
+    this.append(this.header, this.hintPanel, this.mainBlock, this.gameActions);
 
     this.init().catch((error: unknown) => {
       throw new Error(`Critical error during game initialization. Reason: ${String(error)}`);
@@ -62,6 +62,12 @@ class GamePage extends BaseComponent<HTMLDivElement> {
   private async init() {
     await gameService.loadCurrentLevel();
     this.startNewRound();
+  }
+
+  private handleSelectionChange(): void {
+    this.init().catch((error: unknown) => {
+      throw new Error(`Failed to restart the game with new level/round. Reason: ${String(error)}`);
+    });
   }
 
   private startNewRound(): void {
@@ -164,12 +170,16 @@ class GamePage extends BaseComponent<HTMLDivElement> {
 
   private setupEvents() {
     ALL_HINT_KINDS.forEach((kind) => {
-      this.hintControls.getToggleButton(kind).handleClick(() => {
+      this.header.hintControls.getToggleButton(kind).handleClick(() => {
         const isEnabled = gameService.toggleHint(kind);
-        this.hintControls.setToggleLabel(kind, isEnabled);
+        this.header.hintControls.setToggleLabel(kind, isEnabled);
 
         this.renderHintKindVisibility(kind);
       });
+    });
+
+    this.header.onSelectionChange(() => {
+      this.handleSelectionChange();
     });
 
     this.gameActions.continueButton.handleClick(() => {
