@@ -70,6 +70,11 @@ class GameService {
     return round.words.length;
   }
 
+  public isLastSentenceInRound(): boolean {
+    const round = this.getCurrentRound();
+    return this.gameState.sentenceIndex + 1 >= round.words.length;
+  }
+
   public nextStep() {
     if (!this.currentLevelData) {
       throw new Error('Level data is not loaded. Call loadCurrentLevel() first');

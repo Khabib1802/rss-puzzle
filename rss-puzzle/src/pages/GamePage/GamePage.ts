@@ -62,7 +62,17 @@ class GamePage extends BaseComponent<HTMLDivElement> {
 
   private startNewRound(): void {
     this.clearContainers();
+    this.renderNextSentence();
+  }
 
+  private advanceToNextSentence(): void {
+    // TODO(RSS-PZ-22): freeze the completed row instead of clearing it, so
+    // finished sentences stay stacked on the board for the rest of the round.
+    this.clearContainers();
+    this.renderNextSentence();
+  }
+
+  private renderNextSentence(): void {
     this.hintPanel.stopAudio();
     gameService.setChecked(false);
     this.correctSentence = gameService.getCurrentSentence();
@@ -257,12 +267,18 @@ class GamePage extends BaseComponent<HTMLDivElement> {
   }
 
   private handleNextStep() {
+    const isRoundEnd = gameService.isLastSentenceInRound();
     const hasNextStep = gameService.nextStep();
 
-    if (hasNextStep) {
+    if (!hasNextStep) {
+      window.location.hash = '/';
+      return;
+    }
+
+    if (isRoundEnd) {
       this.startNewRound();
     } else {
-      window.location.hash = '/';
+      this.advanceToNextSentence();
     }
   }
 
