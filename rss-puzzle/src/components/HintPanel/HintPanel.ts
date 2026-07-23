@@ -27,7 +27,7 @@ class HintPanel extends BaseComponent<HTMLDivElement> {
     this.toggleButtons = {
       translation: HintPanel.createToggleButton(HINT_KINDS.TRANSLATION, initialHintStates.translation),
       pronunciation: HintPanel.createToggleButton(HINT_KINDS.PRONUNCIATION, initialHintStates.pronunciation),
-      image: HintPanel.createToggleButton('image', initialHintStates.image),
+      image: HintPanel.createToggleButton(HINT_KINDS.IMAGE, initialHintStates.image),
     };
 
     this.hintContents = {
