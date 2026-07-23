@@ -94,6 +94,11 @@ $notch-depth: 3px;
   );
 }
 
+.hasImage {
+  color: #fff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
 .word:active {
   cursor: grabbing;
 }

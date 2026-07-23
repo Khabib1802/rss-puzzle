@@ -79,6 +79,14 @@ class WordPuzzle extends BaseComponent<HTMLDivElement> {
     this.element.classList.add(styles['incorrect']);
   }
 
+  public setImageSegment(imageUrl: string, backgroundSize: string, positionX: number, positionY: number): void {
+    this.wordElement.style.backgroundImage = `linear-gradient(rgba(34, 34, 34, 0.45), rgba(34, 34, 34, 0.45)), url('${imageUrl}')`;
+    this.wordElement.style.backgroundSize = `100% 100%, ${backgroundSize}`;
+    this.wordElement.style.backgroundPosition = `center, -${String(positionX)}px -${String(positionY)}px`;
+    this.wordElement.style.backgroundRepeat = 'no-repeat, no-repeat';
+    this.wordElement.classList.add(styles['hasImage']);
+  }
+
   public removeHighligh() {
     this.element.classList.remove(styles['correct'], styles['incorrect']);
     this.wordElement.classList.remove(styles['correct'], styles['incorrect']);
