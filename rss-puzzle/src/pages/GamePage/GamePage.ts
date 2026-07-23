@@ -11,6 +11,8 @@ import SentenceBoard from '../../components/SentenceBoard/SentenceBoard.ts';
 
 type ContainerId = 'source' | 'result';
 
+const CARD_HEIGHT = 44;
+
 class GamePage extends BaseComponent<HTMLDivElement> {
   private hintPanel: HintPanel;
 
@@ -65,9 +67,8 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     this.hintPanel.setAudioSource(gameService.getCurrentSentenceAudio());
 
     const words = splitIntoWords(this.correctSentence);
-    const shuffledWords = shuffleArray(words);
+    this.renderSourcePuzzles(words);
 
-    this.renderSourcePuzzles(shuffledWords);
     this.renderState();
   }
 
@@ -94,9 +95,37 @@ class GamePage extends BaseComponent<HTMLDivElement> {
   }
 
   private renderSourcePuzzles(words: string[]): void {
-    this.sourcePuzzles = words.map((word) => this.createWordPuzzle(word));
+    const shuffledIndexes = shuffleArray(words.map((_, index) => index));
+
+    const orderedPuzzles: WordPuzzle[] = [];
+    this.sourcePuzzles = shuffledIndexes.map((correctIndex) => {
+      const puzzle = this.createWordPuzzle(words[correctIndex]);
+      orderedPuzzles[correctIndex] = puzzle;
+      return puzzle;
+    });
+
+    orderedPuzzles[orderedPuzzles.length - 1].setSentenceEnd();
+
     this.sourcePuzzles.forEach((puzzle) => {
       this.sentenceBoard.sourceBlock.append(puzzle.element);
+    });
+
+    GamePage.applyImageSegments(orderedPuzzles);
+  }
+
+  private static applyImageSegments(orderedPuzzles: WordPuzzle[]): void {
+    const totalSentences = gameService.getSentenceCountInCurrentRound();
+    const imageUrl = gameService.getCurrentImageSource();
+
+    const widths = orderedPuzzles.map((puzzle) => puzzle.element.getBoundingClientRect().width);
+    const totalRowWidth = widths.reduce((sum, width) => sum + width, 0);
+    const backgroundSize = `${String(totalRowWidth)}px ${String(totalSentences * CARD_HEIGHT)}px`;
+    const positionY = gameService.gameState.sentenceIndex * CARD_HEIGHT;
+
+    let cumulativeX = 0;
+    orderedPuzzles.forEach((puzzle, index) => {
+      puzzle.setImageSegment(imageUrl, backgroundSize, cumulativeX, positionY);
+      cumulativeX += widths[index];
     });
   }
 
@@ -219,6 +248,8 @@ class GamePage extends BaseComponent<HTMLDivElement> {
       this.sentenceBoard.resultBlock.append(puzzle.element);
       puzzle.setCorrect();
     });
+
+    GamePage.applyImageSegments(this.resultPuzzles);
 
     gameService.setChecked(true);
     this.renderState();

@@ -11,6 +11,8 @@ $notch-depth: 3px;
   margin-right: 1px;
   margin-bottom: 1px;
 
+  --segment-overlay: #{rgba($c-dark, 0.45)};
+
   &:last-child {
     margin-right: 0;
   }
@@ -30,6 +32,28 @@ $notch-depth: 3px;
   transition: background-color 0.15s ease;
 }
 
+.wordWrapper.hasImage {
+  .word {
+    background-image: linear-gradient(var(--segment-overlay), var(--segment-overlay)), var(--segment-image);
+    background-size:
+      100% 100%,
+      var(--segment-size);
+    background-position: center, var(--segment-position);
+    background-repeat: no-repeat, no-repeat;
+    color: #fff;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+  }
+
+  &::after {
+    background-image: linear-gradient(var(--segment-overlay), var(--segment-overlay)), var(--segment-image);
+    background-size:
+      100% 100%,
+      var(--segment-size);
+    background-position: center, var(--segment-connector-position);
+    background-repeat: no-repeat, no-repeat;
+  }
+}
+
 .wordWrapper:hover {
   .word {
     background-color: $c-hover;
@@ -40,6 +64,8 @@ $notch-depth: 3px;
 }
 
 .wordWrapper.correct {
+  --segment-overlay: #{rgba($c-correct, 0.75)};
+
   .word {
     background-color: $c-correct;
     color: #fff;
@@ -50,6 +76,8 @@ $notch-depth: 3px;
 }
 
 .wordWrapper.incorrect {
+  --segment-overlay: #{rgba($c-incorrect, 0.75)};
+
   .word {
     background-color: $c-incorrect;
     color: #fff;
@@ -58,7 +86,6 @@ $notch-depth: 3px;
     background-color: $c-incorrect;
   }
 }
-
 .word {
   display: flex;
   justify-content: center;
