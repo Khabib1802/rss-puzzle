@@ -7,10 +7,16 @@ const DRAG_THRESHOLD = 4;
 
 const DEFAULT_CAN_DRAG = () => true;
 
+const TAB_RADIUS = 8;
+const TAB_OFFSET = 11;
+const CARD_HEIGHT = 44;
+
 class WordPuzzle extends BaseComponent<HTMLDivElement> {
   private readonly word: string;
 
   private readonly wordElement: HTMLDivElement;
+
+  private isSentenceEnd = false;
 
   private isDragging = false;
 
@@ -77,6 +83,22 @@ class WordPuzzle extends BaseComponent<HTMLDivElement> {
 
   public setIncorrect(): void {
     this.element.classList.add(styles['incorrect']);
+  }
+
+  public setImageSegment(imageUrl: string, backgroundSize: string, positionX: number, positionY: number): void {
+    const HALF_DIVISOR = 2;
+    const DIAMETER_MULTIPLIER = 2;
+
+    const wordWidth = this.wordElement.getBoundingClientRect().width;
+
+    const connectorX = positionX + wordWidth + (TAB_OFFSET - TAB_RADIUS * DIAMETER_MULTIPLIER);
+    const connectorY = positionY + (CARD_HEIGHT / HALF_DIVISOR - TAB_RADIUS);
+
+    this.element.style.setProperty('--segment-image', `url('${imageUrl}')`);
+    this.element.style.setProperty('--segment-size', backgroundSize);
+    this.element.style.setProperty('--segment-position', `-${String(positionX)}px -${String(positionY)}px`);
+    this.element.style.setProperty('--segment-connector-position', `-${String(connectorX)}px -${String(connectorY)}px`);
+    this.element.classList.add(styles['hasImage']);
   }
 
   public removeHighligh() {
@@ -190,9 +212,14 @@ class WordPuzzle extends BaseComponent<HTMLDivElement> {
     this.element.classList.remove(styles['placeholder']);
   }
 
+  public setSentenceEnd(): void {
+    this.isSentenceEnd = true;
+    this.element.classList.add(styles['noTab']);
+  }
+
   public setEdgeState(hideNotch: boolean, hideTab: boolean): void {
     this.wordElement.classList.toggle(styles['noNotch'], hideNotch);
-    this.element.classList.toggle(styles['noTab'], hideTab);
+    this.element.classList.toggle(styles['noTab'], hideTab || this.isSentenceEnd);
   }
 
   private handlePointerCancel = (event: PointerEvent): void => {

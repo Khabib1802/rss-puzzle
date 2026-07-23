@@ -67,6 +67,16 @@ class GameService {
     return `${DATA_BASE_URL}${round.words[sentenceIndex].audioExample}`;
   }
 
+  public getCurrentImageSource(): string {
+    const round = this.getCurrentRound();
+    return `${DATA_BASE_URL}images/${round.levelData.cutSrc}`;
+  }
+
+  public getSentenceCountInCurrentRound(): number {
+    const round = this.getCurrentRound();
+    return round.words.length;
+  }
+
   public nextStep() {
     if (!this.currentLevelData) {
       throw new Error('Level data is not loaded. Call loadCurrentLevel() first');
