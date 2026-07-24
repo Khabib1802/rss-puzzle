@@ -1,13 +1,13 @@
-import styles from './Header.module.scss';
+import gameService from '@/services/gameService.ts';
+import { removeUser } from '@/services/userService.ts';
+import type { HintKind } from '@/types/game.ts';
+import Button from '@/components/ui/Button/Button.ts';
+import Select, { type SelectOption } from '@/components/ui/Select/Select.ts';
+import BaseComponent from '@/components/BaseComponent';
+import { LEVELS_COUNT } from '@/constants';
+import HintControls from '../hints/HintControls/HintControls';
 
-import BaseComponent from '../../BaseComponent.ts';
-import Button from '../../ui/Button/Button.ts';
-import Select, { type SelectOption } from '../../ui/Select/Select.ts';
-import HintControls from '../hints/HintControls/HintControls.ts';
-import gameService from '../../../services/gameService.ts';
-import { removeUser } from '../../../services/userService.ts';
-import { LEVELS_COUNT } from '../../../constants.ts';
-import type { HintKind } from '../../../types/game.ts';
+import styles from './Header.module.scss';
 
 class Header extends BaseComponent<HTMLDivElement> {
   public readonly hintControls: HintControls;

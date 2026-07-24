@@ -1,5 +1,6 @@
+import BaseComponent from '@/components/BaseComponent';
+
 import styles from './TranslationHint.module.scss';
-import BaseComponent from '../../../BaseComponent.ts';
 
 class TranslationHint extends BaseComponent<HTMLDivElement> {
   private readonly translationText: HTMLDivElement;

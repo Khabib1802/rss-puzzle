@@ -1,16 +1,16 @@
-import styles from './GamePage.module.scss';
+import WordPuzzle from '@/components/game/WordPuzzle/WordPuzzle.ts';
+import BaseComponent from '@/components/BaseComponent.ts';
+import { checkUserWordOrder, isSentenceCorrect, shuffleArray, splitIntoWords } from '@/utils/sentenceUtils.ts';
+import gameService from '@/services/gameService.ts';
+import { findContainerAtPoint, getInsertionIndex, type Point } from '@/utils/dragAndDrop.ts';
+import GameActions from '@/components/game/GameActions/GameActions.ts';
+import HintPanel from '@/components/game/hints/HintPanel/HintPanel.ts';
+import Header from '@/components/game/Header/Header.ts';
+import SentenceBoard from '@/components/game/SentenceBoard/SentenceBoard.ts';
+import { HINT_KINDS } from '@/constants.ts';
+import type { HintKind } from '@/types/game.ts';
 
-import WordPuzzle from '../../components/game/WordPuzzle/WordPuzzle.ts';
-import BaseComponent from '../../components/BaseComponent.ts';
-import { checkUserWordOrder, isSentenceCorrect, shuffleArray, splitIntoWords } from '../../utils/sentenceUtils.ts';
-import gameService from '../../services/gameService.ts';
-import { findContainerAtPoint, getInsertionIndex, type Point } from '../../utils/dragAndDrop.ts';
-import GameActions from '../../components/game/GameActions/GameActions.ts';
-import HintPanel from '../../components/game/hints/HintPanel/HintPanel.ts';
-import Header from '../../components/game/Header/Header.ts';
-import SentenceBoard from '../../components/game/SentenceBoard/SentenceBoard.ts';
-import { HINT_KINDS } from '../../constants.ts';
-import type { HintKind } from '../../types/game.ts';
+import styles from './GamePage.module.scss';
 
 type ContainerId = 'source' | 'result';
 

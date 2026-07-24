@@ -1,7 +1,7 @@
-import Button from '../../components/ui/Button/Button.ts';
-import Input from '../../components/ui/Input/Input.ts';
-import BaseComponent from '../../components/BaseComponent.ts';
-import { saveUser } from '../../services/userService.ts';
+import Button from '@/components/ui/Button/Button.ts';
+import Input from '@/components/ui/Input/Input.ts';
+import BaseComponent from '@/components/BaseComponent.ts';
+import { saveUser } from '@/services/userService.ts';
 
 class EntryPage extends BaseComponent<HTMLDivElement> {
   private title: BaseComponent<HTMLHeadingElement>;

@@ -1,9 +1,10 @@
-import styles from './HintPanel.module.scss';
+import type { ContentHintKind } from '@/types/game.ts';
+import BaseComponent from '@/components/BaseComponent';
 
-import BaseComponent from '../../../BaseComponent.ts';
-import TranslationHint from '../TranslationHint/TranslationHint.ts';
-import PronunciationHint from '../PronunciationHint/PronunciationHint.ts';
-import type { ContentHintKind } from '../../../../types/game.ts';
+import TranslationHint from '../TranslationHint/TranslationHint';
+import PronunciationHint from '../PronunciationHint/PronunciationHint';
+
+import styles from './HintPanel.module.scss';
 
 class HintPanel extends BaseComponent<HTMLDivElement> {
   private readonly hintContents: {

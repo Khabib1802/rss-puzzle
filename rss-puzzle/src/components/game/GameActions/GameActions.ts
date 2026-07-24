@@ -1,7 +1,7 @@
-import styles from './GameActions.module.scss';
+import Button from '@/components/ui/Button/Button.ts';
+import BaseComponent from '@/components/BaseComponent';
 
-import BaseComponent from '../../BaseComponent.ts';
-import Button from '../../ui/Button/Button.ts';
+import styles from './GameActions.module.scss';
 
 interface GameActionsVisibilityState {
   check: boolean;

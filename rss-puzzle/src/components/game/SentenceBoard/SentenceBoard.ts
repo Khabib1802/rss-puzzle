@@ -1,6 +1,6 @@
-import styles from './SentenceBoard.module.scss';
+import BaseComponent from '@/components/BaseComponent';
 
-import BaseComponent from '../../BaseComponent.ts';
+import styles from './SentenceBoard.module.scss';
 
 type ContainerId = 'source' | 'result';
 

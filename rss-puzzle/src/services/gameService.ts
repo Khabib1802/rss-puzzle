@@ -1,7 +1,7 @@
-import fetchLevelData from '../api/gameApi';
-import { DATA_BASE_URL, HINT_KINDS, LEVELS_COUNT } from '../constants';
+import fetchLevelData from '@/api/gameApi';
+import type { GameState, HintKind, HintSettings, Level, Round } from '@/types/game';
+import { DATA_BASE_URL, HINT_KINDS, LEVELS_COUNT } from '@/constants';
 
-import type { GameState, HintKind, HintSettings, Level, Round } from '../types/game';
 import { getItem, removeItem, setItem } from './localStorageService';
 
 const HINT_SETTINGS_KEY = 'hintSettings';

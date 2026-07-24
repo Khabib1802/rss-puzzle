@@ -1,6 +1,3 @@
-import styles from './Input.module.scss';
-
-import BaseComponent from '../../BaseComponent.ts';
 import {
   type Validator,
   runValidators,
@@ -8,7 +5,10 @@ import {
   allowedSymbols,
   firstUppercase,
   minLength,
-} from '../../../utils/validation.ts';
+} from '@/utils/validation.ts';
+import BaseComponent from '@/components/BaseComponent';
+
+import styles from './Input.module.scss';
 
 interface InputOptions {
   label: string;

@@ -1,7 +1,7 @@
-import styles from './WordPuzzle.module.scss';
+import type { Point } from '@/utils/dragAndDrop.ts';
+import BaseComponent from '@/components/BaseComponent';
 
-import BaseComponent from '../../BaseComponent.ts';
-import type { Point } from '../../../utils/dragAndDrop.ts';
+import styles from './WordPuzzle.module.scss';
 
 const DRAG_THRESHOLD = 4;
 

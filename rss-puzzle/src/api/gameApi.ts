@@ -1,5 +1,5 @@
-import { DATA_BASE_URL } from '../constants';
-import type { Level } from '../types/game';
+import type { Level } from '@/types/game';
+import { DATA_BASE_URL } from '@/constants';
 
 function fetchLevelData(levelNumber: number): Promise<Level> {
   const url = `${DATA_BASE_URL}levelData/wordCollectionLevel${String(levelNumber)}.json`;

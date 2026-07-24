@@ -1,7 +1,7 @@
-import styles from './PronunciationHint.module.scss';
+import Button from '@/components/ui/Button/Button';
+import BaseComponent from '@/components/BaseComponent';
 
-import BaseComponent from '../../../BaseComponent';
-import Button from '../../../ui/Button/Button';
+import styles from './PronunciationHint.module.scss';
 
 const SPEAKER_ICON_MARKUP = `
   <svg class="${styles['speakerIcon']}" viewBox="5 5 12 15">

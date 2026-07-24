@@ -1,10 +1,9 @@
+import Button from '@/components/ui/Button/Button.ts';
+import BaseComponent from '@/components/BaseComponent.ts';
+import { getUser, hasUser, removeUser } from '@/services/userService.ts';
+import gameService from '@/services/gameService.ts';
+
 import styles from './StartPage.module.scss';
-
-import Button from '../../components/ui/Button/Button.ts';
-
-import BaseComponent from '../../components/BaseComponent.ts';
-import { getUser, hasUser, removeUser } from '../../services/userService.ts';
-import gameService from '../../services/gameService.ts';
 
 class StartPage extends BaseComponent<HTMLDivElement> {
   private title: BaseComponent<HTMLHeadingElement>;
