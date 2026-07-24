@@ -1,4 +1,4 @@
-@import '../../styles/variables.scss';
+@use '@styles/variables.scss' as *;
 
 $tab-radius: 8px;
 $tab-offset: 11px;
@@ -8,7 +8,6 @@ $notch-depth: 3px;
   position: relative;
   display: inline-flex;
   cursor: grab;
-  margin-bottom: 1px;
 
   --segment-overlay: #{rgba($c-dark, 0.45)};
 }

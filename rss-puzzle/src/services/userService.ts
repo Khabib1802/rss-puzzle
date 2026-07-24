@@ -1,5 +1,5 @@
+import type { User } from '@/types/user.ts';
 import { getItem, setItem, removeItem } from './localStorageService.ts';
-import type { User } from '../types/user.ts';
 
 const USER_KEY = 'user';
 

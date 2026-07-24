@@ -1,4 +1,4 @@
-import type { HINT_KINDS } from '../constants';
+import type { HINT_KINDS } from '@/constants';
 
 interface WordData {
   audioExample: string;

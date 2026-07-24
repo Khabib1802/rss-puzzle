@@ -1,4 +1,4 @@
-@import '../../styles/variables.scss';
+@use '@styles/variables.scss' as *;
 
 .hint {
   display: flex;
@@ -8,7 +8,7 @@
   transition: opacity 0.3s ease;
 
   &.hidden {
-    display: none;
+    visibility: hidden;
   }
 }
 

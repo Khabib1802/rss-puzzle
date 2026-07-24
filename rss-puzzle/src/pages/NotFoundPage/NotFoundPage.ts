@@ -1,5 +1,5 @@
-import BaseComponent from '../../components/BaseComponent';
-import Button from '../../components/Button/Button';
+import BaseComponent from '@/components/BaseComponent';
+import Button from '@/components/ui/Button/Button';
 
 class NotFoundPage extends BaseComponent<HTMLDivElement> {
   private title: BaseComponent<HTMLHeadingElement>;

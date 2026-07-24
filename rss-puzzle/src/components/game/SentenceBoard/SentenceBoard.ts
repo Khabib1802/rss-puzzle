@@ -1,6 +1,5 @@
+import BaseComponent from '@/components/BaseComponent';
 import styles from './SentenceBoard.module.scss';
-
-import BaseComponent from '../BaseComponent.ts';
 
 type ContainerId = 'source' | 'result';
 
@@ -12,11 +11,11 @@ class SentenceBoard extends BaseComponent<HTMLDivElement> {
   private readonly pictureArea: BaseComponent<HTMLDivElement>;
 
   constructor() {
-    super('div', [styles['board']]);
+    super('div', [styles.board]);
 
-    this.pictureArea = new BaseComponent('div', [styles['pictureArea']]);
-    this.resultBlock = new BaseComponent('div', [styles['result']]);
-    this.sourceBlock = new BaseComponent('div', [styles['source']]);
+    this.pictureArea = new BaseComponent('div', [styles.pictureArea]);
+    this.resultBlock = new BaseComponent('div', [styles.result]);
+    this.sourceBlock = new BaseComponent('div', [styles.source]);
 
     this.pictureArea.append(this.resultBlock);
     this.append(this.pictureArea, this.sourceBlock);
@@ -41,7 +40,7 @@ class SentenceBoard extends BaseComponent<HTMLDivElement> {
     if (this.resultBlock.element.children.length === 0) return;
 
     const row = document.createElement('div');
-    row.classList.add(styles['historyRow']);
+    row.classList.add(styles.historyRow);
     row.append(...Array.from(this.resultBlock.element.children));
     this.pictureArea.element.insertBefore(row, this.resultBlock.element);
   }
@@ -59,8 +58,8 @@ class SentenceBoard extends BaseComponent<HTMLDivElement> {
   }
 
   public setDropTarget(id: ContainerId | null): void {
-    this.sourceBlock.element.classList.toggle(styles['dropTarget'], id === 'source');
-    this.resultBlock.element.classList.toggle(styles['dropTarget'], id === 'result');
+    this.sourceBlock.element.classList.toggle(styles.dropTarget, id === 'source');
+    this.resultBlock.element.classList.toggle(styles.dropTarget, id === 'result');
   }
 
   public getContainers(): { id: ContainerId; rect: DOMRect }[] {

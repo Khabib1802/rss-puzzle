@@ -1,5 +1,5 @@
-@import 'normalize-scss/fork-version/normalize';
-@import './variables.scss';
+@use 'normalize-scss/fork-version/normalize';
+@use '@styles/variables.scss' as *;
 
 *,
 *::before,

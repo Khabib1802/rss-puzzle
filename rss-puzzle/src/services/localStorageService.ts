@@ -1,5 +1,5 @@
-import type { HintSettings } from '../types/game.ts';
-import type { User } from '../types/user.ts';
+import type { HintSettings } from '@/types/game.ts';
+import type { User } from '@/types/user.ts';
 
 interface StorageSchema {
   user: User;

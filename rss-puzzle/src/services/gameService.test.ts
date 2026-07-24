@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
+import type { Level } from '@/types/game.ts';
 import gameService from './gameService.ts';
-import type { Level } from '../types/game.ts';
 
 function makeLevel(roundsCount: number, sentencesPerRound: number): Level {
   return {
@@ -73,7 +73,6 @@ describe('gameService.isLastSentenceInRound', () => {
   beforeEach(() => {
     const DEFAULT_ROUNDS_COUNT = 2;
     const DEFAULT_SENTENCES_COUNT = 2;
-
     gameService.gameState = { level: 1, roundIndex: 0, sentenceIndex: 0, isChecked: false };
     gameService.currentLevelData = makeLevel(DEFAULT_ROUNDS_COUNT, DEFAULT_SENTENCES_COUNT);
   });
@@ -84,13 +83,54 @@ describe('gameService.isLastSentenceInRound', () => {
 
   it('returns true on the last sentence of the round', () => {
     gameService.gameState.sentenceIndex = 1;
-
     expect(gameService.isLastSentenceInRound()).toBe(true);
   });
 
   it('does not mutate gameState', () => {
     gameService.isLastSentenceInRound();
-
     expect(gameService.gameState).toMatchObject({ roundIndex: 0, sentenceIndex: 0 });
+  });
+});
+
+describe('gameService.setLevel / setRound', () => {
+  const INITIAL_LEVEL = 3;
+  const INITIAL_ROUND = 2;
+  const INITIAL_SENTENCE = 1;
+
+  const RESET_INDEX = 0;
+
+  beforeEach(() => {
+    gameService.gameState = {
+      level: INITIAL_LEVEL,
+      roundIndex: INITIAL_ROUND,
+      sentenceIndex: INITIAL_SENTENCE,
+      isChecked: true,
+    };
+  });
+
+  it('sets the level and resets round, sentence and checked state', () => {
+    const NEW_LEVEL = 5;
+
+    gameService.setLevel(NEW_LEVEL);
+
+    expect(gameService.gameState).toEqual({
+      level: NEW_LEVEL,
+      roundIndex: RESET_INDEX,
+      sentenceIndex: RESET_INDEX,
+      isChecked: false,
+    });
+  });
+
+  it('sets the round and resets sentence and checked state, keeping the level', () => {
+    const NEW_ROUND = 4;
+
+    gameService.setRound(NEW_ROUND);
+
+    expect(gameService.gameState).toEqual({
+      level: INITIAL_LEVEL,
+      roundIndex: NEW_ROUND,
+      sentenceIndex: RESET_INDEX,
+      isChecked: false,
+    });
   });
 });
