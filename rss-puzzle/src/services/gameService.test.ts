@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
+import type { Level } from '@/types/game.ts';
 import gameService from './gameService.ts';
-import type { Level } from '../types/game.ts';
 
 function makeLevel(roundsCount: number, sentencesPerRound: number): Level {
   return {

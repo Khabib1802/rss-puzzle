@@ -1,6 +1,4 @@
-import styles from './Select.module.scss';
-
-import BaseComponent from '../BaseComponent.ts';
+import BaseComponent from '@/components/BaseComponent';
 
 export interface SelectOption {
   value: string;
@@ -9,7 +7,7 @@ export interface SelectOption {
 
 class Select extends BaseComponent<HTMLSelectElement> {
   constructor(options: SelectOption[] = [], additionalClasses: string[] = []) {
-    super('select', [styles['select'], ...additionalClasses]);
+    super('select', [...additionalClasses]);
 
     this.setOptions(options);
   }

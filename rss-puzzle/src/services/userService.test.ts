@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
+import type { User } from '@/types/user.ts';
 import { saveUser, getUser, hasUser, removeUser } from './userService.ts';
-import type { User } from '../types/user.ts';
 
 describe('userService', () => {
   const testUser: User = { firstName: 'John', surname: 'Doe' };

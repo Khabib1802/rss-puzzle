@@ -1,10 +1,9 @@
+import Button from '@/components/ui/Button/Button.ts';
+import BaseComponent from '@/components/BaseComponent.ts';
+import { getUser, hasUser, removeUser } from '@/services/userService.ts';
+import gameService from '@/services/gameService.ts';
+
 import styles from './StartPage.module.scss';
-
-import Button from '../../components/Button/Button.ts';
-
-import BaseComponent from '../../components/BaseComponent.ts';
-import { getUser, hasUser, removeUser } from '../../services/userService.ts';
-import gameService from '../../services/gameService.ts';
 
 class StartPage extends BaseComponent<HTMLDivElement> {
   private title: BaseComponent<HTMLHeadingElement>;
@@ -33,7 +32,7 @@ class StartPage extends BaseComponent<HTMLDivElement> {
       '“Start an engaging journey of learning English through interactive puzzles inspired by famous artworks”';
 
     this.buttonWrapper = new BaseComponent('div');
-    this.logoutButton = new Button('Logout', [styles['logout']]);
+    this.logoutButton = new Button('Logout', [styles.logout]);
     this.startButton = new Button('Start', ['start']);
     this.buttonWrapper.append(this.logoutButton.element, this.startButton.element);
 

@@ -1,4 +1,4 @@
-import type { Page } from '../types/pages';
+import type { Page } from '@/types/pages';
 
 export type Routes = Record<string, (() => Page) | undefined>;
 class Router {

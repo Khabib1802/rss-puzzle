@@ -1,14 +1,15 @@
+import BaseComponent from '@/components/BaseComponent';
+
 import styles from './TranslationHint.module.scss';
-import BaseComponent from '../BaseComponent.ts';
 
 class TranslationHint extends BaseComponent<HTMLDivElement> {
   private readonly translationText: HTMLDivElement;
 
   constructor(translation: string) {
-    super('div', [styles['hint']]);
+    super('div', [styles.hint]);
 
     this.translationText = document.createElement('div');
-    this.translationText.classList.add(styles['text']);
+    this.translationText.classList.add(styles.text);
     this.translationText.textContent = translation;
 
     this.element.append(this.translationText);
@@ -19,7 +20,7 @@ class TranslationHint extends BaseComponent<HTMLDivElement> {
   }
 
   public setVisible(show: boolean): void {
-    this.element.classList.toggle(styles['hidden'], !show);
+    this.element.classList.toggle(styles.hidden, !show);
   }
 }
 

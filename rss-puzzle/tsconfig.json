@@ -30,7 +30,14 @@
     "noUncheckedSideEffectImports": true,
     "useUnknownInCatchVariables": true,
     "allowUnusedLabels": false,
-    "allowUnreachableCode": false
+    "allowUnreachableCode": false,
+    "allowArbitraryExtensions": true,
+
+    "baseUrl": ".",
+    "paths": {
+      "@styles/*": ["src/styles/*"],
+      "@/*": ["src/*"]
+    }
   },
   "include": ["src", "vite.config.js"]
 }
