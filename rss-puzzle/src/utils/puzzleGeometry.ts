@@ -3,6 +3,7 @@ const MIN_READABLE_WORD_WIDTH = 70;
 interface RoundGeometryInput {
   sentenceWordWidths: number[][];
   referenceWidth: number;
+  maxAllowedWidth: number;
   imageAspectRatio: number;
   sentenceCount: number;
 }
@@ -22,6 +23,7 @@ function getRequiredBoardWidth(words: number[], naturalRowWidth: number): number
 function computeRoundGeometry({
   sentenceWordWidths,
   referenceWidth,
+  maxAllowedWidth,
   imageAspectRatio,
   sentenceCount,
 }: RoundGeometryInput): RoundGeometry {
@@ -31,7 +33,8 @@ function computeRoundGeometry({
     getRequiredBoardWidth(words, naturalRowWidths[index])
   );
 
-  const boardWidth = Math.max(referenceWidth, ...requiredWidths);
+  const readabilityCeiling = Math.max(maxAllowedWidth, referenceWidth);
+  const boardWidth = Math.min(Math.max(referenceWidth, ...requiredWidths), readabilityCeiling);
   const rowHeight = (boardWidth * imageAspectRatio) / sentenceCount;
   const backgroundSize = `${String(boardWidth)}px ${String(boardWidth * imageAspectRatio)}px`;
 

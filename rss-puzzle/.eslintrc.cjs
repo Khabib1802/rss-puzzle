@@ -78,6 +78,7 @@ module.exports = {
       files: ['*.test.ts', '*.spec.ts', '**/__tests__/**/*.ts'],
       rules: {
         'no-magic-numbers': 'off',
+        'max-lines-per-function': 'off',
       },
     },
   ],

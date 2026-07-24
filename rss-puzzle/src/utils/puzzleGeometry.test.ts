@@ -15,6 +15,7 @@ const createTestArgs = (overrides?: Partial<GeometryInput>): GeometryInput => ({
     [DEFAULT_NARROW_WORD_WIDTH, DEFAULT_NARROW_WORD_WIDTH, DEFAULT_NARROW_WORD_WIDTH],
   ],
   referenceWidth: DEFAULT_REFERENCE_WIDTH,
+  maxAllowedWidth: DEFAULT_REFERENCE_WIDTH,
   imageAspectRatio: DEFAULT_ASPECT_RATIO,
   sentenceCount: DEFAULT_SENTENCE_COUNT,
   ...overrides,
@@ -43,6 +44,7 @@ describe('computeRoundGeometry', () => {
       createTestArgs({
         sentenceWordWidths: [[600, 20]],
         referenceWidth: 400,
+        maxAllowedWidth: 3000,
         sentenceCount: 1,
       })
     );
@@ -50,6 +52,21 @@ describe('computeRoundGeometry', () => {
     expect(geometry.boardWidth).toBeGreaterThan(400);
     const scaledSmallestWord = Math.min(...geometry.cardWidthsBySentence[0]);
     expect(scaledSmallestWord).toBeCloseTo(MIN_READABLE_WORD_WIDTH);
+  });
+
+  it('never widens the board past maxAllowedWidth, even if a word stays below the readable minimum', () => {
+    const geometry = computeRoundGeometry(
+      createTestArgs({
+        sentenceWordWidths: [[600, 20]],
+        referenceWidth: 400,
+        maxAllowedWidth: 500,
+        sentenceCount: 1,
+      })
+    );
+
+    expect(geometry.boardWidth).toBe(500);
+    const scaledSmallestWord = Math.min(...geometry.cardWidthsBySentence[0]);
+    expect(scaledSmallestWord).toBeLessThan(MIN_READABLE_WORD_WIDTH);
   });
 
   it('keeps proportions between words within the same sentence', () => {

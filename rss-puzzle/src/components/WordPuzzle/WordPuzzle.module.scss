@@ -8,14 +8,9 @@ $notch-depth: 3px;
   position: relative;
   display: inline-flex;
   cursor: grab;
-  margin-right: 1px;
   margin-bottom: 1px;
 
   --segment-overlay: #{rgba($c-dark, 0.45)};
-
-  &:last-child {
-    margin-right: 0;
-  }
 }
 
 .wordWrapper::after {
@@ -119,16 +114,8 @@ $notch-depth: 3px;
     filter 0.1s ease,
     transform 0.1s ease;
 
-  -webkit-mask-image: radial-gradient(
-    ellipse $tab-radius calc($tab-radius * 1.1) at $notch-depth 50%,
-    transparent 99%,
-    #000 100%
-  );
-  mask-image: radial-gradient(
-    ellipse $tab-radius calc($tab-radius * 1.1) at $notch-depth 50%,
-    transparent 99%,
-    #000 100%
-  );
+  -webkit-mask-image: radial-gradient(circle $tab-radius at $notch-depth 50%, transparent 99%, #000 100%);
+  mask-image: radial-gradient(circle $tab-radius at $notch-depth 50%, transparent 99%, #000 100%);
 }
 
 .hasImage {

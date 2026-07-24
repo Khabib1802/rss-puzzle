@@ -65,6 +65,7 @@ class GamePage extends BaseComponent<HTMLDivElement> {
   private async startNewRound(): Promise<void> {
     this.sentenceBoard.clearPicture();
     this.roundGeometry = await this.computeGeometryForCurrentRound();
+    this.sentenceBoard.setBoardWidth(this.roundGeometry.boardWidth);
     const pictureHeight = this.roundGeometry.rowHeight * gameService.getSentenceCountInCurrentRound();
     this.sentenceBoard.reservePictureHeight(pictureHeight);
     this.clearContainers();
@@ -142,11 +143,13 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     const sentences = gameService.getSentencesInCurrentRound().map((sentence) => splitIntoWords(sentence));
     const sentenceWordWidths = GamePage.measureWordWidths(sentences);
     const referenceWidth = this.sentenceBoard.getReferenceWidth();
+    const maxAllowedWidth = this.sentenceBoard.getMaxAllowedWidth();
     const { width: imageWidth, height: imageHeight } = await gameService.getCurrentImageDimensions();
 
     return computeRoundGeometry({
       sentenceWordWidths,
       referenceWidth,
+      maxAllowedWidth,
       imageAspectRatio: imageHeight / imageWidth,
       sentenceCount: sentences.length,
     });

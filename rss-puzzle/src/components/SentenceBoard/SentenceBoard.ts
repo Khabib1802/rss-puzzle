@@ -30,6 +30,7 @@ class SentenceBoard extends BaseComponent<HTMLDivElement> {
   public clearPicture(): void {
     this.pictureArea.element.replaceChildren(this.resultBlock.element);
     this.pictureArea.element.style.minHeight = '';
+    this.element.style.removeProperty('--board-width');
   }
 
   public reservePictureHeight(px: number): void {
@@ -47,6 +48,14 @@ class SentenceBoard extends BaseComponent<HTMLDivElement> {
 
   public getReferenceWidth(): number {
     return this.resultBlock.element.getBoundingClientRect().width;
+  }
+
+  public getMaxAllowedWidth(): number {
+    return this.element.getBoundingClientRect().width;
+  }
+
+  public setBoardWidth(px: number): void {
+    this.element.style.setProperty('--board-width', `${String(px)}px`);
   }
 
   public setDropTarget(id: ContainerId | null): void {

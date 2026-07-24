@@ -17,8 +17,8 @@
 .historyRow {
   display: flex;
   flex-wrap: nowrap;
-  width: 100%;
-  max-width: 800px;
+  width: var(--board-width, 100%);
+  max-width: 100%;
   margin: 0 auto;
 }
 
@@ -27,8 +27,8 @@
   display: flex;
   flex-wrap: wrap;
   align-content: start;
-  width: 100%;
-  max-width: 800px;
+  width: var(--board-width, 100%);
+  max-width: 100%;
   margin: 0 auto;
   margin-bottom: 10px;
   border-radius: 10px;
