@@ -110,8 +110,6 @@ $notch-depth: 3px;
   color: $c-text;
   text-align: center;
   width: calc(var(--word-length) * 1.2ch + 32px);
-  min-width: 70px;
-  max-width: 220px;
   font-size: clamp(12px, calc(18px - (var(--word-length) * 0.4px)), 16px);
   line-height: 16px;
   word-break: normal;

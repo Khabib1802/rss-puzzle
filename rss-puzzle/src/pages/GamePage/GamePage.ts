@@ -15,8 +15,6 @@ import type { HintKind } from '../../types/game.ts';
 
 type ContainerId = 'source' | 'result';
 
-const CARD_HEIGHT = 44;
-
 const ALL_HINT_KINDS = Object.values(HINT_KINDS);
 
 class GamePage extends BaseComponent<HTMLDivElement> {
@@ -137,7 +135,7 @@ class GamePage extends BaseComponent<HTMLDivElement> {
       this.sentenceBoard.sourceBlock.append(puzzle.element);
     });
 
-    GamePage.applyImageSegments(orderedPuzzles);
+    this.applyImageSegments(orderedPuzzles);
   }
 
   private async computeGeometryForCurrentRound(): Promise<RoundGeometry> {
@@ -173,19 +171,24 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     return widths;
   }
 
-  private static applyImageSegments(orderedPuzzles: WordPuzzle[]): void {
-    const totalSentences = gameService.getSentenceCountInCurrentRound();
-    const imageUrl = gameService.getCurrentImageSource();
+  private applyImageSegments(orderedPuzzles: WordPuzzle[]): void {
+    if (!this.roundGeometry) {
+      throw new Error('Round geometry is not computed yet');
+    }
 
-    const widths = orderedPuzzles.map((puzzle) => puzzle.element.getBoundingClientRect().width);
-    const totalRowWidth = widths.reduce((sum, width) => sum + width, 0);
-    const backgroundSize = `${String(totalRowWidth)}px ${String(totalSentences * CARD_HEIGHT)}px`;
-    const positionY = gameService.gameState.sentenceIndex * CARD_HEIGHT;
+    const { rowHeight, backgroundSize, cardWidthsBySentence } = this.roundGeometry;
+    const { sentenceIndex } = gameService.gameState;
+
+    const imageUrl = gameService.getCurrentImageSource();
+    const cardWidths = cardWidthsBySentence[sentenceIndex];
+    const positionY = sentenceIndex * rowHeight;
 
     let cumulativeX = 0;
     orderedPuzzles.forEach((puzzle, index) => {
-      puzzle.setImageSegment(imageUrl, backgroundSize, cumulativeX, positionY);
-      cumulativeX += widths[index];
+      const width = cardWidths[index];
+      puzzle.setDimensions(width, rowHeight);
+      puzzle.setImageSegment(imageUrl, backgroundSize, cumulativeX, positionY, width, rowHeight);
+      cumulativeX += width;
     });
   }
 
@@ -304,7 +307,7 @@ class GamePage extends BaseComponent<HTMLDivElement> {
       puzzle.setCorrect();
     });
 
-    GamePage.applyImageSegments(this.resultPuzzles);
+    this.applyImageSegments(this.resultPuzzles);
 
     gameService.setChecked(true);
     this.renderState();
