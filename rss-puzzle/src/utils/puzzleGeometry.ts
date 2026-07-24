@@ -15,18 +15,18 @@ interface RoundGeometry {
   cardWidthsBySentence: number[][];
 }
 
-function getRequiredBoardWidth(words: number[], naturalRowWidth: number): number {
+const getRequiredBoardWidth = (words: number[], naturalRowWidth: number): number => {
   const smallestWord = Math.min(...words);
   return (MIN_READABLE_WORD_WIDTH * naturalRowWidth) / smallestWord;
-}
+};
 
-function computeRoundGeometry({
+const calculateRoundGeometry = ({
   sentenceWordWidths,
   referenceWidth,
   maxAllowedWidth,
   imageAspectRatio,
   sentenceCount,
-}: RoundGeometryInput): RoundGeometry {
+}: RoundGeometryInput): RoundGeometry => {
   const naturalRowWidths = sentenceWordWidths.map((words) => words.reduce((sum, width) => sum + width, 0));
 
   const requiredWidths = sentenceWordWidths.map((words, index) =>
@@ -44,7 +44,7 @@ function computeRoundGeometry({
   });
 
   return { boardWidth, rowHeight, backgroundSize, cardWidthsBySentence };
-}
+};
 
-export { computeRoundGeometry, MIN_READABLE_WORD_WIDTH };
+export { calculateRoundGeometry, MIN_READABLE_WORD_WIDTH };
 export type { RoundGeometry, RoundGeometryInput };

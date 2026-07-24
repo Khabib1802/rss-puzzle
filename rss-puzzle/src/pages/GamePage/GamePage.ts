@@ -9,10 +9,10 @@ import Header from '@/components/game/Header/Header.ts';
 import SentenceBoard from '@/components/game/SentenceBoard/SentenceBoard.ts';
 import { HINT_KINDS } from '@/constants.ts';
 import type { HintKind } from '@/types/game.ts';
-import { computeRoundGeometry } from '@/utils/puzzleGeometry.ts';
 import type { RoundGeometry } from '@/utils/puzzleGeometry.ts';
-
 import statisticsService from '@/services/statisticsService';
+import computeRoundGeometry from '@/services/puzzleGeometryMeasurer.ts';
+
 import styles from './GamePage.module.scss';
 
 type ContainerId = 'source' | 'result';
@@ -153,37 +153,11 @@ class GamePage extends BaseComponent<HTMLDivElement> {
 
   private async computeGeometryForCurrentRound(): Promise<RoundGeometry> {
     const sentences = gameService.getSentencesInCurrentRound().map((sentence) => splitIntoWords(sentence));
-    const sentenceWordWidths = GamePage.measureWordWidths(sentences);
     const referenceWidth = this.sentenceBoard.getReferenceWidth();
     const maxAllowedWidth = this.sentenceBoard.getMaxAllowedWidth();
     const { width: imageWidth, height: imageHeight } = await gameService.getCurrentImageDimensions();
 
-    return computeRoundGeometry({
-      sentenceWordWidths,
-      referenceWidth,
-      maxAllowedWidth,
-      imageAspectRatio: imageHeight / imageWidth,
-      sentenceCount: sentences.length,
-    });
-  }
-
-  private static measureWordWidths(sentences: string[][]): number[][] {
-    const measureContainer = document.createElement('div');
-    measureContainer.style.position = 'absolute';
-    measureContainer.style.visibility = 'hidden';
-    measureContainer.style.pointerEvents = 'none';
-    document.body.append(measureContainer);
-
-    const widths = sentences.map((words) =>
-      words.map((word) => {
-        const puzzle = new WordPuzzle(word);
-        measureContainer.append(puzzle.element);
-        return puzzle.element.getBoundingClientRect().width;
-      })
-    );
-
-    measureContainer.remove();
-    return widths;
+    return computeRoundGeometry(sentences, referenceWidth, maxAllowedWidth, imageHeight / imageWidth);
   }
 
   private applyImageSegments(orderedPuzzles: WordPuzzle[]): void {
