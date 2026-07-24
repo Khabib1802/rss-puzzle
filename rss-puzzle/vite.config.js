@@ -1,8 +1,18 @@
 import { defineConfig } from 'vite';
 import path from 'path';
+import sassDts from 'vite-plugin-sass-dts';
 
 export default defineConfig({
   base: '/rss-puzzle/',
+
+  plugins: [
+    sassDts({
+      global: {
+        generateScopedName: '[name]__[local]___[hash:base64:5]',
+      },
+    }),
+  ],
+
   resolve: {
     alias: {
       '@styles': path.resolve(__dirname, './src/styles'),
