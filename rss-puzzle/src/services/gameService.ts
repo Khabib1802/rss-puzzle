@@ -98,6 +98,11 @@ class GameService {
     return `${DATA_BASE_URL}images/${round.levelData.cutSrc}`;
   }
 
+  public getCurrentImageInfo(): { name: string; author: string; year: string } {
+    const { name, author, year } = this.getCurrentRound().levelData;
+    return { name, author, year };
+  }
+
   public getSentenceCountInCurrentRound(): number {
     const round = this.getCurrentRound();
     return round.words.length;

@@ -125,6 +125,10 @@ class WordPuzzle extends BaseComponent<HTMLDivElement> {
     this.element.classList.toggle(styles.hasImage, show);
   }
 
+  public reveal(): void {
+    this.element.classList.add(styles.revealed);
+  }
+
   public removeHighligh() {
     this.element.classList.remove(styles.correct, styles.incorrect);
     this.wordElement.classList.remove(styles.correct, styles.incorrect);

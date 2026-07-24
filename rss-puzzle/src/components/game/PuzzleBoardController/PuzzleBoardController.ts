@@ -18,6 +18,8 @@ class PuzzleBoardController {
 
   private roundGeometry: RoundGeometry | null = null;
 
+  private roundPuzzles: WordPuzzle[] = [];
+
   constructor(sentenceBoard: SentenceBoard, onBoardChange: () => void) {
     this.sentenceBoard = sentenceBoard;
     this.onBoardChange = onBoardChange;
@@ -106,6 +108,16 @@ class PuzzleBoardController {
     });
   }
 
+  public resetRound(): void {
+    this.roundPuzzles = [];
+  }
+
+  public revealRoundImage(): void {
+    this.roundPuzzles.forEach((puzzle) => {
+      puzzle.reveal();
+    });
+  }
+
   private applyImageSegments(orderedPuzzles: WordPuzzle[]): void {
     if (!this.roundGeometry) {
       throw new Error('Round geometry is not computed yet');
@@ -129,6 +141,7 @@ class PuzzleBoardController {
 
   private createWordPuzzle(word: string): WordPuzzle {
     const puzzle = new WordPuzzle(word);
+    this.roundPuzzles.push(puzzle);
 
     puzzle.handleClick(() => {
       if (gameService.gameState.isChecked) return;

@@ -111,7 +111,8 @@ $notch-depth: 3px;
   transition:
     background-color 0.15s ease,
     filter 0.1s ease,
-    transform 0.1s ease;
+    transform 0.1s ease,
+    color 0.4s ease;
 
   -webkit-mask-image: radial-gradient(circle $tab-radius at $notch-depth 50%, transparent 99%, #000 100%);
   mask-image: radial-gradient(circle $tab-radius at $notch-depth 50%, transparent 99%, #000 100%);
@@ -144,4 +145,20 @@ $notch-depth: 3px;
 .noNotch {
   -webkit-mask-image: none;
   mask-image: none;
+}
+
+.wordWrapper.revealed {
+  &::after {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+  }
+
+  .word {
+    color: transparent;
+    text-shadow: none;
+    -webkit-mask-image: none;
+    mask-image: none;
+    --segment-overlay: transparent;
+  }
 }
