@@ -13,7 +13,7 @@ class HintPanel extends BaseComponent<HTMLDivElement> {
   };
 
   constructor() {
-    super('div', [styles['panel']]);
+    super('div', [styles.panel]);
 
     this.hintContents = {
       translation: new TranslationHint(''),

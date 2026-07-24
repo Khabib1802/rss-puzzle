@@ -1,12 +1,10 @@
 import BaseComponent from '@/components/BaseComponent';
 
-import styles from './Button.module.scss';
-
 class Button extends BaseComponent<HTMLButtonElement> {
   private button: HTMLButtonElement;
 
   constructor(text: string, additionalClasses: string[] = []) {
-    super('button', [styles['button'], ...additionalClasses]);
+    super('button', [...additionalClasses]);
 
     this.button = this.element;
 

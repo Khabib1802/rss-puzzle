@@ -15,7 +15,7 @@ class HintControls extends BaseComponent<HTMLDivElement> {
   private readonly toggleButtons: Record<HintKind, Button>;
 
   constructor(initialHintStates: Record<HintKind, boolean>) {
-    super('div', [styles['controls']]);
+    super('div', [styles.controls]);
 
     this.toggleButtons = {
       translation: HintControls.createToggleButton(HINT_KINDS.TRANSLATION, initialHintStates.translation),
@@ -27,7 +27,7 @@ class HintControls extends BaseComponent<HTMLDivElement> {
   }
 
   private static createToggleButton(kind: HintKind, initialState: boolean): Button {
-    return new Button(HintControls.getToggleLabel(kind, initialState), [styles['toggleButton']]);
+    return new Button(HintControls.getToggleLabel(kind, initialState), [styles.toggleButton]);
   }
 
   private static getToggleLabel(kind: HintKind, isEnabled: boolean): string {

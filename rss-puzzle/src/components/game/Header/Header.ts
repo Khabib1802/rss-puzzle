@@ -21,11 +21,11 @@ class Header extends BaseComponent<HTMLDivElement> {
   private onSelectionChangeCallback: (() => void) | null = null;
 
   constructor(initialHintStates: Record<HintKind, boolean>) {
-    super('div', [styles['header']]);
+    super('div', [styles.header]);
 
-    this.logoutButton = new Button('Logout', [styles['logout']]);
-    this.levelSelect = new Select(Header.buildLevelOptions(), [styles['select']]);
-    this.roundSelect = new Select([], [styles['select']]);
+    this.logoutButton = new Button('Logout', [styles.logout]);
+    this.levelSelect = new Select(Header.buildLevelOptions(), [styles.select]);
+    this.roundSelect = new Select([], [styles.select]);
     this.hintControls = new HintControls(initialHintStates);
 
     this.levelSelect.setValue(String(gameService.gameState.level));

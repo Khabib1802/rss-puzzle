@@ -30,23 +30,23 @@ class Input extends BaseComponent<HTMLDivElement> {
   private validators: Validator[] = [];
 
   constructor(options: InputOptions) {
-    super('div', [styles['wrapper']]);
+    super('div', [styles.wrapper]);
 
     this.wrapper = this.element;
 
     const label = document.createElement('label');
-    label.classList.add(styles['label']);
+    label.classList.add(styles.label);
     label.textContent = options.label;
 
     this.input = document.createElement('input');
-    this.input.classList.add(styles['input']);
+    this.input.classList.add(styles.input);
     this.input.type = 'text';
     this.input.placeholder = options.placeholder || '';
     this.input.minLength = options.minLength || 0;
     this.input.required = options.required || false;
 
     this.errorSpan = document.createElement('span');
-    this.errorSpan.classList.add(styles['error']);
+    this.errorSpan.classList.add(styles.error);
     this.errorSpan.textContent = this.errorMessage;
 
     this.wrapper.append(label, this.input, this.errorSpan);
@@ -75,12 +75,12 @@ class Input extends BaseComponent<HTMLDivElement> {
     this.errorMessage = runValidators(this.input.value, this.validators);
     this.errorSpan.textContent = this.errorMessage;
     if (this.errorMessage) {
-      this.input.classList.add(styles['invalid']);
-      this.input.classList.remove(styles['valid']);
+      this.input.classList.add(styles.invalid);
+      this.input.classList.remove(styles.valid);
       this.errorSpan.style.display = 'block';
     } else {
-      this.input.classList.remove(styles['invalid']);
-      this.input.classList.add(styles['valid']);
+      this.input.classList.remove(styles.invalid);
+      this.input.classList.add(styles.valid);
       this.errorSpan.style.display = 'none';
     }
     return !this.errorMessage;

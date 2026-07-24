@@ -10,10 +10,10 @@ class SentenceBoard extends BaseComponent<HTMLDivElement> {
   public readonly resultBlock: BaseComponent<HTMLDivElement>;
 
   constructor() {
-    super('div', [styles['board']]);
+    super('div', [styles.board]);
 
-    this.resultBlock = new BaseComponent('div', [styles['result']]);
-    this.sourceBlock = new BaseComponent('div', [styles['source']]);
+    this.resultBlock = new BaseComponent('div', [styles.result]);
+    this.sourceBlock = new BaseComponent('div', [styles.source]);
 
     this.append(this.resultBlock, this.sourceBlock);
   }
@@ -24,8 +24,8 @@ class SentenceBoard extends BaseComponent<HTMLDivElement> {
   }
 
   public setDropTarget(id: ContainerId | null): void {
-    this.sourceBlock.element.classList.toggle(styles['dropTarget'], id === 'source');
-    this.resultBlock.element.classList.toggle(styles['dropTarget'], id === 'result');
+    this.sourceBlock.element.classList.toggle(styles.dropTarget, id === 'source');
+    this.resultBlock.element.classList.toggle(styles.dropTarget, id === 'result');
   }
 
   public getContainers(): { id: ContainerId; rect: DOMRect }[] {

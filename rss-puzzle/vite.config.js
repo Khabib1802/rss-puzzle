@@ -7,6 +7,7 @@ export default defineConfig({
 
   plugins: [
     sassDts({
+      esm: true,
       global: {
         generateScopedName: '[name]__[local]___[hash:base64:5]',
       },

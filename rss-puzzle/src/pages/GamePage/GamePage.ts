@@ -38,7 +38,7 @@ class GamePage extends BaseComponent<HTMLDivElement> {
   constructor() {
     super('div', ['wrapper']);
 
-    this.mainBlock = new BaseComponent('div', [styles['mainBlock']]);
+    this.mainBlock = new BaseComponent('div', [styles.mainBlock]);
     this.sentenceBoard = new SentenceBoard();
 
     this.header = new Header({

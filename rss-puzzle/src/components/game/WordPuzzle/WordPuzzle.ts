@@ -37,12 +37,12 @@ class WordPuzzle extends BaseComponent<HTMLDivElement> {
   private onDragEndCallback: ((point: Point) => void) | null = null;
 
   constructor(word: string) {
-    super('div', [styles['wordWrapper']]);
+    super('div', [styles.wordWrapper]);
 
     this.word = word;
 
     this.wordElement = document.createElement('div');
-    this.wordElement.classList.add(styles['word']);
+    this.wordElement.classList.add(styles.word);
     this.wordElement.textContent = word;
     this.wordElement.style.setProperty('--word-length', String(word.length));
     this.wordElement.style.touchAction = 'none';
@@ -78,11 +78,11 @@ class WordPuzzle extends BaseComponent<HTMLDivElement> {
   }
 
   public setCorrect(): void {
-    this.element.classList.add(styles['correct']);
+    this.element.classList.add(styles.correct);
   }
 
   public setIncorrect(): void {
-    this.element.classList.add(styles['incorrect']);
+    this.element.classList.add(styles.incorrect);
   }
 
   public setImageSegment(imageUrl: string, backgroundSize: string, positionX: number, positionY: number): void {
@@ -98,16 +98,16 @@ class WordPuzzle extends BaseComponent<HTMLDivElement> {
     this.element.style.setProperty('--segment-size', backgroundSize);
     this.element.style.setProperty('--segment-position', `-${String(positionX)}px -${String(positionY)}px`);
     this.element.style.setProperty('--segment-connector-position', `-${String(connectorX)}px -${String(connectorY)}px`);
-    this.element.classList.add(styles['hasImage']);
+    this.element.classList.add(styles.hasImage);
   }
 
   public setImageVisible(show: boolean): void {
-    this.element.classList.toggle(styles['hasImage'], show);
+    this.element.classList.toggle(styles.hasImage, show);
   }
 
   public removeHighligh() {
-    this.element.classList.remove(styles['correct'], styles['incorrect']);
-    this.wordElement.classList.remove(styles['correct'], styles['incorrect']);
+    this.element.classList.remove(styles.correct, styles.incorrect);
+    this.wordElement.classList.remove(styles.correct, styles.incorrect);
   }
 
   private suppressClickAfterDrag = (event: MouseEvent): void => {
@@ -177,11 +177,11 @@ class WordPuzzle extends BaseComponent<HTMLDivElement> {
 
   private startDragVisual(point: Point): void {
     document.body.classList.add('is-dragging');
-    this.element.classList.add(styles['placeholder']);
+    this.element.classList.add(styles.placeholder);
 
     const ghost = this.element.cloneNode(true) as HTMLElement;
-    ghost.classList.remove(styles['placeholder']);
-    ghost.classList.add(styles['dragging']);
+    ghost.classList.remove(styles.placeholder);
+    ghost.classList.add(styles.dragging);
 
     const rect = this.element.getBoundingClientRect();
 
@@ -213,17 +213,17 @@ class WordPuzzle extends BaseComponent<HTMLDivElement> {
     document.body.classList.remove('is-dragging');
     this.ghostElement?.remove();
     this.ghostElement = null;
-    this.element.classList.remove(styles['placeholder']);
+    this.element.classList.remove(styles.placeholder);
   }
 
   public setSentenceEnd(): void {
     this.isSentenceEnd = true;
-    this.element.classList.add(styles['noTab']);
+    this.element.classList.add(styles.noTab);
   }
 
   public setEdgeState(hideNotch: boolean, hideTab: boolean): void {
-    this.wordElement.classList.toggle(styles['noNotch'], hideNotch);
-    this.element.classList.toggle(styles['noTab'], hideTab || this.isSentenceEnd);
+    this.wordElement.classList.toggle(styles.noNotch, hideNotch);
+    this.element.classList.toggle(styles.noTab, hideTab || this.isSentenceEnd);
   }
 
   private handlePointerCancel = (event: PointerEvent): void => {
