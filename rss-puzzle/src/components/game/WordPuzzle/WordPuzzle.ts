@@ -1,11 +1,8 @@
 import type { Point } from '@/utils/dragAndDrop.ts';
+import PointerDragController from '@/utils/PointerDragController.ts';
 import BaseComponent from '@/components/BaseComponent';
 
 import styles from './WordPuzzle.module.scss';
-
-const DRAG_THRESHOLD = 4;
-
-const DEFAULT_CAN_DRAG = () => true;
 
 const TAB_RADIUS = 8;
 const TAB_OFFSET = 11;
@@ -17,17 +14,11 @@ class WordPuzzle extends BaseComponent<HTMLDivElement> {
 
   private isSentenceEnd = false;
 
-  private isDragging = false;
-
-  private justDragged = false;
-
-  private startPoint: Point = { x: 0, y: 0 };
+  private readonly dragController: PointerDragController;
 
   private dragOffset: Point = { x: 0, y: 0 };
 
   private ghostElement: HTMLElement | null = null;
-
-  private canDrag: () => boolean = DEFAULT_CAN_DRAG;
 
   private isFrozen = false;
 
@@ -50,8 +41,23 @@ class WordPuzzle extends BaseComponent<HTMLDivElement> {
 
     this.element.append(this.wordElement);
 
-    this.wordElement.addEventListener('click', this.suppressClickAfterDrag, true);
-    this.wordElement.addEventListener('pointerdown', this.handlePointerDown);
+    this.dragController = new PointerDragController(this.wordElement, {
+      onDragStart: (point) => {
+        this.onDragStartCallback?.(point);
+        this.startDragVisual(point);
+      },
+      onDragMove: (point) => {
+        this.updateDragVisual(point);
+        this.onDragMoveCallback?.(point);
+      },
+      onDragEnd: (point) => {
+        this.endDragVisual();
+        this.onDragEndCallback?.(point);
+      },
+      onDragCancel: () => {
+        this.endDragVisual();
+      },
+    });
   }
 
   public getWord() {
@@ -66,12 +72,12 @@ class WordPuzzle extends BaseComponent<HTMLDivElement> {
   }
 
   public setDragGuard(canDrag: () => boolean): void {
-    this.canDrag = canDrag;
+    this.dragController.setDragGuard(canDrag);
   }
 
   public freeze(): void {
     this.isFrozen = true;
-    this.canDrag = () => false;
+    this.dragController.setDragGuard(() => false);
     this.element.classList.add(styles.frozen);
   }
 
@@ -134,71 +140,6 @@ class WordPuzzle extends BaseComponent<HTMLDivElement> {
     this.wordElement.classList.remove(styles.correct, styles.incorrect);
   }
 
-  private suppressClickAfterDrag = (event: MouseEvent): void => {
-    if (this.justDragged) {
-      event.stopImmediatePropagation();
-      this.justDragged = false;
-    }
-  };
-
-  private handlePointerDown = (event: PointerEvent): void => {
-    if (!this.canDrag()) return;
-
-    this.justDragged = false;
-
-    const rect = this.wordElement.getBoundingClientRect();
-
-    this.startPoint = { x: event.clientX, y: event.clientY };
-    this.dragOffset = { x: event.clientX - rect.left, y: event.clientY - rect.top };
-
-    this.wordElement.setPointerCapture(event.pointerId);
-    this.wordElement.addEventListener('pointermove', this.handlePointerMove);
-    this.wordElement.addEventListener('pointerup', this.handlePointerUp);
-    this.wordElement.addEventListener('pointercancel', this.handlePointerCancel);
-  };
-
-  private handlePointerMove = (event: PointerEvent): void => {
-    const currentPoint: Point = { x: event.clientX, y: event.clientY };
-
-    if (!this.isDragging) {
-      const distance = Math.hypot(currentPoint.x - this.startPoint.x, currentPoint.y - this.startPoint.y);
-      if (distance < DRAG_THRESHOLD) return;
-
-      this.isDragging = true;
-      this.justDragged = true;
-      this.onDragStartCallback?.(currentPoint);
-      this.startDragVisual(currentPoint);
-    }
-
-    this.updateDragVisual(currentPoint);
-    this.onDragMoveCallback?.(currentPoint);
-  };
-
-  private handlePointerUp = (event: PointerEvent): void => {
-    const wasDragging = this.isDragging;
-
-    this.cleanupDrag(event.pointerId);
-
-    if (wasDragging) {
-      this.onDragEndCallback?.({ x: event.clientX, y: event.clientY });
-    }
-  };
-
-  private cleanupDrag(pointerId: number): void {
-    if (this.wordElement.hasPointerCapture(pointerId)) {
-      this.wordElement.releasePointerCapture(pointerId);
-    }
-    this.wordElement.removeEventListener('pointermove', this.handlePointerMove);
-    this.wordElement.removeEventListener('pointerup', this.handlePointerUp);
-    this.wordElement.removeEventListener('pointercancel', this.handlePointerCancel);
-
-    if (this.isDragging) {
-      this.endDragVisual();
-    }
-
-    this.isDragging = false;
-  }
-
   private startDragVisual(point: Point): void {
     document.body.classList.add('is-dragging');
     this.element.classList.add(styles.placeholder);
@@ -249,10 +190,6 @@ class WordPuzzle extends BaseComponent<HTMLDivElement> {
     this.wordElement.classList.toggle(styles.noNotch, hideNotch);
     this.element.classList.toggle(styles.noTab, hideTab || this.isSentenceEnd);
   }
-
-  private handlePointerCancel = (event: PointerEvent): void => {
-    this.cleanupDrag(event.pointerId);
-  };
 }
 
 export default WordPuzzle;
