@@ -6,7 +6,7 @@ import HintPanel from '@/components/game/hints/HintPanel/HintPanel.ts';
 import Header from '@/components/game/Header/Header.ts';
 import SentenceBoard from '@/components/game/SentenceBoard/SentenceBoard.ts';
 import { HINT_KINDS } from '@/constants.ts';
-import type { HintKind } from '@/types/game.ts';
+import type { HintKind, LastCompletedRound } from '@/types/game.ts';
 import type { RoundGeometry } from '@/utils/puzzleGeometry.ts';
 import statisticsService from '@/services/statisticsService';
 import computeRoundGeometry from '@/services/puzzleGeometryMeasurer.ts';
@@ -33,6 +33,8 @@ class GamePage extends BaseComponent<HTMLDivElement> {
 
   private currentRoundGeometry: RoundGeometry | null = null;
 
+  private resumedFrom: LastCompletedRound | null = null;
+
   constructor() {
     super('div', ['wrapper']);
 
@@ -41,6 +43,8 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     this.puzzleBoardController = new PuzzleBoardController(this.sentenceBoard, () => {
       this.renderCheckButtonState();
     });
+
+    this.applyResumePosition();
 
     this.header = new Header({
       translation: gameService.settings.translation,
@@ -58,6 +62,15 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     this.init().catch((error: unknown) => {
       throw new Error(`Critical error during game initialization. Reason: ${String(error)}`);
     });
+  }
+
+  private applyResumePosition(): void {
+    const resumePosition = statisticsService.getResumePosition();
+    if (!resumePosition) return;
+
+    gameService.setLevel(resumePosition.level);
+    gameService.setRound(resumePosition.roundIndex);
+    this.resumedFrom = resumePosition;
   }
 
   private async init() {
