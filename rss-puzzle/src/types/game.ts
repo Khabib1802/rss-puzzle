@@ -35,6 +35,11 @@ interface LevelProgressEntry {
 
 type LevelProgress = Partial<Record<number, LevelProgressEntry>>;
 
+interface LastCompletedRound {
+  level: number;
+  roundIndex: number;
+}
+
 interface GameState {
   level: number;
   roundIndex: number;
@@ -48,4 +53,4 @@ type HintSettings = Record<HintKind, boolean>;
 
 type ContentHintKind = Exclude<HintKind, typeof HINT_KINDS.IMAGE>;
 
-export type { Level, Round, GameState, HintKind, HintSettings, ContentHintKind, LevelProgress };
+export type { Level, Round, GameState, HintKind, HintSettings, ContentHintKind, LevelProgress, LastCompletedRound };
