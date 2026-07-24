@@ -69,6 +69,29 @@ describe('gameService.nextStep', () => {
   });
 });
 
+describe('gameService.isLastSentenceInRound', () => {
+  beforeEach(() => {
+    const DEFAULT_ROUNDS_COUNT = 2;
+    const DEFAULT_SENTENCES_COUNT = 2;
+    gameService.gameState = { level: 1, roundIndex: 0, sentenceIndex: 0, isChecked: false };
+    gameService.currentLevelData = makeLevel(DEFAULT_ROUNDS_COUNT, DEFAULT_SENTENCES_COUNT);
+  });
+
+  it('returns false when there are more sentences left in the round', () => {
+    expect(gameService.isLastSentenceInRound()).toBe(false);
+  });
+
+  it('returns true on the last sentence of the round', () => {
+    gameService.gameState.sentenceIndex = 1;
+    expect(gameService.isLastSentenceInRound()).toBe(true);
+  });
+
+  it('does not mutate gameState', () => {
+    gameService.isLastSentenceInRound();
+    expect(gameService.gameState).toMatchObject({ roundIndex: 0, sentenceIndex: 0 });
+  });
+});
+
 describe('gameService.setLevel / setRound', () => {
   const INITIAL_LEVEL = 3;
   const INITIAL_ROUND = 2;

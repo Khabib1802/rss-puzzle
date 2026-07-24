@@ -8,14 +8,8 @@ $notch-depth: 3px;
   position: relative;
   display: inline-flex;
   cursor: grab;
-  margin-right: 1px;
-  margin-bottom: 1px;
 
   --segment-overlay: #{rgba($c-dark, 0.45)};
-
-  &:last-child {
-    margin-right: 0;
-  }
 }
 
 .wordWrapper::after {
@@ -63,6 +57,18 @@ $notch-depth: 3px;
   }
 }
 
+.wordWrapper.frozen {
+  cursor: default;
+
+  .word:active {
+    cursor: default;
+  }
+
+  &:hover .word {
+    background-color: $c-light;
+  }
+}
+
 .wordWrapper.correct {
   --segment-overlay: #{rgba($c-correct, 0.75)};
 
@@ -98,8 +104,6 @@ $notch-depth: 3px;
   color: $c-text;
   text-align: center;
   width: calc(var(--word-length) * 1.2ch + 32px);
-  min-width: 70px;
-  max-width: 220px;
   font-size: clamp(12px, calc(18px - (var(--word-length) * 0.4px)), 16px);
   line-height: 16px;
   word-break: normal;
@@ -109,16 +113,8 @@ $notch-depth: 3px;
     filter 0.1s ease,
     transform 0.1s ease;
 
-  -webkit-mask-image: radial-gradient(
-    ellipse $tab-radius calc($tab-radius * 1.1) at $notch-depth 50%,
-    transparent 99%,
-    #000 100%
-  );
-  mask-image: radial-gradient(
-    ellipse $tab-radius calc($tab-radius * 1.1) at $notch-depth 50%,
-    transparent 99%,
-    #000 100%
-  );
+  -webkit-mask-image: radial-gradient(circle $tab-radius at $notch-depth 50%, transparent 99%, #000 100%);
+  mask-image: radial-gradient(circle $tab-radius at $notch-depth 50%, transparent 99%, #000 100%);
 }
 
 .hasImage {

@@ -9,12 +9,12 @@ import Header from '@/components/game/Header/Header.ts';
 import SentenceBoard from '@/components/game/SentenceBoard/SentenceBoard.ts';
 import { HINT_KINDS } from '@/constants.ts';
 import type { HintKind } from '@/types/game.ts';
+import { computeRoundGeometry } from '@/utils/puzzleGeometry.ts';
+import type { RoundGeometry } from '@/utils/puzzleGeometry.ts';
 
 import styles from './GamePage.module.scss';
 
 type ContainerId = 'source' | 'result';
-
-const CARD_HEIGHT = 44;
 
 const ALL_HINT_KINDS = Object.values(HINT_KINDS);
 
@@ -34,6 +34,8 @@ class GamePage extends BaseComponent<HTMLDivElement> {
   private resultPuzzles: WordPuzzle[] = [];
 
   private correctSentence = '';
+
+  private roundGeometry: RoundGeometry | null = null;
 
   constructor() {
     super('div', ['wrapper']);
@@ -61,7 +63,18 @@ class GamePage extends BaseComponent<HTMLDivElement> {
 
   private async init() {
     await gameService.loadCurrentLevel();
-    this.startNewRound();
+    await this.startNewRound();
+  }
+
+  private async startNewRound(): Promise<void> {
+    this.sentenceBoard.clearPicture();
+    this.roundGeometry = await this.computeGeometryForCurrentRound();
+    this.sentenceBoard.setBoardWidth(this.roundGeometry.boardWidth);
+    const pictureHeight = this.roundGeometry.rowHeight * gameService.getSentenceCountInCurrentRound();
+    this.sentenceBoard.reservePictureHeight(pictureHeight);
+
+    this.clearContainers();
+    this.renderNextSentence();
   }
 
   private handleSelectionChange(): void {
@@ -70,9 +83,17 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     });
   }
 
-  private startNewRound(): void {
+  private advanceToNextSentence(): void {
+    this.resultPuzzles.forEach((puzzle) => {
+      puzzle.removeHighligh();
+      puzzle.freeze();
+    });
+    this.sentenceBoard.freezeCurrentResultRow();
     this.clearContainers();
+    this.renderNextSentence();
+  }
 
+  private renderNextSentence(): void {
     this.hintPanel.stopAudio();
     gameService.setChecked(false);
     this.correctSentence = gameService.getCurrentSentence();
@@ -126,22 +147,62 @@ class GamePage extends BaseComponent<HTMLDivElement> {
       this.sentenceBoard.sourceBlock.append(puzzle.element);
     });
 
-    GamePage.applyImageSegments(orderedPuzzles);
+    this.applyImageSegments(orderedPuzzles);
   }
 
-  private static applyImageSegments(orderedPuzzles: WordPuzzle[]): void {
-    const totalSentences = gameService.getSentenceCountInCurrentRound();
-    const imageUrl = gameService.getCurrentImageSource();
+  private async computeGeometryForCurrentRound(): Promise<RoundGeometry> {
+    const sentences = gameService.getSentencesInCurrentRound().map((sentence) => splitIntoWords(sentence));
+    const sentenceWordWidths = GamePage.measureWordWidths(sentences);
+    const referenceWidth = this.sentenceBoard.getReferenceWidth();
+    const maxAllowedWidth = this.sentenceBoard.getMaxAllowedWidth();
+    const { width: imageWidth, height: imageHeight } = await gameService.getCurrentImageDimensions();
 
-    const widths = orderedPuzzles.map((puzzle) => puzzle.element.getBoundingClientRect().width);
-    const totalRowWidth = widths.reduce((sum, width) => sum + width, 0);
-    const backgroundSize = `${String(totalRowWidth)}px ${String(totalSentences * CARD_HEIGHT)}px`;
-    const positionY = gameService.gameState.sentenceIndex * CARD_HEIGHT;
+    return computeRoundGeometry({
+      sentenceWordWidths,
+      referenceWidth,
+      maxAllowedWidth,
+      imageAspectRatio: imageHeight / imageWidth,
+      sentenceCount: sentences.length,
+    });
+  }
+
+  private static measureWordWidths(sentences: string[][]): number[][] {
+    const measureContainer = document.createElement('div');
+    measureContainer.style.position = 'absolute';
+    measureContainer.style.visibility = 'hidden';
+    measureContainer.style.pointerEvents = 'none';
+    document.body.append(measureContainer);
+
+    const widths = sentences.map((words) =>
+      words.map((word) => {
+        const puzzle = new WordPuzzle(word);
+        measureContainer.append(puzzle.element);
+        return puzzle.element.getBoundingClientRect().width;
+      })
+    );
+
+    measureContainer.remove();
+    return widths;
+  }
+
+  private applyImageSegments(orderedPuzzles: WordPuzzle[]): void {
+    if (!this.roundGeometry) {
+      throw new Error('Round geometry is not computed yet');
+    }
+
+    const { rowHeight, backgroundSize, cardWidthsBySentence } = this.roundGeometry;
+    const { sentenceIndex } = gameService.gameState;
+
+    const imageUrl = gameService.getCurrentImageSource();
+    const cardWidths = cardWidthsBySentence[sentenceIndex];
+    const positionY = sentenceIndex * rowHeight;
 
     let cumulativeX = 0;
     orderedPuzzles.forEach((puzzle, index) => {
-      puzzle.setImageSegment(imageUrl, backgroundSize, cumulativeX, positionY);
-      cumulativeX += widths[index];
+      const width = cardWidths[index];
+      puzzle.setDimensions(width, rowHeight);
+      puzzle.setImageSegment(imageUrl, backgroundSize, cumulativeX, positionY, width, rowHeight);
+      cumulativeX += width;
     });
   }
 
@@ -264,19 +325,27 @@ class GamePage extends BaseComponent<HTMLDivElement> {
       puzzle.setCorrect();
     });
 
-    GamePage.applyImageSegments(this.resultPuzzles);
+    this.applyImageSegments(this.resultPuzzles);
 
     gameService.setChecked(true);
     this.renderState();
   }
 
   private handleNextStep() {
+    const isRoundEnd = gameService.isLastSentenceInRound();
     const hasNextStep = gameService.nextStep();
 
-    if (hasNextStep) {
-      this.startNewRound();
-    } else {
+    if (!hasNextStep) {
       window.location.hash = '/';
+      return;
+    }
+
+    if (isRoundEnd) {
+      this.startNewRound().catch((error: unknown) => {
+        throw new Error(`Failed to start a new round. Reason: ${String(error)}`);
+      });
+    } else {
+      this.advanceToNextSentence();
     }
   }
 

@@ -9,7 +9,6 @@ const DEFAULT_CAN_DRAG = () => true;
 
 const TAB_RADIUS = 8;
 const TAB_OFFSET = 11;
-const CARD_HEIGHT = 44;
 
 class WordPuzzle extends BaseComponent<HTMLDivElement> {
   private readonly word: string;
@@ -29,6 +28,8 @@ class WordPuzzle extends BaseComponent<HTMLDivElement> {
   private ghostElement: HTMLElement | null = null;
 
   private canDrag: () => boolean = DEFAULT_CAN_DRAG;
+
+  private isFrozen = false;
 
   private onDragStartCallback: ((point: Point) => void) | null = null;
 
@@ -58,11 +59,20 @@ class WordPuzzle extends BaseComponent<HTMLDivElement> {
   }
 
   public handleClick(callback: () => void): void {
-    this.element.addEventListener('click', callback);
+    this.element.addEventListener('click', () => {
+      if (this.isFrozen) return;
+      callback();
+    });
   }
 
   public setDragGuard(canDrag: () => boolean): void {
     this.canDrag = canDrag;
+  }
+
+  public freeze(): void {
+    this.isFrozen = true;
+    this.canDrag = () => false;
+    this.element.classList.add(styles.frozen);
   }
 
   public onDragStart(callback: (point: Point) => void): void {
@@ -85,14 +95,24 @@ class WordPuzzle extends BaseComponent<HTMLDivElement> {
     this.element.classList.add(styles.incorrect);
   }
 
-  public setImageSegment(imageUrl: string, backgroundSize: string, positionX: number, positionY: number): void {
+  public setDimensions(width: number, height: number): void {
+    this.wordElement.style.width = `${String(width)}px`;
+    this.wordElement.style.height = `${String(height)}px`;
+  }
+
+  public setImageSegment(
+    imageUrl: string,
+    backgroundSize: string,
+    positionX: number,
+    positionY: number,
+    width: number,
+    cardHeight: number
+  ): void {
     const HALF_DIVISOR = 2;
     const DIAMETER_MULTIPLIER = 2;
 
-    const wordWidth = this.wordElement.getBoundingClientRect().width;
-
-    const connectorX = positionX + wordWidth + (TAB_OFFSET - TAB_RADIUS * DIAMETER_MULTIPLIER);
-    const connectorY = positionY + (CARD_HEIGHT / HALF_DIVISOR - TAB_RADIUS);
+    const connectorX = positionX + width + (TAB_OFFSET - TAB_RADIUS * DIAMETER_MULTIPLIER);
+    const connectorY = positionY + (cardHeight / HALF_DIVISOR - TAB_RADIUS);
 
     this.element.style.setProperty('--segment-image', `url('${imageUrl}')`);
     this.element.style.setProperty('--segment-size', backgroundSize);

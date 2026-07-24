@@ -8,16 +8,29 @@
   justify-content: space-between;
 }
 
+.pictureArea {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.historyRow {
+  display: flex;
+  flex-wrap: nowrap;
+  width: var(--board-width, 100%);
+  max-width: 100%;
+  margin: 0 auto;
+}
+
 .source,
 .result {
   display: flex;
   flex-wrap: wrap;
   align-content: start;
-  width: 100%;
-  max-width: 800px;
+  width: var(--board-width, 100%);
+  max-width: 100%;
   margin: 0 auto;
   margin-bottom: 10px;
-  padding: 15px;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
