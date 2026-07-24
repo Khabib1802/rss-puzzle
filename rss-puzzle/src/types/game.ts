@@ -28,7 +28,12 @@ interface Level {
   roundsCount: number;
 }
 
-type LevelProgress = Record<number, boolean[]>;
+interface LevelProgressEntry {
+  completedRounds: boolean[];
+  roundsCount: number;
+}
+
+type LevelProgress = Partial<Record<number, LevelProgressEntry>>;
 
 interface GameState {
   level: number;

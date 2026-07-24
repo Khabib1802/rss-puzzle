@@ -336,7 +336,9 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     const isRoundEnd = gameService.isLastSentenceInRound();
 
     if (isRoundEnd) {
-      statisticsService.markRoundCompleted(gameService.gameState.level, gameService.gameState.roundIndex);
+      const { level, roundIndex } = gameService.gameState;
+      const roundsCount = gameService.currentLevelData?.roundsCount ?? 0;
+      statisticsService.markRoundCompleted(level, roundIndex, roundsCount);
     }
 
     const hasNextStep = gameService.nextStep();

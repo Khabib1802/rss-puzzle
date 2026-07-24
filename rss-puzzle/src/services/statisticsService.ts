@@ -24,24 +24,25 @@ class StatisticsService {
     });
   }
 
-  public markRoundCompleted(level: number, roundIndex: number): void {
-    const rounds = [...this.progress[level]];
-    rounds[roundIndex] = true;
+  public markRoundCompleted(level: number, roundIndex: number, roundsCount: number): void {
+    const existing = this.progress[level];
+    const completedRounds = existing ? [...existing.completedRounds] : [];
+    completedRounds[roundIndex] = true;
 
-    this.progress = { ...this.progress, [level]: rounds };
+    this.progress = { ...this.progress, [level]: { completedRounds, roundsCount } };
     setItem(PROGRESS_KEY, this.progress);
     this.notify();
   }
 
   public isRoundCompleted(level: number, roundIndex: number): boolean {
-    return this.progress[level][roundIndex];
+    return this.progress[level]?.completedRounds[roundIndex] ?? false;
   }
 
-  public isLevelCompleted(level: number, roundsCount: number): boolean {
-    const rounds = this.progress[level];
-    if (rounds.length < roundsCount) return false;
+  public isLevelCompleted(level: number): boolean {
+    const entry = this.progress[level];
+    if (!entry) return false;
 
-    return Array.from({ length: roundsCount }, (_, index) => rounds[index]).every(Boolean);
+    return Array.from({ length: entry.roundsCount }, (_, index) => entry.completedRounds[index]).every(Boolean);
   }
 }
 

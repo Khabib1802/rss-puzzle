@@ -1,0 +1,6 @@
+@use '@styles/variables.scss' as *;
+
+.completed {
+  color: $c-correct;
+  font-weight: 600;
+}
