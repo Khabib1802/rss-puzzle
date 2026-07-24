@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { computeRoundGeometry, MIN_READABLE_WORD_WIDTH } from './puzzleGeometry.ts';
+import { calculateRoundGeometry, MIN_READABLE_WORD_WIDTH } from './puzzleGeometry.ts';
 
-type GeometryInput = Parameters<typeof computeRoundGeometry>[0];
+type GeometryInput = Parameters<typeof calculateRoundGeometry>[0];
 
 const DEFAULT_WORD_WIDTH = 100;
 const DEFAULT_NARROW_WORD_WIDTH = 80;
@@ -21,9 +21,9 @@ const createTestArgs = (overrides?: Partial<GeometryInput>): GeometryInput => ({
   ...overrides,
 });
 
-describe('computeRoundGeometry', () => {
+describe('calculateRoundGeometry', () => {
   it('uses the reference width as-is when every sentence fits comfortably', () => {
-    const geometry = computeRoundGeometry(createTestArgs());
+    const geometry = calculateRoundGeometry(createTestArgs());
 
     expect(geometry.boardWidth).toBe(800);
     expect(geometry.rowHeight).toBe((800 * 0.5) / 2);
@@ -31,7 +31,7 @@ describe('computeRoundGeometry', () => {
   });
 
   it('scales every sentence of the round to the same board width', () => {
-    const geometry = computeRoundGeometry(createTestArgs());
+    const geometry = calculateRoundGeometry(createTestArgs());
     const rowTotals = geometry.cardWidthsBySentence.map((words) => words.reduce((sum, width) => sum + width, 0));
 
     rowTotals.forEach((total) => {
@@ -40,7 +40,7 @@ describe('computeRoundGeometry', () => {
   });
 
   it('widens the board when the reference width would shrink a word below the readable minimum', () => {
-    const geometry = computeRoundGeometry(
+    const geometry = calculateRoundGeometry(
       createTestArgs({
         sentenceWordWidths: [[600, 20]],
         referenceWidth: 400,
@@ -55,7 +55,7 @@ describe('computeRoundGeometry', () => {
   });
 
   it('never widens the board past maxAllowedWidth, even if a word stays below the readable minimum', () => {
-    const geometry = computeRoundGeometry(
+    const geometry = calculateRoundGeometry(
       createTestArgs({
         sentenceWordWidths: [[600, 20]],
         referenceWidth: 400,
@@ -70,7 +70,7 @@ describe('computeRoundGeometry', () => {
   });
 
   it('keeps proportions between words within the same sentence', () => {
-    const geometry = computeRoundGeometry(
+    const geometry = calculateRoundGeometry(
       createTestArgs({
         sentenceWordWidths: [[100, 200]],
         referenceWidth: 900,
