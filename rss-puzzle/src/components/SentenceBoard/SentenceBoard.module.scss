@@ -8,6 +8,20 @@
   justify-content: space-between;
 }
 
+.pictureArea {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.historyRow {
+  display: flex;
+  flex-wrap: nowrap;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
 .source,
 .result {
   display: flex;

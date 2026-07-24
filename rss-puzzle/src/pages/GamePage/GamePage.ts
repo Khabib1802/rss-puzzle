@@ -61,13 +61,17 @@ class GamePage extends BaseComponent<HTMLDivElement> {
   }
 
   private startNewRound(): void {
+    this.sentenceBoard.clearPicture();
+    this.sentenceBoard.reservePictureHeight(CARD_HEIGHT * gameService.getSentenceCountInCurrentRound());
     this.clearContainers();
     this.renderNextSentence();
   }
 
   private advanceToNextSentence(): void {
-    // TODO(RSS-PZ-22): freeze the completed row instead of clearing it, so
-    // finished sentences stay stacked on the board for the rest of the round.
+    this.resultPuzzles.forEach((puzzle) => {
+      puzzle.freeze();
+    });
+    this.sentenceBoard.freezeCurrentResultRow();
     this.clearContainers();
     this.renderNextSentence();
   }

@@ -30,6 +30,8 @@ class WordPuzzle extends BaseComponent<HTMLDivElement> {
 
   private canDrag: () => boolean = DEFAULT_CAN_DRAG;
 
+  private isFrozen = false;
+
   private onDragStartCallback: ((point: Point) => void) | null = null;
 
   private onDragMoveCallback: ((point: Point) => void) | null = null;
@@ -58,11 +60,20 @@ class WordPuzzle extends BaseComponent<HTMLDivElement> {
   }
 
   public handleClick(callback: () => void): void {
-    this.element.addEventListener('click', callback);
+    this.element.addEventListener('click', () => {
+      if (this.isFrozen) return;
+      callback();
+    });
   }
 
   public setDragGuard(canDrag: () => boolean): void {
     this.canDrag = canDrag;
+  }
+
+  public freeze(): void {
+    this.isFrozen = true;
+    this.canDrag = () => false;
+    this.element.classList.add(styles['frozen']);
   }
 
   public onDragStart(callback: (point: Point) => void): void {

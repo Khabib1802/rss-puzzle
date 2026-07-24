@@ -63,6 +63,14 @@ $notch-depth: 3px;
   }
 }
 
+.wordWrapper.frozen {
+  cursor: default;
+
+  &:hover .word {
+    background-color: $c-light;
+  }
+}
+
 .wordWrapper.correct {
   --segment-overlay: #{rgba($c-correct, 0.75)};
 
