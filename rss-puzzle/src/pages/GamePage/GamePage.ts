@@ -12,6 +12,7 @@ import statisticsService from '@/services/statisticsService';
 import computeRoundGeometry from '@/services/puzzleGeometryMeasurer.ts';
 import PuzzleBoardController from '@/components/game/PuzzleBoardController/PuzzleBoardController';
 import ResumeBanner from '@/components/game/ResumeBanner/ResumeBanner';
+import RoundCompletePanel from '@/components/game/RoundCompletePanel/RoundCompletePanel';
 
 import styles from './GamePage.module.scss';
 
@@ -37,6 +38,8 @@ class GamePage extends BaseComponent<HTMLDivElement> {
   private resumedFrom: LastCompletedRound | null = null;
 
   private resumeBanner: ResumeBanner | null = null;
+
+  private roundCompletePanel: RoundCompletePanel | null = null;
 
   constructor() {
     super('div', ['wrapper']);
@@ -88,6 +91,7 @@ class GamePage extends BaseComponent<HTMLDivElement> {
   }
 
   private async startNewRound(): Promise<void> {
+    this.puzzleBoardController.resetRound();
     this.sentenceBoard.clearPicture();
     this.currentRoundGeometry = await this.computeGeometryForCurrentRound();
     this.sentenceBoard.setBoardWidth(this.currentRoundGeometry.boardWidth);
@@ -245,9 +249,8 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     const isRoundEnd = gameService.isLastSentenceInRound();
 
     if (isRoundEnd) {
-      const { level, roundIndex } = gameService.gameState;
-      const roundsCount = gameService.currentLevelData?.roundsCount ?? 0;
-      statisticsService.markRoundCompleted(level, roundIndex, roundsCount);
+      this.handleRoundEnd();
+      return;
     }
 
     const hasNextStep = gameService.nextStep();
@@ -257,13 +260,44 @@ class GamePage extends BaseComponent<HTMLDivElement> {
       return;
     }
 
-    if (isRoundEnd) {
-      this.startNewRound().catch((error: unknown) => {
-        throw new Error(`Failed to start a new round. Reason: ${String(error)}`);
-      });
-    } else {
-      this.advanceToNextSentence();
-    }
+    this.advanceToNextSentence();
+  }
+
+  private handleRoundEnd(): void {
+    const { level, roundIndex } = gameService.gameState;
+    const roundsCount = gameService.currentLevelData?.roundsCount ?? 0;
+    const imageInfo = gameService.getCurrentImageInfo();
+
+    statisticsService.markRoundCompleted(level, roundIndex, roundsCount);
+
+    const hasNextStep = gameService.nextStep();
+
+    this.gameActions.setVisibility({ check: false, continue: false, autoComplete: false });
+    this.puzzleBoardController.revealRoundImage();
+    this.showRoundCompletePanel(imageInfo, hasNextStep);
+  }
+
+  private showRoundCompletePanel(
+    imageInfo: { name: string; author: string; year: string },
+    hasNextStep: boolean
+  ): void {
+    const actionLabel = hasNextStep ? 'Next round' : 'Home';
+    this.roundCompletePanel = new RoundCompletePanel(imageInfo, actionLabel);
+
+    this.roundCompletePanel.actionButton.handleClick(() => {
+      this.roundCompletePanel?.element.remove();
+      this.roundCompletePanel = null;
+
+      if (hasNextStep) {
+        this.startNewRound().catch((error: unknown) => {
+          throw new Error(`Failed to start a new round. Reason: ${String(error)}`);
+        });
+      } else {
+        window.location.hash = '/';
+      }
+    });
+
+    this.append(this.roundCompletePanel);
   }
 
   private clearContainers() {
