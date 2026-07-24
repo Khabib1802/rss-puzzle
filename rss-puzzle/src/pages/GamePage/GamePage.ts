@@ -11,6 +11,7 @@ import type { RoundGeometry } from '@/utils/puzzleGeometry.ts';
 import statisticsService from '@/services/statisticsService';
 import computeRoundGeometry from '@/services/puzzleGeometryMeasurer.ts';
 import PuzzleBoardController from '@/components/game/PuzzleBoardController/PuzzleBoardController';
+import ResumeBanner from '@/components/game/ResumeBanner/ResumeBanner';
 
 import styles from './GamePage.module.scss';
 
@@ -35,6 +36,8 @@ class GamePage extends BaseComponent<HTMLDivElement> {
 
   private resumedFrom: LastCompletedRound | null = null;
 
+  private resumeBanner: ResumeBanner | null = null;
+
   constructor() {
     super('div', ['wrapper']);
 
@@ -53,11 +56,17 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     });
     this.hintPanel = new HintPanel();
 
+    if (this.resumedFrom) {
+      this.resumeBanner = new ResumeBanner(this.resumedFrom.level, this.resumedFrom.roundIndex + 1);
+    }
+
     this.mainBlock.append(this.sentenceBoard.element);
     this.gameActions = new GameActions();
 
     this.setupEvents();
-    this.append(this.header, this.hintPanel, this.mainBlock, this.gameActions);
+
+    const children: (BaseComponent | HTMLElement)[] = this.resumeBanner ? [this.resumeBanner] : [];
+    this.append(...children, this.header, this.hintPanel, this.mainBlock, this.gameActions);
 
     this.init().catch((error: unknown) => {
       throw new Error(`Critical error during game initialization. Reason: ${String(error)}`);
