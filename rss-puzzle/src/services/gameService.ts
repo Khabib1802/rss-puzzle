@@ -1,5 +1,5 @@
 import fetchLevelData from '@/api/gameApi';
-import type { GameState, HintKind, HintSettings, Level, Round } from '@/types/game';
+import type { GameState, HintKind, HintSettings, Level, Round, RoundSentenceResult } from '@/types/game';
 import { DATA_BASE_URL, HINT_KINDS, LEVELS_COUNT } from '@/constants';
 
 import { getItem, removeItem, setItem } from './localStorageService';
@@ -24,6 +24,10 @@ class GameService {
   currentLevelData: Level | null = null;
 
   private levelCache = new Map<number, Level>();
+
+  private roundResults: RoundSentenceResult[] = [];
+
+  private roundHasNextStep = true;
 
   private async loadLevel(level: number): Promise<Level> {
     const cached = this.levelCache.get(level);
@@ -123,6 +127,26 @@ class GameService {
 
       image.src = src;
     });
+  }
+
+  public resetRoundResults(): void {
+    this.roundResults = [];
+  }
+
+  public recordSentenceResult(sentence: string, known: boolean): void {
+    this.roundResults.push({ sentence, known });
+  }
+
+  public getRoundResults(): RoundSentenceResult[] {
+    return this.roundResults;
+  }
+
+  public setRoundHasNextStep(value: boolean): void {
+    this.roundHasNextStep = value;
+  }
+
+  public getRoundHasNextStep(): boolean {
+    return this.roundHasNextStep;
   }
 
   public isLastSentenceInRound(): boolean {
