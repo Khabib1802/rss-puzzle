@@ -45,6 +45,10 @@ class SentenceBoard extends BaseComponent<HTMLDivElement> {
     this.pictureArea.element.insertBefore(row, this.resultBlock.element);
   }
 
+  public getReferenceWidth(): number {
+    return this.resultBlock.element.getBoundingClientRect().width;
+  }
+
   public setDropTarget(id: ContainerId | null): void {
     this.sourceBlock.element.classList.toggle(styles['dropTarget'], id === 'source');
     this.resultBlock.element.classList.toggle(styles['dropTarget'], id === 'result');

@@ -60,6 +60,11 @@ class GameService {
     return `${DATA_BASE_URL}${round.words[sentenceIndex].audioExample}`;
   }
 
+  public getSentencesInCurrentRound(): string[] {
+    const round = this.getCurrentRound();
+    return round.words.map((word) => word.textExample);
+  }
+
   public getCurrentImageSource(): string {
     const round = this.getCurrentRound();
     return `${DATA_BASE_URL}images/${round.levelData.cutSrc}`;
@@ -68,6 +73,23 @@ class GameService {
   public getSentenceCountInCurrentRound(): number {
     const round = this.getCurrentRound();
     return round.words.length;
+  }
+
+  public async getCurrentImageDimensions(): Promise<{ width: number; height: number }> {
+    const src = this.getCurrentImageSource();
+
+    return new Promise((resolve, reject) => {
+      const image = new Image();
+
+      image.addEventListener('load', () => {
+        resolve({ width: image.naturalWidth, height: image.naturalHeight });
+      });
+      image.addEventListener('error', () => {
+        reject(new Error(`Failed to load image: ${src}`));
+      });
+
+      image.src = src;
+    });
   }
 
   public isLastSentenceInRound(): boolean {

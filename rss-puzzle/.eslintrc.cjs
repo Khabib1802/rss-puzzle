@@ -72,4 +72,13 @@ module.exports = {
       },
     ],
   },
+
+  overrides: [
+    {
+      files: ['*.test.ts', '*.spec.ts', '**/__tests__/**/*.ts'],
+      rules: {
+        'no-magic-numbers': 'off',
+      },
+    },
+  ],
 };

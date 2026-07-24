@@ -66,6 +66,10 @@ $notch-depth: 3px;
 .wordWrapper.frozen {
   cursor: default;
 
+  .word:active {
+    cursor: default;
+  }
+
   &:hover .word {
     background-color: $c-light;
   }
