@@ -12,6 +12,7 @@ import type { HintKind } from '@/types/game.ts';
 import { computeRoundGeometry } from '@/utils/puzzleGeometry.ts';
 import type { RoundGeometry } from '@/utils/puzzleGeometry.ts';
 
+import statisticsService from '@/services/statisticsService';
 import styles from './GamePage.module.scss';
 
 type ContainerId = 'source' | 'result';
@@ -333,6 +334,13 @@ class GamePage extends BaseComponent<HTMLDivElement> {
 
   private handleNextStep() {
     const isRoundEnd = gameService.isLastSentenceInRound();
+
+    if (isRoundEnd) {
+      const { level, roundIndex } = gameService.gameState;
+      const roundsCount = gameService.currentLevelData?.roundsCount ?? 0;
+      statisticsService.markRoundCompleted(level, roundIndex, roundsCount);
+    }
+
     const hasNextStep = gameService.nextStep();
 
     if (!hasNextStep) {

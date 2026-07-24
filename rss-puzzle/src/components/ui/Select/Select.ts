@@ -1,8 +1,11 @@
 import BaseComponent from '@/components/BaseComponent';
 
+import styles from './Select.module.scss';
+
 export interface SelectOption {
   value: string;
   label: string;
+  isCompleted?: boolean;
 }
 
 class Select extends BaseComponent<HTMLSelectElement> {
@@ -16,10 +19,11 @@ class Select extends BaseComponent<HTMLSelectElement> {
     const previousValue = this.element.value;
 
     this.element.replaceChildren(
-      ...options.map(({ value, label }) => {
+      ...options.map(({ value, label, isCompleted }) => {
         const optionElement = document.createElement('option');
         optionElement.value = value;
         optionElement.textContent = label;
+        optionElement.classList.toggle(styles.completed, Boolean(isCompleted));
         return optionElement;
       })
     );

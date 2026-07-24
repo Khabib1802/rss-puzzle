@@ -5,6 +5,7 @@ import Button from '@/components/ui/Button/Button.ts';
 import Select, { type SelectOption } from '@/components/ui/Select/Select.ts';
 import BaseComponent from '@/components/BaseComponent';
 import { LEVELS_COUNT } from '@/constants';
+import statisticsService from '@/services/statisticsService';
 import HintControls from '../hints/HintControls/HintControls';
 
 import styles from './Header.module.scss';
@@ -36,23 +37,31 @@ class Header extends BaseComponent<HTMLDivElement> {
     this.refreshRoundOptions().catch((error: unknown) => {
       throw new Error(`Failed to load rounds list. Reason: ${String(error)}`);
     });
-  }
 
-  public onSelectionChange(callback: () => void): void {
-    this.onSelectionChangeCallback = callback;
+    statisticsService.subscribe(() => {
+      this.levelSelect.setOptions(Header.buildLevelOptions());
+      this.roundSelect.setOptions(
+        Header.buildRoundOptions(this.roundSelect.element.options.length, gameService.gameState.level)
+      );
+    });
   }
 
   private static buildLevelOptions(): SelectOption[] {
     return Array.from({ length: LEVELS_COUNT }, (_, index) => {
       const level = index + 1;
-      return { value: String(level), label: `Level ${String(level)}` };
+      return {
+        value: String(level),
+        label: `Level ${String(level)}`,
+        isCompleted: statisticsService.isLevelCompleted(level),
+      };
     });
   }
 
-  private static buildRoundOptions(roundsCount: number): SelectOption[] {
+  private static buildRoundOptions(roundsCount: number, level: number): SelectOption[] {
     return Array.from({ length: roundsCount }, (_, index) => ({
       value: String(index),
       label: `Round ${String(index + 1)}`,
+      isCompleted: statisticsService.isRoundCompleted(level, index),
     }));
   }
 
@@ -61,9 +70,13 @@ class Header extends BaseComponent<HTMLDivElement> {
 
     const roundsCount = await gameService.getRoundsCount(gameService.gameState.level);
 
-    this.roundSelect.setOptions(Header.buildRoundOptions(roundsCount));
+    this.roundSelect.setOptions(Header.buildRoundOptions(roundsCount, gameService.gameState.level));
     this.roundSelect.setValue(String(gameService.gameState.roundIndex));
     this.roundSelect.setDisabled(false);
+  }
+
+  public onSelectionChange(callback: () => void): void {
+    this.onSelectionChangeCallback = callback;
   }
 
   private setupEvents(): void {
