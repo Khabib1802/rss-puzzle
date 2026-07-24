@@ -1,0 +1,16 @@
+@use '@styles/variables.scss' as *;
+
+.banner {
+  padding: 8px 16px;
+  background-color: $c-light;
+  color: $c-text;
+  border-radius: 6px;
+  text-align: center;
+  opacity: 1;
+  transition: opacity 0.4s ease;
+}
+
+.hidden {
+  opacity: 0;
+  pointer-events: none;
+}

@@ -1,10 +1,11 @@
-import type { HintSettings, LevelProgress } from '@/types/game.ts';
+import type { HintSettings, LastCompletedRound, LevelProgress } from '@/types/game.ts';
 import type { User } from '@/types/user.ts';
 
 interface StorageSchema {
   user: User;
   hintSettings: HintSettings;
   levelProgress: LevelProgress;
+  lastCompletedRound: LastCompletedRound;
 }
 
 const getItem = <K extends keyof StorageSchema>(key: K): StorageSchema[K] | null => {

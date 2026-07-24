@@ -6,11 +6,12 @@ import HintPanel from '@/components/game/hints/HintPanel/HintPanel.ts';
 import Header from '@/components/game/Header/Header.ts';
 import SentenceBoard from '@/components/game/SentenceBoard/SentenceBoard.ts';
 import { HINT_KINDS } from '@/constants.ts';
-import type { HintKind } from '@/types/game.ts';
+import type { HintKind, LastCompletedRound } from '@/types/game.ts';
 import type { RoundGeometry } from '@/utils/puzzleGeometry.ts';
 import statisticsService from '@/services/statisticsService';
 import computeRoundGeometry from '@/services/puzzleGeometryMeasurer.ts';
 import PuzzleBoardController from '@/components/game/PuzzleBoardController/PuzzleBoardController';
+import ResumeBanner from '@/components/game/ResumeBanner/ResumeBanner';
 
 import styles from './GamePage.module.scss';
 
@@ -33,6 +34,10 @@ class GamePage extends BaseComponent<HTMLDivElement> {
 
   private currentRoundGeometry: RoundGeometry | null = null;
 
+  private resumedFrom: LastCompletedRound | null = null;
+
+  private resumeBanner: ResumeBanner | null = null;
+
   constructor() {
     super('div', ['wrapper']);
 
@@ -42,6 +47,8 @@ class GamePage extends BaseComponent<HTMLDivElement> {
       this.renderCheckButtonState();
     });
 
+    this.applyResumePosition();
+
     this.header = new Header({
       translation: gameService.settings.translation,
       pronunciation: gameService.settings.pronunciation,
@@ -49,15 +56,30 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     });
     this.hintPanel = new HintPanel();
 
+    if (this.resumedFrom) {
+      this.resumeBanner = new ResumeBanner(this.resumedFrom.level, this.resumedFrom.roundIndex + 1);
+    }
+
     this.mainBlock.append(this.sentenceBoard.element);
     this.gameActions = new GameActions();
 
     this.setupEvents();
-    this.append(this.header, this.hintPanel, this.mainBlock, this.gameActions);
+
+    const children: (BaseComponent | HTMLElement)[] = this.resumeBanner ? [this.resumeBanner] : [];
+    this.append(...children, this.header, this.hintPanel, this.mainBlock, this.gameActions);
 
     this.init().catch((error: unknown) => {
       throw new Error(`Critical error during game initialization. Reason: ${String(error)}`);
     });
+  }
+
+  private applyResumePosition(): void {
+    const resumePosition = statisticsService.getResumePosition();
+    if (!resumePosition) return;
+
+    gameService.setLevel(resumePosition.level);
+    gameService.setRound(resumePosition.roundIndex);
+    this.resumedFrom = resumePosition;
   }
 
   private async init() {
