@@ -212,7 +212,7 @@ class GamePage extends BaseComponent<HTMLDivElement> {
 
     if (isSentenceCorrect(resultSentence, this.correctSentence)) {
       gameService.setChecked(true);
-      gameService.recordSentenceResult(this.correctSentence, true);
+      gameService.recordSentenceResult(this.correctSentence, true, gameService.getCurrentSentenceAudio());
       this.renderState();
     }
   }
@@ -244,7 +244,7 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     this.puzzleBoardController.autoComplete(correctWords);
 
     gameService.setChecked(true);
-    gameService.recordSentenceResult(this.correctSentence, false);
+    gameService.recordSentenceResult(this.correctSentence, false, gameService.getCurrentSentenceAudio());
     this.renderState();
   }
 
