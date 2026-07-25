@@ -106,7 +106,6 @@ class Select extends BaseComponent<HTMLDivElement> {
     listbox.classList.add(styles.listbox);
     listbox.id = this.listboxId;
     listbox.setAttribute('role', 'listbox');
-    listbox.hidden = true;
     this.trigger.setAttribute('aria-controls', this.listboxId);
     return listbox;
   }
@@ -177,7 +176,6 @@ class Select extends BaseComponent<HTMLDivElement> {
     }
 
     this.isOpen = true;
-    this.listbox.hidden = false;
     this.trigger.setAttribute('aria-expanded', 'true');
     this.element.classList.add(styles.open);
     this.highlight(this.activeIndex >= 0 ? this.activeIndex : 0);
@@ -185,7 +183,6 @@ class Select extends BaseComponent<HTMLDivElement> {
 
   private close(): void {
     this.isOpen = false;
-    this.listbox.hidden = true;
     this.trigger.setAttribute('aria-expanded', 'false');
     this.element.classList.remove(styles.open);
   }
