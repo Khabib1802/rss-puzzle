@@ -92,6 +92,7 @@ class GamePage extends BaseComponent<HTMLDivElement> {
 
   private async startNewRound(): Promise<void> {
     this.puzzleBoardController.resetRound();
+    gameService.resetRoundResults();
     this.sentenceBoard.clearPicture();
     this.currentRoundGeometry = await this.computeGeometryForCurrentRound();
     this.sentenceBoard.setBoardWidth(this.currentRoundGeometry.boardWidth);
@@ -211,6 +212,7 @@ class GamePage extends BaseComponent<HTMLDivElement> {
 
     if (isSentenceCorrect(resultSentence, this.correctSentence)) {
       gameService.setChecked(true);
+      gameService.recordSentenceResult(this.correctSentence, true);
       this.renderState();
     }
   }
@@ -242,6 +244,7 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     this.puzzleBoardController.autoComplete(correctWords);
 
     gameService.setChecked(true);
+    gameService.recordSentenceResult(this.correctSentence, false);
     this.renderState();
   }
 
@@ -271,6 +274,7 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     statisticsService.markRoundCompleted(level, roundIndex, roundsCount);
 
     const hasNextStep = gameService.nextStep();
+    gameService.setRoundHasNextStep(hasNextStep);
 
     this.gameActions.setVisibility({ check: false, continue: false, autoComplete: false });
     this.puzzleBoardController.revealRoundImage();
@@ -283,6 +287,10 @@ class GamePage extends BaseComponent<HTMLDivElement> {
   ): void {
     const actionLabel = hasNextStep ? 'Next round' : 'Home';
     this.roundCompletePanel = new RoundCompletePanel(imageInfo, actionLabel);
+
+    this.roundCompletePanel.resultsButton.handleClick(() => {
+      window.location.hash = '/statistics';
+    });
 
     this.roundCompletePanel.actionButton.handleClick(() => {
       this.roundCompletePanel?.element.remove();
