@@ -29,6 +29,8 @@ class GameService {
 
   private roundHasNextStep = true;
 
+  private roundArtwork: { src: string; name: string; author: string; year: string } | null = null;
+
   private async loadLevel(level: number): Promise<Level> {
     const cached = this.levelCache.get(level);
     if (cached) return cached;
@@ -102,6 +104,11 @@ class GameService {
     return `${DATA_BASE_URL}images/${round.levelData.cutSrc}`;
   }
 
+  public getCurrentFullImageSource(): string {
+    const round = this.getCurrentRound();
+    return `${DATA_BASE_URL}images/${round.levelData.imageSrc}`;
+  }
+
   public getCurrentImageInfo(): { name: string; author: string; year: string } {
     const { name, author, year } = this.getCurrentRound().levelData;
     return { name, author, year };
@@ -147,6 +154,14 @@ class GameService {
 
   public getRoundHasNextStep(): boolean {
     return this.roundHasNextStep;
+  }
+
+  public setRoundArtwork(artwork: { src: string; name: string; author: string; year: string }): void {
+    this.roundArtwork = artwork;
+  }
+
+  public getRoundArtwork(): { src: string; name: string; author: string; year: string } | null {
+    return this.roundArtwork;
   }
 
   public isLastSentenceInRound(): boolean {

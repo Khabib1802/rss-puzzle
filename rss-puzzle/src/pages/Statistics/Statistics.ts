@@ -15,6 +15,9 @@ class Statistics extends BaseComponent<HTMLDivElement> {
     const title = new BaseComponent('h1', [styles.title]);
     title.element.textContent = 'Round results';
 
+    const artwork = gameService.getRoundArtwork();
+    const artworkBlock = artwork ? Statistics.buildArtworkBlock(artwork) : null;
+
     const roundResults = gameService.getRoundResults();
     const knownResults = roundResults.filter((result) => result.known);
     const unknownResults = roundResults.filter((result) => !result.known);
@@ -29,7 +32,28 @@ class Statistics extends BaseComponent<HTMLDivElement> {
     this.continueButton = new Button(hasNextStep ? 'Continue' : 'Home', [styles.continueButton]);
 
     this.setupEvents(hasNextStep);
-    this.append(title, ...sections, this.continueButton);
+
+    const children: (BaseComponent | HTMLElement)[] = artworkBlock ? [artworkBlock] : [];
+    this.append(title, ...children, ...sections, this.continueButton);
+  }
+
+  private static buildArtworkBlock(artwork: {
+    src: string;
+    name: string;
+    author: string;
+    year: string;
+  }): BaseComponent {
+    const block = new BaseComponent('figure', [styles.artwork]);
+
+    const image = new BaseComponent<HTMLImageElement>('img', [styles.artworkImage]);
+    image.element.src = artwork.src;
+    image.element.alt = artwork.name;
+
+    const caption = new BaseComponent('figcaption', [styles.artworkCaption]);
+    caption.element.textContent = `${artwork.name} — ${artwork.author}, ${artwork.year}`;
+
+    block.append(image, caption);
+    return block;
   }
 
   private static buildSection(

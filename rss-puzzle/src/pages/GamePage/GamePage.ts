@@ -270,6 +270,7 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     const { level, roundIndex } = gameService.gameState;
     const roundsCount = gameService.currentLevelData?.roundsCount ?? 0;
     const imageInfo = gameService.getCurrentImageInfo();
+    gameService.setRoundArtwork({ ...imageInfo, src: gameService.getCurrentFullImageSource() });
 
     statisticsService.markRoundCompleted(level, roundIndex, roundsCount);
 
