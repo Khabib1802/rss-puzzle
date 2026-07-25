@@ -1,0 +1,29 @@
+@use 'sass:map';
+
+$palette: (
+  'white': #ffffff,
+  'ink-900': #222222,
+  'ink-700': #2c3e50,
+  'ink-300': #aaaaaa,
+  'sky-100': #ddf2f7,
+  'sky-200': #cae4ee,
+  'green-500': #4caf50,
+  'red-500': #f44336,
+);
+
+$colors: (
+  'text': map.get($palette, 'ink-700'),
+  'on-primary': map.get($palette, 'white'),
+  'primary': map.get($palette, 'ink-900'),
+  'surface': map.get($palette, 'sky-100'),
+  'surface-hover': map.get($palette, 'sky-200'),
+  'disabled': map.get($palette, 'ink-300'),
+  'success': map.get($palette, 'green-500'),
+  'danger': map.get($palette, 'red-500'),
+);
+
+@mixin emit-color-properties {
+  @each $name, $value in $colors {
+    --color-#{$name}: #{$value};
+  }
+}
