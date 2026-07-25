@@ -21,7 +21,7 @@ class PronunciationHint extends BaseComponent<HTMLDivElement> {
   constructor() {
     super('div', [styles.hint]);
 
-    this.playButton = new Button('', [styles.playButton]);
+    this.playButton = new Button({ text: '', additionalClasses: [styles.playButton] });
     this.playButton.element.innerHTML = SPEAKER_ICON_MARKUP;
 
     this.playButton.handleClick(() => {

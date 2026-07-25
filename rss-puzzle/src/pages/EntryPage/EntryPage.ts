@@ -37,7 +37,7 @@ class EntryPage extends BaseComponent<HTMLDivElement> {
 
     this.inputWrapper.append(this.nameInput, this.surnameInput);
 
-    this.loginButton = new Button('Login', ['login']);
+    this.loginButton = new Button({ text: 'Login', additionalClasses: ['login'] });
 
     this.setupEvents();
 

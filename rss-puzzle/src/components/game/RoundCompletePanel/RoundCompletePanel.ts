@@ -26,8 +26,8 @@ class RoundCompletePanel extends BaseComponent<HTMLDivElement> {
     meta.textContent = `${imageInfo.author}, ${imageInfo.year}`;
 
     const buttonRow = new BaseComponent('div', [styles.buttonRow]);
-    this.resultsButton = new Button('Results', [styles.resultsButton]);
-    this.actionButton = new Button(actionLabel, [styles.actionButton]);
+    this.resultsButton = new Button({ text: 'Results', additionalClasses: [styles.resultsButton] });
+    this.actionButton = new Button({ text: actionLabel, additionalClasses: [styles.actionButton] });
     buttonRow.append(this.resultsButton, this.actionButton);
 
     this.append(title, meta, buttonRow);

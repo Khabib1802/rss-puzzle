@@ -27,7 +27,10 @@ class HintControls extends BaseComponent<HTMLDivElement> {
   }
 
   private static createToggleButton(kind: HintKind, initialState: boolean): Button {
-    return new Button(HintControls.getToggleLabel(kind, initialState), [styles.toggleButton]);
+    return new Button({
+      text: HintControls.getToggleLabel(kind, initialState),
+      additionalClasses: [styles.toggleButton],
+    });
   }
 
   private static getToggleLabel(kind: HintKind, isEnabled: boolean): string {

@@ -29,7 +29,10 @@ class Statistics extends BaseComponent<HTMLDivElement> {
     if (unknownSection) sections.push(unknownSection);
 
     const hasNextStep = gameService.getRoundHasNextStep();
-    this.continueButton = new Button(hasNextStep ? 'Continue' : 'Home', [styles.continueButton]);
+    this.continueButton = new Button({
+      text: hasNextStep ? 'Continue' : 'Home',
+      additionalClasses: [styles.continueButton],
+    });
 
     this.setupEvents(hasNextStep);
 

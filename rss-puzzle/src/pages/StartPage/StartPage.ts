@@ -32,8 +32,8 @@ class StartPage extends BaseComponent<HTMLDivElement> {
       '“Start an engaging journey of learning English through interactive puzzles inspired by famous artworks”';
 
     this.buttonWrapper = new BaseComponent('div');
-    this.logoutButton = new Button('Logout', [styles.logout]);
-    this.startButton = new Button('Start', ['start']);
+    this.logoutButton = new Button({ text: 'Logout', additionalClasses: [styles.logout] });
+    this.startButton = new Button({ text: 'Start', additionalClasses: ['start'] });
     this.buttonWrapper.append(this.logoutButton.element, this.startButton.element);
 
     this.setupEvents();

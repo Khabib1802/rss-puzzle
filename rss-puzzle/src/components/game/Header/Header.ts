@@ -24,7 +24,7 @@ class Header extends BaseComponent<HTMLDivElement> {
   constructor(initialHintStates: Record<HintKind, boolean>) {
     super('div', [styles.header]);
 
-    this.logoutButton = new Button('Logout', [styles.logout]);
+    this.logoutButton = new Button({ text: 'Logout', additionalClasses: [styles.logout] });
     this.levelSelect = new Select(Header.buildLevelOptions(), [styles.select]);
     this.roundSelect = new Select([], [styles.select]);
     this.hintControls = new HintControls(initialHintStates);

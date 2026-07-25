@@ -16,7 +16,7 @@ class NotFoundPage extends BaseComponent<HTMLDivElement> {
     this.text = new BaseComponent('p');
     this.text.element.textContent = "Oops! It looks like you're lost";
 
-    this.button = new Button('Back');
+    this.button = new Button({ text: 'Back' });
     this.button.handleClick(() => {
       window.location.hash = '/';
     });

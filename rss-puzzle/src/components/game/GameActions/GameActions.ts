@@ -19,9 +19,9 @@ class GameActions extends BaseComponent<HTMLDivElement> {
   constructor() {
     super('div', [styles.actions]);
 
-    this.checkButton = new Button('Check', [styles.checkButton]);
-    this.autoCompleteButton = new Button('Auto-Complete', [styles.autoCompleteButton]);
-    this.continueButton = new Button('Continue', [styles.continueButton, styles.hidden]);
+    this.checkButton = new Button({ text: 'Check', additionalClasses: [styles.checkButton] });
+    this.autoCompleteButton = new Button({ text: 'Auto-Complete', additionalClasses: [styles.autoCompleteButton] });
+    this.continueButton = new Button({ text: 'Continue', additionalClasses: [styles.continueButton, styles.hidden] });
 
     this.append(this.checkButton, this.autoCompleteButton, this.continueButton);
   }
