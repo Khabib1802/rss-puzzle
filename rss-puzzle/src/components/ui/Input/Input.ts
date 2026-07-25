@@ -23,6 +23,8 @@ class Input extends BaseComponent<HTMLDivElement> {
 
   private wrapper: HTMLElement;
 
+  private inputContainer: HTMLDivElement;
+
   private input: HTMLInputElement;
 
   private errorSpan: HTMLSpanElement;
@@ -39,10 +41,8 @@ class Input extends BaseComponent<HTMLDivElement> {
     const inputId = `input-${String((Input.idCounter += 1))}`;
     const errorId = `${inputId}-error`;
 
-    const label = document.createElement('label');
-    label.classList.add(styles.label);
-    label.textContent = options.label;
-    label.htmlFor = inputId;
+    this.inputContainer = document.createElement('div');
+    this.inputContainer.classList.add(styles.inputContainer);
 
     this.input = document.createElement('input');
     this.input.id = inputId;
@@ -53,12 +53,19 @@ class Input extends BaseComponent<HTMLDivElement> {
     this.input.required = options.required || false;
     this.input.setAttribute('aria-describedby', errorId);
 
+    const label = document.createElement('label');
+    label.classList.add(styles.label);
+    label.textContent = options.label;
+    label.htmlFor = inputId;
+
+    this.inputContainer.append(this.input, label);
+
     this.errorSpan = document.createElement('span');
     this.errorSpan.id = errorId;
     this.errorSpan.classList.add(styles.error);
     this.errorSpan.textContent = this.errorMessage;
 
-    this.wrapper.append(this.input, label, this.errorSpan);
+    this.wrapper.append(this.inputContainer, this.errorSpan);
 
     if (options.validators && options.validators.length) {
       this.validators = options.validators;
@@ -87,11 +94,11 @@ class Input extends BaseComponent<HTMLDivElement> {
     this.input.setAttribute('aria-invalid', String(Boolean(this.errorMessage)));
 
     if (this.errorMessage) {
-      this.input.classList.add(styles.invalid);
-      this.input.classList.remove(styles.valid);
+      this.inputContainer.classList.add(styles.invalid);
+      this.inputContainer.classList.remove(styles.valid);
     } else {
-      this.input.classList.remove(styles.invalid);
-      this.input.classList.add(styles.valid);
+      this.inputContainer.classList.remove(styles.invalid);
+      this.inputContainer.classList.add(styles.valid);
     }
 
     return !this.errorMessage;

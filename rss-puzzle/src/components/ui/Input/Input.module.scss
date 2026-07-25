@@ -1,41 +1,53 @@
 .wrapper {
-  position: relative;
   display: flex;
   flex-direction: column;
-  padding: var(--space-xl) var(--space-lg) var(--space-lg);
-  background-color: var(--color-surface);
+  width: 100%;
+}
+
+.inputContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm);
+  background-color: var(--color-surface);
   transition:
     border-color 0.2s ease,
     box-shadow 0.2s ease;
 }
 
-.wrapper:focus-within {
+.inputContainer:focus-within {
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 12%, transparent);
+  box-shadow: 0 0 0 1px var(--color-primary);
 }
 
-.wrapper:has(.invalid) {
+.inputContainer.invalid {
   border-color: var(--color-danger);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-danger) 12%, transparent);
+
+  &:focus-within {
+    box-shadow: 0 0 0 1px var(--color-danger);
+  }
 }
 
-.wrapper:has(.valid) {
+.inputContainer.valid {
   border-color: var(--color-success);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-success) 12%, transparent);
+
+  &:focus-within {
+    box-shadow: 0 0 0 1px var(--color-success);
+  }
 }
 
 .input {
   width: 100%;
-  color: var(--color-text);
+  height: 48px;
+  padding: 0 14px;
   font-family: inherit;
-  font-size: var(--font-size-lg);
-  padding: var(--space-sm) 0;
+  font-size: var(--font-size-md, 1rem);
+  color: var(--color-text);
+  background: transparent;
   border: none;
   outline: none;
-  background: transparent;
+  box-sizing: border-box;
 }
 
 .input::placeholder {
@@ -49,49 +61,46 @@
 
 .label {
   position: absolute;
-  left: var(--space-lg);
-  top: calc(var(--space-xl) + var(--space-sm));
-  color: var(--color-text-muted);
-  font-size: var(--font-size-lg);
-  line-height: 1;
-  padding: 0 var(--space-xs);
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 0 4px;
   background-color: var(--color-surface);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-md, 1rem);
+  line-height: 1;
   pointer-events: none;
   transition:
-    top 0.2s ease,
+    transform 0.2s ease,
     font-size 0.2s ease,
     color 0.2s ease;
 }
 
 .input:focus ~ .label,
 .input:not(:placeholder-shown) ~ .label {
-  top: 0;
-  font-size: var(--font-size-xs);
+  transform: translateY(-28px) scale(0.85);
+  transform-origin: top left;
   color: var(--color-primary);
 }
 
-.wrapper:has(.invalid) .label {
+.inputContainer.invalid .label {
   color: var(--color-danger);
 }
 
-.wrapper:has(.valid) .label {
+.inputContainer.valid .label {
   color: var(--color-success);
 }
 
 .error {
+  min-height: 18px;
+  margin-top: 4px;
+  padding-left: 14px;
+  font-size: var(--font-size-xs, 0.75rem);
   color: var(--color-danger);
-  font-size: var(--font-size-xs);
-  min-height: 16px;
-  max-height: 16px;
-  overflow: hidden;
   opacity: 0;
-  margin-top: 0;
-  transition:
-    opacity 0.2s ease,
-    margin-top 0.2s ease;
+  transition: opacity 0.2s ease;
 }
 
 .errorVisible {
   opacity: 1;
-  margin-top: var(--space-xs);
 }

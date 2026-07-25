@@ -90,6 +90,11 @@
   color: var(--color-on-primary);
 }
 
+.active:hover:not(:disabled) {
+  background-color: var(--color-secondary-hover);
+  border-color: var(--color-secondary-hover);
+}
+
 .icon {
   flex-shrink: 0;
   width: 1em;
