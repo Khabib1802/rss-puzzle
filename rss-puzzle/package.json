@@ -11,8 +11,8 @@
     "type-check": "tsc --noEmit",
     "format": "prettier --write src",
     "ci:format": "prettier --check src",
-    "lint": "eslint src",
-    "lint:fix": "eslint src --fix",
+    "lint": "tsc --noEmit && eslint src --ext .ts,.tsx",
+    "lint:fix": "eslint src --ext .ts,.tsx --fix",
     "check-all": "npm run type-check && npm run lint && npm run ci:format",
     "prepare": "cd .. && husky rss-puzzle/.husky",
     "deploy": "gh-pages -d dist --no-history",
@@ -33,7 +33,8 @@
     "pattern": "^(feat|fix|refactor|docs|style|chore)/RSS-PZ-\\d{2}_.*$|^main$|^(feat|fix|refactor|docs|style|chore)/[a-zA-Z0-9]+$"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^8.50.1",
+    "@typescript-eslint/eslint-plugin": "^8.65.0",
+    "@typescript-eslint/parser": "^8.65.0",
     "@vitest/coverage-v8": "^4.1.10",
     "eslint": "^8.57.1",
     "eslint-config-airbnb-base": "^15.0.0",
