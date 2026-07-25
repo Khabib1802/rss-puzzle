@@ -43,6 +43,7 @@ interface LastCompletedRound {
 interface RoundSentenceResult {
   sentence: string;
   known: boolean;
+  audio: string;
 }
 
 interface GameState {
