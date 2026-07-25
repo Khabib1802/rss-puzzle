@@ -1,6 +1,7 @@
 import EntryPage from '@/pages/EntryPage/EntryPage.ts';
 import StartPage from '@/pages/StartPage/StartPage.ts';
 import GamePage from '@/pages/GamePage/GamePage.ts';
+import Statistics from '@/pages/Statistics/Statistics.ts';
 import NotFoundPage from '@/pages/NotFoundPage/NotFoundPage.ts';
 import type { Page } from '@/types/pages.ts';
 import { hasUser } from '@/services/userService.ts';
@@ -29,6 +30,7 @@ export default class App {
       '/': protectedRoute(() => new StartPage()),
       '/entry': () => new EntryPage(),
       '/game': protectedRoute(() => new GamePage()),
+      '/statistics': protectedRoute(() => new Statistics()),
       '/404': () => new NotFoundPage(),
     };
 
