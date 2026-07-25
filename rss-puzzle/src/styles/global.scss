@@ -4,6 +4,7 @@
 @use '@styles/tokens/spacing' as spacing;
 @use '@styles/tokens/radius' as radius;
 @use '@styles/tokens/shadows' as shadows;
+@use '@styles/tokens/typography' as typography;
 
 *,
 *::before,
@@ -16,6 +17,7 @@
   @include spacing.emit-spacing-properties;
   @include radius.emit-radius-properties;
   @include shadows.emit-shadow-properties;
+  @include typography.emit-typography-properties;
 }
 
 html,
