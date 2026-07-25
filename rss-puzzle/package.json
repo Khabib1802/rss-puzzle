@@ -23,7 +23,7 @@
     "*.{js,jsx,ts,tsx}": [
       "eslint --fix",
       "prettier --write",
-      "eslint"
+      "vitest related --run"
     ],
     "*.{css,scss,md,json}": [
       "prettier --write"
