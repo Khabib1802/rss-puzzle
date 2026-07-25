@@ -1,2 +1,36 @@
 .button {
+  padding: var(--space-sm) var(--space-md);
+  background-color: transparent;
+  color: var(--color-primary);
+  border: 2px solid var(--color-primary);
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition: all 0.3s;
+  outline-offset: 1px;
+}
+
+.button:hover,
+.button:focus-visible {
+  background-color: var(--color-primary);
+  color: var(--color-on-primary);
+}
+
+.button:disabled {
+  background-color: var(--color-disabled);
+  border-color: transparent;
+  color: inherit;
+  cursor: not-allowed;
+}
+
+.primary {
+  background-color: var(--color-primary);
+  color: var(--color-on-primary);
+}
+
+.primary:hover,
+.primary:focus-visible {
+  background-color: transparent;
+  color: var(--color-primary);
 }

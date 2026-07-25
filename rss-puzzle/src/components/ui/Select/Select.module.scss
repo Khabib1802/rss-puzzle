@@ -1,6 +1,95 @@
-@use '@styles/variables.scss' as *;
+.select {
+  position: relative;
+  display: inline-block;
+}
 
-.completed {
-  color: $c-correct;
-  font-weight: 600;
+.trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  min-width: 120px;
+  padding: var(--space-sm) var(--space-md);
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  border: 1px solid var(--color-disabled);
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: var(--font-size-md);
+  cursor: pointer;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+
+.trigger::after {
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  content: '';
+  border-right: 2px solid currentcolor;
+  border-bottom: 2px solid currentcolor;
+  transform: rotate(45deg);
+  transition: transform 0.2s;
+}
+
+.open .trigger::after {
+  transform: rotate(-135deg);
+}
+
+.trigger:hover,
+.trigger:focus-visible {
+  border-color: var(--color-primary);
+}
+
+.trigger:disabled {
+  color: inherit;
+  cursor: not-allowed;
+  background-color: var(--color-disabled);
+  border-color: transparent;
+}
+
+.value {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.listbox {
+  position: absolute;
+  top: calc(100% + var(--space-xs));
+  right: 0;
+  left: 0;
+  z-index: 10;
+  max-height: 240px;
+  padding: var(--space-xs);
+  margin: 0;
+  overflow-y: auto;
+  list-style: none;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-disabled);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-md);
+}
+
+.option {
+  overflow: hidden;
+  padding: var(--space-sm) var(--space-md);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.option.active {
+  background-color: var(--color-surface-hover);
+}
+
+.option.selected {
+  color: var(--color-primary);
+  font-weight: var(--font-weight-semibold);
+}
+
+.option.completed {
+  color: var(--color-success);
 }

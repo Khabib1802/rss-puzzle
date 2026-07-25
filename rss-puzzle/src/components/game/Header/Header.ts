@@ -41,7 +41,7 @@ class Header extends BaseComponent<HTMLDivElement> {
     statisticsService.subscribe(() => {
       this.levelSelect.setOptions(Header.buildLevelOptions());
       this.roundSelect.setOptions(
-        Header.buildRoundOptions(this.roundSelect.element.options.length, gameService.gameState.level)
+        Header.buildRoundOptions(this.roundSelect.getOptionsCount(), gameService.gameState.level)
       );
     });
   }
