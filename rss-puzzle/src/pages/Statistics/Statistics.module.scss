@@ -29,6 +29,26 @@ $color-item-bg: #242424;
   letter-spacing: -0.05em;
 }
 
+.section {
+  width: 100%;
+}
+
+.sectionTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0 0 0.75rem 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.section.known .sectionTitle {
+  color: $color-known;
+}
+
+.section.unknown .sectionTitle {
+  color: $color-unknown;
+}
+
 .list {
   display: flex;
   flex-direction: column;
@@ -36,8 +56,8 @@ $color-item-bg: #242424;
   width: 100%;
   list-style: none;
   padding: 0;
-  margin: 0 0 2.5rem 0;
-  max-height: 50vh;
+  margin: 0 0 1.5rem 0;
+  max-height: 30vh;
   overflow-y: auto;
   padding-right: 0.5rem;
 
