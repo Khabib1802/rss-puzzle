@@ -49,5 +49,19 @@
 }
 
 .actionButton {
+  background-color: $c-correct;
+  color: #fff;
+  border: none;
+}
+
+.resultsButton {
+  background-color: transparent;
+  color: $c-light;
+  border: 1px solid rgba(221, 242, 247, 0.6);
+}
+
+.buttonRow {
+  display: flex;
+  gap: 10px;
   margin-top: 10px;
 }

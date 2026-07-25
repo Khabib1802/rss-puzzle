@@ -12,6 +12,8 @@ interface ImageInfo {
 class RoundCompletePanel extends BaseComponent<HTMLDivElement> {
   public readonly actionButton: Button;
 
+  public readonly resultsButton: Button;
+
   constructor(imageInfo: ImageInfo, actionLabel: string) {
     super('div', [styles.panel]);
 
@@ -23,9 +25,12 @@ class RoundCompletePanel extends BaseComponent<HTMLDivElement> {
     meta.classList.add(styles.meta);
     meta.textContent = `${imageInfo.author}, ${imageInfo.year}`;
 
+    const buttonRow = new BaseComponent('div', [styles.buttonRow]);
+    this.resultsButton = new Button('Results', [styles.resultsButton]);
     this.actionButton = new Button(actionLabel, [styles.actionButton]);
+    buttonRow.append(this.resultsButton, this.actionButton);
 
-    this.append(title, meta, this.actionButton);
+    this.append(title, meta, buttonRow);
 
     requestAnimationFrame(() => {
       this.element.classList.add(styles.visible);
