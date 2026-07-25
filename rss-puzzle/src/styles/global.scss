@@ -122,33 +122,43 @@ img {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-button {
-  padding: 10px 15px;
-  background-color: transparent;
-  color: $c-dark;
-  border: 2px solid $c-dark;
-  border-radius: 5px;
-  font-family: inherit;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s;
-  outline-offset: 1px;
-}
-
-button:hover,
-button:focus {
-  background-color: $c-dark;
-  color: #ffffff;
-}
-
-button:disabled {
-  background-color: $c-disabled;
-  border-color: transparent;
-  color: inherit;
-  cursor: not-allowed;
-}
-
 .is-dragging,
 .is-dragging * {
   cursor: grabbing !important;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.container {
+  width: 100%;
+  max-width: 1000px;
+  margin-inline: auto;
+  padding-inline: var(--space-lg);
+}
+
+.truncate {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.no-select {
+  user-select: none;
+  -webkit-user-select: none;
 }
