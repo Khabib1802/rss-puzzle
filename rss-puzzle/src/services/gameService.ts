@@ -133,8 +133,8 @@ class GameService {
     this.roundResults = [];
   }
 
-  public recordSentenceResult(sentence: string, known: boolean): void {
-    this.roundResults.push({ sentence, known });
+  public recordSentenceResult(sentence: string, known: boolean, audio: string): void {
+    this.roundResults.push({ sentence, known, audio });
   }
 
   public getRoundResults(): RoundSentenceResult[] {

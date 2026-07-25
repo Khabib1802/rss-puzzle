@@ -112,6 +112,21 @@ $color-item-bg: #242424;
   word-break: break-word;
 }
 
+.audioIcon {
+  flex-shrink: 0;
+
+  button {
+    color: $color-text;
+    border-color: $color-text-muted;
+  }
+
+  button:hover,
+  button:focus {
+    background-color: $color-text;
+    color: $color-bg;
+  }
+}
+
 .badge {
   font-size: 0.85rem;
   font-weight: 600;
