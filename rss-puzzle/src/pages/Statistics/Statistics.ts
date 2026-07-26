@@ -1,9 +1,8 @@
 import BaseComponent from '@/components/BaseComponent.ts';
 import Button from '@/components/ui/Button/Button.ts';
-import PronunciationHint from '@/components/game/hints/PronunciationHint/PronunciationHint.ts';
+import ResultsList from '@/components/statistics/ResultsList/ResultsList.ts';
 import gameService from '@/services/gameService.ts';
 import type { RoundSentenceResult } from '@/types/game.ts';
-
 import { ArrowRight, CheckCheck } from 'lucide';
 import styles from './Statistics.module.scss';
 
@@ -29,6 +28,8 @@ class Statistics extends BaseComponent<HTMLDivElement> {
     if (knownSection) sections.push(knownSection);
     if (unknownSection) sections.push(unknownSection);
 
+    const resultsBlock = sections.length > 0 ? Statistics.buildResultsBlock(sections) : null;
+
     const hasNextStep = gameService.getRoundHasNextStep();
     this.continueButton = new Button({
       text: hasNextStep ? 'Continue' : 'Finish',
@@ -40,7 +41,19 @@ class Statistics extends BaseComponent<HTMLDivElement> {
     this.setupEvents(hasNextStep);
 
     const children: (BaseComponent | HTMLElement)[] = artworkBlock ? [artworkBlock] : [];
-    this.append(title, ...children, ...sections, this.continueButton);
+    if (resultsBlock) children.push(resultsBlock);
+    this.append(title, ...children, this.continueButton);
+  }
+
+  private static buildResultsBlock(sections: BaseComponent[]): BaseComponent {
+    const wrap = new BaseComponent('div', [styles.resultsWrap]);
+    const scroll = new BaseComponent('div', [styles.resultsScroll]);
+    scroll.append(...sections);
+
+    const fade = new BaseComponent('div', [styles.resultsFade]);
+
+    wrap.append(scroll, fade);
+    return wrap;
   }
 
   private static buildArtworkBlock(artwork: {
@@ -74,22 +87,7 @@ class Statistics extends BaseComponent<HTMLDivElement> {
     const sectionTitle = new BaseComponent('h2', [styles.sectionTitle]);
     sectionTitle.element.textContent = heading;
 
-    const list = new BaseComponent('ul', [styles.list]);
-    results.forEach(({ sentence, known, audio }) => {
-      const item = new BaseComponent('li', [styles.item, known ? styles.known : styles.unknown]);
-      const sentenceText = new BaseComponent('span', [styles.sentence]);
-      sentenceText.element.textContent = sentence;
-
-      const audioHint = new PronunciationHint();
-      audioHint.setAudioSource(audio);
-      audioHint.setVisible(true);
-      audioHint.element.classList.add(styles.audioIcon);
-
-      const badge = new BaseComponent('span', [styles.badge]);
-      badge.element.textContent = known ? 'Known' : 'Unknown';
-      item.append(sentenceText, audioHint, badge);
-      list.append(item);
-    });
+    const list = new ResultsList(results);
 
     section.append(sectionTitle, list);
     return section;

@@ -4,6 +4,12 @@ import BaseComponent from '@/components/BaseComponent';
 
 import styles from './PronunciationHint.module.scss';
 
+export type PronunciationHintSize = 'sm' | 'md';
+
+export interface PronunciationHintProps {
+  size?: PronunciationHintSize;
+}
+
 class PronunciationHint extends BaseComponent<HTMLDivElement> {
   private readonly playButton: Button;
 
@@ -11,14 +17,16 @@ class PronunciationHint extends BaseComponent<HTMLDivElement> {
 
   private audioSrc = '';
 
-  constructor() {
+  constructor(props: PronunciationHintProps = {}) {
     super('div', [styles.hint]);
+
+    const size = props.size ?? 'md';
 
     this.playButton = new Button({
       variant: 'secondary',
       icon: Volume2,
       ariaLabel: 'Play pronunciation',
-      additionalClasses: [styles.playButton],
+      additionalClasses: [styles.playButton, styles[size]],
     });
 
     const wave1 = document.createElement('div');

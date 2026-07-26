@@ -1,0 +1,72 @@
+@use '@styles/mixins/respond' as respond;
+
+.item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-sm) var(--space-md);
+  padding: var(--space-sm) var(--space-md);
+  background-color: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  transition: border-color 0.2s ease;
+
+  &.known {
+    border-left: 5px solid var(--color-success);
+
+    .badge {
+      background-color: color-mix(in srgb, var(--color-success) 15%, transparent);
+      color: var(--color-success);
+    }
+  }
+
+  &.unknown {
+    border-left: 5px solid var(--color-danger);
+
+    .badge {
+      background-color: color-mix(in srgb, var(--color-danger) 15%, transparent);
+      color: var(--color-danger);
+    }
+  }
+
+  @include respond.respond-below('sm') {
+    grid-template-columns: 1fr;
+    gap: var(--space-sm);
+    padding: var(--space-sm) var(--space-md);
+  }
+}
+
+.sentence {
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-normal);
+  text-align: left;
+  word-break: break-word;
+}
+
+.meta {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: var(--space-sm);
+
+  @include respond.respond-below('sm') {
+    justify-self: end;
+  }
+}
+
+.audioIcon {
+  flex-shrink: 0;
+}
+
+.badge {
+  flex-shrink: 0;
+  min-width: 15ch;
+  padding: var(--space-xs) var(--space-md);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  border-radius: var(--radius-full);
+}
