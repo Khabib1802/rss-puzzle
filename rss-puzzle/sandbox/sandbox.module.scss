@@ -1,0 +1,19 @@
+.section {
+  margin-bottom: var(--space-2xl);
+}
+
+.section h2 {
+  margin-bottom: var(--space-md);
+  font-size: var(--font-size-lg);
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-lg);
+}
+
+.forceHover {
+  background-color: var(--color-primary-hover) !important;
+}

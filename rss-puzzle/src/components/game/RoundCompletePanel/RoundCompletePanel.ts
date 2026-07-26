@@ -1,3 +1,4 @@
+import { ClipboardList, type IconNode } from 'lucide';
 import BaseComponent from '@/components/BaseComponent';
 import Button from '@/components/ui/Button/Button.ts';
 
@@ -14,7 +15,7 @@ class RoundCompletePanel extends BaseComponent<HTMLDivElement> {
 
   public readonly resultsButton: Button;
 
-  constructor(imageInfo: ImageInfo, actionLabel: string) {
+  constructor(imageInfo: ImageInfo, actionText: string, actionIcon: IconNode) {
     super('div', [styles.panel]);
 
     const title = document.createElement('p');
@@ -26,8 +27,18 @@ class RoundCompletePanel extends BaseComponent<HTMLDivElement> {
     meta.textContent = `${imageInfo.author}, ${imageInfo.year}`;
 
     const buttonRow = new BaseComponent('div', [styles.buttonRow]);
-    this.resultsButton = new Button('Results', [styles.resultsButton]);
-    this.actionButton = new Button(actionLabel, [styles.actionButton]);
+    this.resultsButton = new Button({
+      text: 'Results',
+      variant: 'secondary',
+      icon: ClipboardList,
+      iconPosition: 'right',
+    });
+    this.actionButton = new Button({
+      text: actionText,
+      variant: 'primary',
+      icon: actionIcon,
+      iconPosition: 'right',
+    });
     buttonRow.append(this.resultsButton, this.actionButton);
 
     this.append(title, meta, buttonRow);

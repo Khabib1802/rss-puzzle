@@ -14,6 +14,7 @@ import PuzzleBoardController from '@/components/game/PuzzleBoardController/Puzzl
 import ResumeBanner from '@/components/game/ResumeBanner/ResumeBanner';
 import RoundCompletePanel from '@/components/game/RoundCompletePanel/RoundCompletePanel';
 
+import { ArrowRight, CheckCheck } from 'lucide';
 import styles from './GamePage.module.scss';
 
 const ALL_HINT_KINDS = Object.values(HINT_KINDS);
@@ -174,7 +175,7 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     ALL_HINT_KINDS.forEach((kind) => {
       this.header.hintControls.getToggleButton(kind).handleClick(() => {
         const isEnabled = gameService.toggleHint(kind);
-        this.header.hintControls.setToggleLabel(kind, isEnabled);
+        this.header.hintControls.setToggleState(kind, isEnabled);
 
         this.renderHintKindVisibility(kind);
       });
@@ -286,8 +287,9 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     imageInfo: { name: string; author: string; year: string },
     hasNextStep: boolean
   ): void {
-    const actionLabel = hasNextStep ? 'Next round' : 'Home';
-    this.roundCompletePanel = new RoundCompletePanel(imageInfo, actionLabel);
+    const actionText = hasNextStep ? 'Next round' : 'Finish';
+    const actionIcon = hasNextStep ? ArrowRight : CheckCheck;
+    this.roundCompletePanel = new RoundCompletePanel(imageInfo, actionText, actionIcon);
 
     this.roundCompletePanel.resultsButton.handleClick(() => {
       window.location.hash = '/statistics';

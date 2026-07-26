@@ -3,6 +3,7 @@ import BaseComponent from '@/components/BaseComponent.ts';
 import { getUser, hasUser, removeUser } from '@/services/userService.ts';
 import gameService from '@/services/gameService.ts';
 
+import { ArrowRight, LogOut } from 'lucide';
 import styles from './StartPage.module.scss';
 
 class StartPage extends BaseComponent<HTMLDivElement> {
@@ -32,8 +33,20 @@ class StartPage extends BaseComponent<HTMLDivElement> {
       '“Start an engaging journey of learning English through interactive puzzles inspired by famous artworks”';
 
     this.buttonWrapper = new BaseComponent('div');
-    this.logoutButton = new Button('Logout', [styles.logout]);
-    this.startButton = new Button('Start', ['start']);
+    this.logoutButton = new Button({
+      text: 'Logout',
+      variant: 'secondary',
+      additionalClasses: [styles.logout],
+      icon: LogOut,
+      iconPosition: 'right',
+    });
+    this.startButton = new Button({
+      text: 'Start',
+      variant: 'primary',
+      additionalClasses: ['start'],
+      icon: ArrowRight,
+      iconPosition: 'right',
+    });
     this.buttonWrapper.append(this.logoutButton.element, this.startButton.element);
 
     this.setupEvents();

@@ -39,5 +39,5 @@
       "@/*": ["src/*"]
     }
   },
-  "include": ["src", "vite.config.js"]
+  "include": ["src", "sandbox", "vite.config.js"]
 }

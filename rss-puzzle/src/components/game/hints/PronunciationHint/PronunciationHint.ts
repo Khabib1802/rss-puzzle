@@ -1,15 +1,8 @@
+import { Volume2 } from 'lucide';
 import Button from '@/components/ui/Button/Button';
 import BaseComponent from '@/components/BaseComponent';
 
 import styles from './PronunciationHint.module.scss';
-
-const SPEAKER_ICON_MARKUP = `
-  <svg class="${styles.speakerIcon}" viewBox="5 5 12 15">
-    <path fill="currentColor" d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/>
-  </svg>
-  <div class="${styles.wave}"></div>
-  <div class="${styles.wave}"></div>
-`;
 
 class PronunciationHint extends BaseComponent<HTMLDivElement> {
   private readonly playButton: Button;
@@ -21,8 +14,18 @@ class PronunciationHint extends BaseComponent<HTMLDivElement> {
   constructor() {
     super('div', [styles.hint]);
 
-    this.playButton = new Button('', [styles.playButton]);
-    this.playButton.element.innerHTML = SPEAKER_ICON_MARKUP;
+    this.playButton = new Button({
+      variant: 'secondary',
+      icon: Volume2,
+      ariaLabel: 'Play pronunciation',
+      additionalClasses: [styles.playButton],
+    });
+
+    const wave1 = document.createElement('div');
+    wave1.classList.add(styles.wave);
+    const wave2 = document.createElement('div');
+    wave2.classList.add(styles.wave);
+    this.playButton.element.append(wave1, wave2);
 
     this.playButton.handleClick(() => {
       this.play();
