@@ -28,6 +28,8 @@ class Statistics extends BaseComponent<HTMLDivElement> {
     if (knownSection) sections.push(knownSection);
     if (unknownSection) sections.push(unknownSection);
 
+    const resultsBlock = sections.length > 0 ? Statistics.buildResultsBlock(sections) : null;
+
     const hasNextStep = gameService.getRoundHasNextStep();
     this.continueButton = new Button({
       text: hasNextStep ? 'Continue' : 'Finish',
@@ -39,7 +41,19 @@ class Statistics extends BaseComponent<HTMLDivElement> {
     this.setupEvents(hasNextStep);
 
     const children: (BaseComponent | HTMLElement)[] = artworkBlock ? [artworkBlock] : [];
-    this.append(title, ...children, ...sections, this.continueButton);
+    if (resultsBlock) children.push(resultsBlock);
+    this.append(title, ...children, this.continueButton);
+  }
+
+  private static buildResultsBlock(sections: BaseComponent[]): BaseComponent {
+    const wrap = new BaseComponent('div', [styles.resultsWrap]);
+    const scroll = new BaseComponent('div', [styles.resultsScroll]);
+    scroll.append(...sections);
+
+    const fade = new BaseComponent('div', [styles.resultsFade]);
+
+    wrap.append(scroll, fade);
+    return wrap;
   }
 
   private static buildArtworkBlock(artwork: {

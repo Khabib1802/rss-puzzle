@@ -11,7 +11,7 @@ class ResultItem extends BaseComponent<HTMLLIElement> {
     const sentence = new BaseComponent('span', [styles.sentence]);
     sentence.element.textContent = result.sentence;
 
-    const audioHint = new PronunciationHint();
+    const audioHint = new PronunciationHint({ size: 'sm' });
     audioHint.setAudioSource(result.audio);
     audioHint.setVisible(true);
     audioHint.element.classList.add(styles.audioIcon);
