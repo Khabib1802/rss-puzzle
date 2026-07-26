@@ -4,6 +4,7 @@ import PronunciationHint from '@/components/game/hints/PronunciationHint/Pronunc
 import gameService from '@/services/gameService.ts';
 import type { RoundSentenceResult } from '@/types/game.ts';
 
+import { ArrowRight, CheckCheck } from 'lucide';
 import styles from './Statistics.module.scss';
 
 class Statistics extends BaseComponent<HTMLDivElement> {
@@ -30,8 +31,10 @@ class Statistics extends BaseComponent<HTMLDivElement> {
 
     const hasNextStep = gameService.getRoundHasNextStep();
     this.continueButton = new Button({
-      text: hasNextStep ? 'Continue' : 'Home',
-      additionalClasses: [styles.continueButton],
+      text: hasNextStep ? 'Continue' : 'Finish',
+      variant: 'primary',
+      icon: hasNextStep ? ArrowRight : CheckCheck,
+      iconPosition: 'right',
     });
 
     this.setupEvents(hasNextStep);

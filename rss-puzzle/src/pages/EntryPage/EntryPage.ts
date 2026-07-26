@@ -2,6 +2,7 @@ import Button from '@/components/ui/Button/Button.ts';
 import Input from '@/components/ui/Input/Input.ts';
 import BaseComponent from '@/components/BaseComponent.ts';
 import { saveUser } from '@/services/userService.ts';
+import { LogIn } from 'lucide';
 
 class EntryPage extends BaseComponent<HTMLDivElement> {
   private title: BaseComponent<HTMLHeadingElement>;
@@ -37,7 +38,13 @@ class EntryPage extends BaseComponent<HTMLDivElement> {
 
     this.inputWrapper.append(this.nameInput, this.surnameInput);
 
-    this.loginButton = new Button({ text: 'Login', additionalClasses: ['login'] });
+    this.loginButton = new Button({
+      text: 'Login',
+      variant: 'primary',
+      additionalClasses: ['login'],
+      icon: LogIn,
+      iconPosition: 'right',
+    });
 
     this.setupEvents();
 

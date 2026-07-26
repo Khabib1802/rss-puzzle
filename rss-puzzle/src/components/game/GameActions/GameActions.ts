@@ -1,6 +1,7 @@
 import Button from '@/components/ui/Button/Button.ts';
 import BaseComponent from '@/components/BaseComponent';
 
+import { ArrowRight, SquareCheckBig, X } from 'lucide';
 import styles from './GameActions.module.scss';
 
 interface GameActionsVisibilityState {
@@ -19,11 +20,26 @@ class GameActions extends BaseComponent<HTMLDivElement> {
   constructor() {
     super('div', [styles.actions]);
 
-    this.checkButton = new Button({ text: 'Check', additionalClasses: [styles.checkButton] });
-    this.autoCompleteButton = new Button({ text: 'Auto-Complete', additionalClasses: [styles.autoCompleteButton] });
-    this.continueButton = new Button({ text: 'Continue', additionalClasses: [styles.continueButton, styles.hidden] });
+    this.autoCompleteButton = new Button({
+      text: 'Skip',
+      variant: 'danger',
+      icon: X,
+      iconPosition: 'right',
+    });
+    this.checkButton = new Button({
+      text: 'Check',
+      variant: 'primary',
+      icon: SquareCheckBig,
+      iconPosition: 'right',
+    });
+    this.continueButton = new Button({
+      text: 'Continue',
+      variant: 'primary',
+      icon: ArrowRight,
+      iconPosition: 'right',
+    });
 
-    this.append(this.checkButton, this.autoCompleteButton, this.continueButton);
+    this.append(this.autoCompleteButton, this.checkButton, this.continueButton);
   }
 
   public setCheckDisabled(state: boolean): void {
