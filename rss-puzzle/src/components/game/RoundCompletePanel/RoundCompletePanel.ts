@@ -1,3 +1,4 @@
+import { ArrowRight, ClipboardList } from 'lucide';
 import BaseComponent from '@/components/BaseComponent';
 import Button from '@/components/ui/Button/Button.ts';
 
@@ -26,8 +27,18 @@ class RoundCompletePanel extends BaseComponent<HTMLDivElement> {
     meta.textContent = `${imageInfo.author}, ${imageInfo.year}`;
 
     const buttonRow = new BaseComponent('div', [styles.buttonRow]);
-    this.resultsButton = new Button({ text: 'Results', additionalClasses: [styles.resultsButton] });
-    this.actionButton = new Button({ text: actionLabel, additionalClasses: [styles.actionButton] });
+    this.resultsButton = new Button({
+      text: 'Results',
+      variant: 'secondary',
+      icon: ClipboardList,
+      iconPosition: 'right',
+    });
+    this.actionButton = new Button({
+      text: actionLabel,
+      variant: 'primary',
+      icon: ArrowRight,
+      iconPosition: 'right',
+    });
     buttonRow.append(this.resultsButton, this.actionButton);
 
     this.append(title, meta, buttonRow);

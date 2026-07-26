@@ -15,7 +15,7 @@
   padding: 16px 24px;
   max-width: 90vw;
 
-  background-color: rgba(34, 34, 34, 0.72);
+  // background-color: rgba(34, 34, 34, 0.72);
   border-radius: 12px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
   backdrop-filter: blur(4px);
@@ -46,18 +46,6 @@
   color: rgba(221, 242, 247, 0.8);
   font-size: 14px;
   text-align: center;
-}
-
-.actionButton {
-  background-color: $c-correct;
-  color: #fff;
-  border: none;
-}
-
-.resultsButton {
-  background-color: transparent;
-  color: $c-light;
-  border: 1px solid rgba(221, 242, 247, 0.6);
 }
 
 .buttonRow {
