@@ -79,6 +79,17 @@
   background-color: var(--color-danger);
 }
 
+.success {
+  color: var(--color-success);
+  background-color: transparent;
+  border-color: var(--color-success);
+}
+
+.success:hover:not(:disabled) {
+  color: var(--color-on-primary);
+  background-color: var(--color-success);
+}
+
 .iconOnly {
   padding: var(--space-sm);
 }

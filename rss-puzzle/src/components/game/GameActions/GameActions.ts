@@ -28,7 +28,7 @@ class GameActions extends BaseComponent<HTMLDivElement> {
     });
     this.checkButton = new Button({
       text: 'Check',
-      variant: 'primary',
+      variant: 'success',
       icon: SquareCheckBig,
       iconPosition: 'right',
     });

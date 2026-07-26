@@ -43,7 +43,7 @@ class GamePage extends BaseComponent<HTMLDivElement> {
   private roundCompletePanel: RoundCompletePanel | null = null;
 
   constructor() {
-    super('div', ['wrapper']);
+    super('div', [styles.gameWrapper]);
 
     this.mainBlock = new BaseComponent('div', [styles.mainBlock]);
     this.sentenceBoard = new SentenceBoard();
