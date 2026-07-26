@@ -2,9 +2,9 @@
 
 .actions {
   display: flex;
-  justify-content: center;
-  gap: 10px;
   flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-sm);
 }
 
 .hidden {
