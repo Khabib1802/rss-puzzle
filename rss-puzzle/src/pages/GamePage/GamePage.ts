@@ -175,7 +175,7 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     ALL_HINT_KINDS.forEach((kind) => {
       this.header.hintControls.getToggleButton(kind).handleClick(() => {
         const isEnabled = gameService.toggleHint(kind);
-        this.header.hintControls.setToggleLabel(kind, isEnabled);
+        this.header.hintControls.setToggleState(kind, isEnabled);
 
         this.renderHintKindVisibility(kind);
       });
