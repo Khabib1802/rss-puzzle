@@ -16,13 +16,13 @@ if (!root) {
 
 function renderSection(title: string, nodes: HTMLElement[]): HTMLElement {
   const section = document.createElement('section');
-  section.classList.add(styles.section);
+  section.classList.add(styles['section']);
 
   const heading = document.createElement('h2');
   heading.textContent = title;
 
   const row = document.createElement('div');
-  row.classList.add(styles.row);
+  row.classList.add(styles['row']);
   row.append(...nodes);
 
   section.append(heading, row);
@@ -52,7 +52,7 @@ const buttonIcons = renderSection('Button — icons', [
 const activeToggle = new Button({ text: 'Hint', variant: 'secondary', icon: ChevronRight, active: true });
 
 const hoverDemo = new Button({ text: 'Hover (static demo)', variant: 'primary' });
-hoverDemo.element.classList.add(styles.forceHover);
+hoverDemo.element.classList.add(styles['forceHover']);
 
 const buttonStates = renderSection('Button — states', [
   activeToggle.element,
