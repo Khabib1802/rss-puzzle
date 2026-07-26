@@ -11,7 +11,7 @@ class Statistics extends BaseComponent<HTMLDivElement> {
   private continueButton: Button;
 
   constructor() {
-    super('div', ['wrapper', styles.page]);
+    super('div', ['wrapper']);
 
     const title = new BaseComponent('h1', [styles.title]);
     title.element.textContent = 'Round results';

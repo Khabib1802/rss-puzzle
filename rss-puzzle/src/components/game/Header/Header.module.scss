@@ -1,13 +1,21 @@
+@use '@styles/mixins/respond' as respond;
+
 .header {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
+  gap: var(--space-md);
   width: 100%;
+
+  @include respond.respond-below('sm') {
+    flex-direction: column;
+    align-items: stretch;
+  }
 }
 
 .logout {
-  margin-right: 20px;
+  margin-right: var(--space-lg);
 }
 
 .select {

@@ -4,7 +4,7 @@ import BaseComponent from '@/components/BaseComponent';
 
 import styles from './Button.module.scss';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'danger';
+export type ButtonVariant = 'primary' | 'secondary' | 'danger' | 'success';
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
 export interface ButtonProps {
