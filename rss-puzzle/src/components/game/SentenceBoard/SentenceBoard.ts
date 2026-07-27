@@ -36,6 +36,12 @@ class SentenceBoard extends BaseComponent<HTMLDivElement> {
     this.pictureArea.element.style.minHeight = `${String(px)}px`;
   }
 
+  public growPictureHeight(px: number): void {
+    const current = this.pictureArea.element.style.minHeight;
+    const currentPx = current ? parseFloat(current) : 0;
+    this.pictureArea.element.style.minHeight = `${String(currentPx + px)}px`;
+  }
+
   public freezeCurrentResultRow(): void {
     if (this.resultBlock.element.children.length === 0) return;
 

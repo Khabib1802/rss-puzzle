@@ -104,8 +104,9 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     this.sentenceBoard.clearPicture();
     this.currentRoundGeometry = await this.computeGeometryForCurrentRound();
     this.sentenceBoard.setBoardWidth(this.currentRoundGeometry.boardWidth);
-    const pictureHeight = this.currentRoundGeometry.rowHeight * gameService.getSentenceCountInCurrentRound();
-    this.sentenceBoard.reservePictureHeight(pictureHeight);
+
+    const { rowHeight } = this.currentRoundGeometry;
+    this.sentenceBoard.reservePictureHeight(rowHeight);
 
     this.clearContainers();
     this.renderNextSentence();
@@ -118,8 +119,15 @@ class GamePage extends BaseComponent<HTMLDivElement> {
   }
 
   private advanceToNextSentence(): void {
+    const { rowHeight } = this.currentRoundGeometry ?? {};
+
     this.puzzleBoardController.freezeResultRow();
     this.sentenceBoard.freezeCurrentResultRow();
+
+    if (rowHeight) {
+      this.sentenceBoard.growPictureHeight(rowHeight);
+    }
+
     this.clearContainers();
     this.renderNextSentence();
   }
@@ -203,7 +211,9 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     this.currentRoundGeometry = newGeometry;
 
     this.sentenceBoard.setBoardWidth(newGeometry.boardWidth);
-    const pictureHeight = newGeometry.rowHeight * gameService.getSentenceCountInCurrentRound();
+
+    const completedSentences = gameService.gameState.sentenceIndex;
+    const pictureHeight = newGeometry.rowHeight * (completedSentences + 1);
     this.sentenceBoard.reservePictureHeight(pictureHeight);
 
     this.puzzleBoardController.rescale(newGeometry);
