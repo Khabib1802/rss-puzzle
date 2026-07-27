@@ -74,6 +74,7 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     this.gameActions = new GameActions();
 
     this.setupEvents();
+    window.addEventListener('resize', this.handleWindowResize);
 
     const children: (BaseComponent | HTMLElement)[] = this.resumeBanner ? [this.resumeBanner] : [];
     this.append(...children, this.header, this.hintPanel, this.mainBlock, this.gameActions);
@@ -308,6 +309,9 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     const roundsCount = gameService.currentLevelData?.roundsCount ?? 0;
     const imageInfo = gameService.getCurrentImageInfo();
     gameService.setRoundArtwork({ ...imageInfo, src: gameService.getCurrentFullImageSource() });
+
+    this.puzzleBoardController.freezeResultRow();
+    this.sentenceBoard.freezeCurrentResultRow();
 
     statisticsService.markRoundCompleted(level, roundIndex, roundsCount);
 
