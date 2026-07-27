@@ -30,25 +30,26 @@
   width: var(--board-width, 100%);
   max-width: 100%;
   margin: 0 auto;
-  margin-bottom: 10px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: var(--space-md);
+  background-color: var(--color-background);
+  transition: box-shadow 0.15s ease;
 }
 
 .source {
+  border-radius: var(--radius-lg);
   min-height: 20%;
   align-items: center;
+  padding: var(--space-lg);
+  border: 1px dashed var(--color-border);
+  box-shadow: var(--shadow-sm);
 }
 
 .result {
   align-items: start;
-  margin-bottom: 10px;
   height: 80%;
-}
-
-.source,
-.result {
-  transition: box-shadow 0.15s ease;
+  box-shadow:
+    0 0 0 2px var(--color-primary) inset,
+    var(--shadow-md);
 }
 
 .dropTarget {
