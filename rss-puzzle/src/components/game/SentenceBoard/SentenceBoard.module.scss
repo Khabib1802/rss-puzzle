@@ -32,16 +32,18 @@
   margin: 0 auto;
   margin-bottom: var(--space-md);
   background-color: var(--color-background);
-  transition: box-shadow 0.15s ease;
+  transition:
+    box-shadow 0.5s ease,
+    border-color 0.5s ease,
+    background-color 0.15s ease;
 }
 
 .source {
   border-radius: var(--radius-lg);
+  padding: var(--space-lg);
   min-height: 20%;
   align-items: center;
-  padding: var(--space-lg);
-  border: 1px dashed var(--color-border);
-  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border);
 }
 
 .result {
@@ -53,5 +55,19 @@
 }
 
 .dropTarget {
-  box-shadow: 0 0 0 2px $c-hover inset;
+  box-shadow:
+    0 0 0 2px var(--color-primary) inset,
+    0 0 16px 0 color-mix(in srgb, var(--color-primary) 30%, transparent);
+  background-color: color-mix(in srgb, var(--color-primary) 6%, var(--color-background));
+}
+
+.source.dropTarget {
+  // border-color: var(--color-primary);
+}
+
+.result.dropTarget {
+  box-shadow:
+    0 0 0 2px var(--color-primary) inset,
+    0 0 20px 0 color-mix(in srgb, var(--color-primary) 40%, transparent),
+    var(--shadow-md);
 }
