@@ -63,13 +63,21 @@
 
 .wordWrapper.frozen {
   cursor: default;
+  opacity: 0.7;
 
   .word:active {
     cursor: default;
   }
+}
 
-  &:hover .word {
-    background-color: $c-light;
+.wordWrapper.frozen:hover {
+  transform: none;
+
+  .word {
+    background-color: var(--color-surface);
+  }
+  &::after {
+    background-color: var(--color-surface);
   }
 }
 
