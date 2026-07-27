@@ -31,12 +31,12 @@ class WordPuzzle extends BaseComponent<HTMLDivElement> {
   constructor(word: string) {
     super('div', [styles.wordWrapper]);
 
-    this.word = word;
+    this.word = typeof word === 'string' ? word.trim() : '';
 
     this.wordElement = document.createElement('div');
     this.wordElement.classList.add(styles.word);
-    this.wordElement.textContent = word;
-    this.wordElement.style.setProperty('--word-length', String(word.length));
+    this.wordElement.textContent = this.word;
+    this.wordElement.style.setProperty('--word-length', String(this.word.length));
     this.wordElement.style.touchAction = 'none';
 
     this.element.append(this.wordElement);
@@ -104,6 +104,7 @@ class WordPuzzle extends BaseComponent<HTMLDivElement> {
   public setDimensions(width: number, height: number): void {
     this.wordElement.style.width = `${String(width)}px`;
     this.wordElement.style.height = `${String(height)}px`;
+    this.element.style.setProperty('--card-height', `${String(height)}px`);
   }
 
   public setImageSegment(

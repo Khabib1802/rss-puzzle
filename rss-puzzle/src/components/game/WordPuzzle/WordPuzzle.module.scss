@@ -1,27 +1,29 @@
 @use '@styles/variables.scss' as *;
 
-$tab-radius: 8px;
-$tab-offset: 11px;
-$notch-depth: 3px;
-
 .wordWrapper {
   position: relative;
   display: inline-flex;
   cursor: grab;
 
+  --card-height: 44px;
+  --tab-radius: clamp(8px, calc(var(--card-height) * 0.18), 20px);
+  --tab-offset: calc(var(--tab-radius) + 6px);
+  --notch-depth: calc(var(--tab-radius) * 0.4);
   --segment-overlay: #{rgba($c-dark, 0.45)};
+
+  transition: transform 0.15s ease;
 }
 
 .wordWrapper::after {
   content: '';
   position: absolute;
-  right: -#{$tab-offset};
+  right: calc(var(--tab-offset) * -1);
   top: 50%;
   transform: translateY(-50%);
-  width: $tab-radius * 2;
-  height: $tab-radius * 2;
+  width: calc(var(--tab-radius) * 2);
+  height: calc(var(--tab-radius) * 2);
   border-radius: 50%;
-  background-color: $c-light;
+  background-color: var(--color-surface);
   z-index: 2;
   transition: background-color 0.15s ease;
 }
@@ -50,10 +52,10 @@ $notch-depth: 3px;
 
 .wordWrapper:hover {
   .word {
-    background-color: $c-hover;
+    background-color: var(--color-surface-hover);
   }
   &::after {
-    background-color: $c-hover;
+    background-color: var(--color-surface-hover);
   }
 }
 
@@ -92,35 +94,32 @@ $notch-depth: 3px;
     background-color: $c-incorrect;
   }
 }
+
 .word {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 44px;
-  padding: 0 15px;
-  background-color: $c-light;
+  height: var(--card-height);
+  padding: 0 var(--space-md);
+  background-color: var(--color-surface);
+  box-shadow: var(--shadow-sm);
   user-select: none;
   box-sizing: border-box;
-  color: $c-text;
+  color: var(--color-text);
   text-align: center;
-  width: calc(var(--word-length) * 1.2ch + 32px);
-  font-size: clamp(12px, calc(18px - (var(--word-length) * 0.4px)), 16px);
-  line-height: 16px;
+  width: min(calc(var(--word-length, 1) * 1.2ch + 32px), 40vw);
+  font-size: clamp(12px, calc(18px - (var(--word-length, 1) * 0.4px)), 16px);
+  line-height: 1.2;
   word-break: normal;
-  overflow-wrap: break-word;
+  overflow-wrap: anywhere;
   transition:
     background-color 0.15s ease,
-    filter 0.1s ease,
+    box-shadow 0.15s ease,
     transform 0.1s ease,
     color 0.4s ease;
 
-  -webkit-mask-image: radial-gradient(circle $tab-radius at $notch-depth 50%, transparent 99%, #000 100%);
-  mask-image: radial-gradient(circle $tab-radius at $notch-depth 50%, transparent 99%, #000 100%);
-}
-
-.hasImage {
-  color: #fff;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+  -webkit-mask-image: radial-gradient(circle var(--tab-radius) at var(--notch-depth) 50%, transparent 99%, #000 100%);
+  mask-image: radial-gradient(circle var(--tab-radius) at var(--notch-depth) 50%, transparent 99%, #000 100%);
 }
 
 .word:active {
@@ -128,7 +127,7 @@ $notch-depth: 3px;
 }
 
 .dragging {
-  filter: drop-shadow(0 4px 5px rgba(0, 0, 0, 0.15));
+  filter: drop-shadow(var(--shadow-lg));
   transform: scale(1.05);
   cursor: grabbing;
   pointer-events: none;
