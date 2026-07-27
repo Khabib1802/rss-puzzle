@@ -1,10 +1,13 @@
 import type { Page } from '@/types/pages';
 
 export type Routes = Record<string, (() => Page) | undefined>;
+
 class Router {
   private root: HTMLDivElement;
 
   private routes: Routes;
+
+  private currentPage: Page | null = null;
 
   constructor(root: HTMLDivElement, routes: Routes) {
     this.root = root;
@@ -16,7 +19,10 @@ class Router {
 
     const getPage = this.routes[hash] || this.routes['/404'];
     if (getPage) {
+      this.currentPage?.destroy?.();
+
       const page = getPage();
+      this.currentPage = page;
       this.root.replaceChildren(page.element);
     }
   };

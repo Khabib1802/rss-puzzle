@@ -17,6 +17,8 @@ import RoundCompletePanel from '@/components/game/RoundCompletePanel/RoundComple
 import { ArrowRight, CheckCheck } from 'lucide';
 import styles from './GamePage.module.scss';
 
+const RESIZE_DEBOUNCE_MS = 200;
+
 const ALL_HINT_KINDS = Object.values(HINT_KINDS);
 
 class GamePage extends BaseComponent<HTMLDivElement> {
@@ -41,6 +43,10 @@ class GamePage extends BaseComponent<HTMLDivElement> {
   private resumeBanner: ResumeBanner | null = null;
 
   private roundCompletePanel: RoundCompletePanel | null = null;
+
+  private currentImageAspectRatio: number | null = null;
+
+  private resizeTimeoutId: number | undefined;
 
   constructor() {
     super('div', [styles.gameWrapper]);
@@ -162,13 +168,43 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     this.puzzleBoardController.initSentence(words, this.currentRoundGeometry);
   }
 
+  private readonly handleWindowResize = (): void => {
+    window.clearTimeout(this.resizeTimeoutId);
+    this.resizeTimeoutId = window.setTimeout(() => {
+      this.recomputeGeometryOnResize();
+    }, RESIZE_DEBOUNCE_MS);
+  };
+
+  public destroy(): void {
+    window.removeEventListener('resize', this.handleWindowResize);
+    window.clearTimeout(this.resizeTimeoutId);
+  }
+
   private async computeGeometryForCurrentRound(): Promise<RoundGeometry> {
     const sentences = gameService.getSentencesInCurrentRound().map((sentence) => splitIntoWords(sentence));
     const referenceWidth = this.sentenceBoard.getReferenceWidth();
     const maxAllowedWidth = this.sentenceBoard.getMaxAllowedWidth();
     const { width: imageWidth, height: imageHeight } = await gameService.getCurrentImageDimensions();
+    this.currentImageAspectRatio = imageHeight / imageWidth;
 
-    return computeRoundGeometry(sentences, referenceWidth, maxAllowedWidth, imageHeight / imageWidth);
+    return computeRoundGeometry(sentences, referenceWidth, maxAllowedWidth, this.currentImageAspectRatio);
+  }
+
+  private recomputeGeometryOnResize(): void {
+    if (this.currentImageAspectRatio === null) return;
+
+    const sentences = gameService.getSentencesInCurrentRound().map((sentence) => splitIntoWords(sentence));
+    const referenceWidth = this.sentenceBoard.getReferenceWidth();
+    const maxAllowedWidth = this.sentenceBoard.getMaxAllowedWidth();
+
+    const newGeometry = computeRoundGeometry(sentences, referenceWidth, maxAllowedWidth, this.currentImageAspectRatio);
+    this.currentRoundGeometry = newGeometry;
+
+    this.sentenceBoard.setBoardWidth(newGeometry.boardWidth);
+    const pictureHeight = newGeometry.rowHeight * gameService.getSentenceCountInCurrentRound();
+    this.sentenceBoard.reservePictureHeight(pictureHeight);
+
+    this.puzzleBoardController.rescale(newGeometry);
   }
 
   private setupEvents() {
