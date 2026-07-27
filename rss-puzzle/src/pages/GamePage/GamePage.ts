@@ -193,6 +193,7 @@ class GamePage extends BaseComponent<HTMLDivElement> {
 
   private recomputeGeometryOnResize(): void {
     if (this.currentImageAspectRatio === null) return;
+    if (this.roundCompletePanel) return;
 
     const sentences = gameService.getSentencesInCurrentRound().map((sentence) => splitIntoWords(sentence));
     const referenceWidth = this.sentenceBoard.getReferenceWidth();
