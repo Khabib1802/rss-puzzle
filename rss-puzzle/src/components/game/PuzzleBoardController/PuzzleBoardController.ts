@@ -7,6 +7,12 @@ import type { RoundGeometry } from '@/utils/puzzleGeometry.ts';
 
 type ContainerId = 'source' | 'result';
 
+interface RoundPuzzleEntry {
+  sentenceIndex: number;
+  wordIndex: number;
+  puzzle: WordPuzzle;
+}
+
 class PuzzleBoardController {
   private readonly sentenceBoard: SentenceBoard;
 
@@ -18,7 +24,7 @@ class PuzzleBoardController {
 
   private roundGeometry: RoundGeometry | null = null;
 
-  private roundPuzzles: WordPuzzle[] = [];
+  private roundPuzzles: RoundPuzzleEntry[] = [];
 
   constructor(sentenceBoard: SentenceBoard, onBoardChange: () => void) {
     this.sentenceBoard = sentenceBoard;
@@ -32,7 +38,7 @@ class PuzzleBoardController {
 
     const orderedPuzzles: WordPuzzle[] = [];
     this.sourcePuzzles = shuffledIndexes.map((correctIndex) => {
-      const puzzle = this.createWordPuzzle(words[correctIndex]);
+      const puzzle = this.createWordPuzzle(words[correctIndex], correctIndex);
       orderedPuzzles[correctIndex] = puzzle;
       return puzzle;
     });
@@ -49,7 +55,7 @@ class PuzzleBoardController {
   public autoComplete(correctWords: string[]): void {
     this.clear();
 
-    this.resultPuzzles = correctWords.map((word) => this.createWordPuzzle(word));
+    this.resultPuzzles = correctWords.map((word, wordIndex) => this.createWordPuzzle(word, wordIndex));
     this.resultPuzzles.forEach((puzzle) => {
       this.sentenceBoard.resultBlock.append(puzzle.element);
       puzzle.setCorrect();
@@ -113,8 +119,8 @@ class PuzzleBoardController {
   }
 
   public revealRoundImage(): void {
-    this.roundPuzzles.forEach((puzzle) => {
-      puzzle.reveal();
+    this.roundPuzzles.forEach((roundPuzzles) => {
+      roundPuzzles.puzzle.reveal();
     });
   }
 
@@ -139,9 +145,9 @@ class PuzzleBoardController {
     });
   }
 
-  private createWordPuzzle(word: string): WordPuzzle {
+  private createWordPuzzle(word: string, wordIndex: number): WordPuzzle {
     const puzzle = new WordPuzzle(word);
-    this.roundPuzzles.push(puzzle);
+    this.roundPuzzles.push({ sentenceIndex: gameService.gameState.sentenceIndex, wordIndex, puzzle });
 
     puzzle.handleClick(() => {
       if (gameService.gameState.isChecked) return;
@@ -240,6 +246,32 @@ class PuzzleBoardController {
     if (isSourceEmpty && total > 1) {
       last.setEdgeState(false, true);
     }
+  }
+
+  public rescale(newGeometry: RoundGeometry): void {
+    const { rowHeight, backgroundSize, cardWidthsBySentence } = newGeometry;
+    const imageUrl = gameService.getCurrentImageSource();
+
+    const prefixSumsBySentence = cardWidthsBySentence.map((widths) => {
+      const prefix: number[] = [];
+      let sum = 0;
+      widths.forEach((width) => {
+        prefix.push(sum);
+        sum += width;
+      });
+      return prefix;
+    });
+
+    this.roundPuzzles.forEach(({ sentenceIndex, wordIndex, puzzle }) => {
+      const width = cardWidthsBySentence[sentenceIndex][wordIndex];
+      const positionX = prefixSumsBySentence[sentenceIndex][wordIndex];
+      const positionY = sentenceIndex * rowHeight;
+
+      puzzle.setDimensions(width, rowHeight);
+      puzzle.setImageSegment(imageUrl, backgroundSize, positionX, positionY, width, rowHeight);
+    });
+
+    this.roundGeometry = newGeometry;
   }
 }
 
