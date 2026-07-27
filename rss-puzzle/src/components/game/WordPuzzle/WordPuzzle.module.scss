@@ -49,7 +49,9 @@
     background-repeat: no-repeat, no-repeat;
   }
 }
-
+.wordWrapper.hasImage:hover {
+  --segment-overlay: #{rgba($c-dark, 0.65)};
+}
 .wordWrapper:hover {
   .word {
     background-color: var(--color-surface-hover);
@@ -76,7 +78,8 @@
 
   .word {
     background-color: $c-correct;
-    color: #fff;
+    box-shadow: var(--shadow-sm);
+    color: var(--color-on-primary);
   }
   &::after {
     background-color: $c-correct;
@@ -88,7 +91,8 @@
 
   .word {
     background-color: $c-incorrect;
-    color: #fff;
+    box-shadow: var(--shadow-sm);
+    color: var(--color-on-primary);
   }
   &::after {
     background-color: $c-incorrect;
@@ -128,7 +132,7 @@
 
 .dragging {
   filter: drop-shadow(var(--shadow-lg));
-  transform: scale(1.05);
+  transform: scale(1.05) rotate(-2deg);
   cursor: grabbing;
   pointer-events: none;
 }
