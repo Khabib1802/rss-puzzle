@@ -12,6 +12,8 @@
   display: flex;
   flex-direction: column;
   width: 100%;
+  padding-left: var(--space-2xl);
+  position: relative;
 }
 
 .historyRow {
@@ -20,6 +22,36 @@
   width: var(--board-width, 100%);
   max-width: 100%;
   margin: 0 auto;
+  position: relative;
+}
+
+.historyRow::before,
+.result::before {
+  content: attr(data-row);
+  position: absolute;
+  left: calc(var(--space-2xl) * -1);
+  top: 50%;
+  transform: translateY(-50%);
+  width: var(--space-xl);
+  text-align: center;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  user-select: none;
+
+  border-radius: 50%;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-on-primary);
+}
+
+.historyRow::before {
+  background-color: var(--color-secondary);
+}
+
+.result::before {
+  background-color: var(--color-primary);
 }
 
 .source,
@@ -52,6 +84,7 @@
   box-shadow:
     0 0 0 2px var(--color-primary) inset,
     var(--shadow-md);
+  position: relative;
 }
 
 .dropTarget {
@@ -59,10 +92,6 @@
     0 0 0 2px var(--color-primary) inset,
     0 0 16px 0 color-mix(in srgb, var(--color-primary) 30%, transparent);
   background-color: color-mix(in srgb, var(--color-primary) 6%, var(--color-background));
-}
-
-.source.dropTarget {
-  // border-color: var(--color-primary);
 }
 
 .result.dropTarget {

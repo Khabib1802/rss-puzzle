@@ -47,6 +47,7 @@ class SentenceBoard extends BaseComponent<HTMLDivElement> {
 
     const row = document.createElement('div');
     row.classList.add(styles.historyRow);
+    row.dataset['row'] = String(this.pictureArea.element.querySelectorAll(`.${styles.historyRow}`).length + 1);
     row.append(...Array.from(this.resultBlock.element.children));
     this.pictureArea.element.insertBefore(row, this.resultBlock.element);
   }
@@ -73,6 +74,10 @@ class SentenceBoard extends BaseComponent<HTMLDivElement> {
       { id: 'source', rect: this.sourceBlock.element.getBoundingClientRect() },
       { id: 'result', rect: this.resultBlock.element.getBoundingClientRect() },
     ];
+  }
+
+  public setCurrentRowNumber(n: number): void {
+    this.resultBlock.element.dataset['row'] = String(n);
   }
 }
 

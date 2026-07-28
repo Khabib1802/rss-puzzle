@@ -141,6 +141,9 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     this.renderHint(currentTranslation);
     this.hintPanel.setAudioSource(gameService.getCurrentSentenceAudio());
 
+    const sentenceNumber = gameService.gameState.sentenceIndex + 1;
+    this.sentenceBoard.setCurrentRowNumber(sentenceNumber);
+
     const words = splitIntoWords(this.correctSentence);
     this.renderSourcePuzzles(words);
 
