@@ -82,6 +82,16 @@ class SentenceBoard extends BaseComponent<HTMLDivElement> {
   public setCardHeight(px: number): void {
     this.element.style.setProperty('--card-height', `${String(px)}px`);
   }
+
+  public hideControls(): void {
+    this.sourceBlock.element.style.display = 'none';
+    this.resultBlock.element.style.display = 'none';
+  }
+
+  public showControls(): void {
+    this.sourceBlock.element.style.display = '';
+    this.resultBlock.element.style.display = '';
+  }
 }
 
 export default SentenceBoard;

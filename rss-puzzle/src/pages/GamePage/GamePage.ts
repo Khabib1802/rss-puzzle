@@ -107,6 +107,9 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     this.puzzleBoardController.resetRound();
     gameService.resetRoundResults();
     this.sentenceBoard.clearPicture();
+    this.sentenceBoard.showControls();
+    this.hintPanel.element.style.display = '';
+
     this.currentRoundGeometry = await this.computeGeometryForCurrentRound();
     this.sentenceBoard.setBoardWidth(this.currentRoundGeometry.boardWidth);
 
@@ -339,21 +342,21 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     this.puzzleBoardController.freezeResultRow();
     this.sentenceBoard.freezeCurrentResultRow();
 
-    const totalSteps = gameService.getSentenceCountInCurrentRound();
-    const lastResult = this.lastSentenceSkipped ? 'skipped' : 'done';
-    this.lastSentenceSkipped = false;
-    this.roundStepper?.setStep(totalSteps + 1, lastResult);
-
     statisticsService.markRoundCompleted(level, roundIndex, roundsCount);
 
     const hasNextStep = gameService.nextStep();
     gameService.setRoundHasNextStep(hasNextStep);
 
+    const totalSteps = gameService.getSentenceCountInCurrentRound();
+    const lastResult = this.lastSentenceSkipped ? 'skipped' : 'done';
+    this.lastSentenceSkipped = false;
+    this.roundStepper?.setStep(totalSteps + 1, lastResult);
+
+    this.sentenceBoard.hideControls();
+    this.hintPanel.element.style.display = 'none';
     this.gameActions.setVisibility({ check: false, continue: false, autoComplete: false });
+
     this.puzzleBoardController.revealRoundImage();
-
-    this.roundStepper?.setStep(gameService.getSentenceCountInCurrentRound() + 1);
-
     this.showRoundCompletePanel(imageInfo, hasNextStep);
   }
 
