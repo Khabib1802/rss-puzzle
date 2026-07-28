@@ -47,7 +47,6 @@ class SentenceBoard extends BaseComponent<HTMLDivElement> {
 
     const row = document.createElement('div');
     row.classList.add(styles.historyRow);
-    row.dataset['row'] = String(this.pictureArea.element.querySelectorAll(`.${styles.historyRow}`).length + 1);
     row.append(...Array.from(this.resultBlock.element.children));
     this.pictureArea.element.insertBefore(row, this.resultBlock.element);
   }

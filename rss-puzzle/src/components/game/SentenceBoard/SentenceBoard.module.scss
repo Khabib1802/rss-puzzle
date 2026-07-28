@@ -12,7 +12,6 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  position: relative;
 }
 
 .historyRow {
@@ -21,36 +20,20 @@
   width: var(--board-width, 100%);
   max-width: 100%;
   margin: 0 auto;
+}
+
+.result {
+  align-items: start;
+  min-height: calc(var(--card-height, 64px));
+  box-shadow:
+    0 0 0 2px var(--color-primary) inset,
+    var(--shadow-md);
   position: relative;
 }
 
-.historyRow::before,
+.source::before,
 .result::before {
-  content: attr(data-row);
-  position: absolute;
-  left: calc(var(--space-2xl) * -1);
-  top: 50%;
-  transform: translateY(-50%);
-  width: var(--space-xl);
-  text-align: center;
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-bold);
-  user-select: none;
-
-  border-radius: 50%;
-  aspect-ratio: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--color-on-primary);
-}
-
-.historyRow::before {
-  background-color: var(--color-secondary);
-}
-
-.result::before {
-  background-color: var(--color-primary);
+  display: none;
 }
 
 .source,
@@ -77,28 +60,6 @@
   align-items: center;
   gap: var(--space-xl) var(--space-4xl);
   border: 1px solid var(--color-border);
-}
-
-.source::before {
-  content: '';
-  position: absolute;
-  left: calc(var(--space-2xl) * -1);
-  top: 25%;
-  transform: translateY(-50%);
-  user-select: none;
-
-  display: block;
-  width: var(--space-xl);
-  height: var(--space-xl);
-
-  border-radius: 50%;
-  background-color: var(--color-primary);
-
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M15.39 4.39a1 1 0 0 0 1.68-.474 2.5 2.5 0 1 1 3.014 3.015 1 1 0 0 0-.474 1.68l1.683 1.682a2.414 2.414 0 0 1 0 3.414L19.61 15.39a1 1 0 0 1-1.68-.474 2.5 2.5 0 1 0-3.014 3.015 1 1 0 0 1 .474 1.68l-1.683 1.682a2.414 2.414 0 0 1-3.414 0L8.61 19.61a1 1 0 0 0-1.68.474 2.5 2.5 0 1 1-3.014-3.015 1 1 0 0 0 .474-1.68l-1.683-1.682a2.414 2.414 0 0 1 0-3.414L4.39 8.61a1 1 0 0 1 1.68.474 2.5 2.5 0 1 0 3.014-3.015 1 1 0 0 1-.474-1.68l1.683-1.682a2.414 2.414 0 0 1 3.414 0z'/%3E%3C/svg%3E");
-
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 60%;
 }
 
 .result {
