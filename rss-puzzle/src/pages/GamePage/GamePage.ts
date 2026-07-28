@@ -339,6 +339,11 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     this.puzzleBoardController.freezeResultRow();
     this.sentenceBoard.freezeCurrentResultRow();
 
+    const totalSteps = gameService.getSentenceCountInCurrentRound();
+    const lastResult = this.lastSentenceSkipped ? 'skipped' : 'done';
+    this.lastSentenceSkipped = false;
+    this.roundStepper?.setStep(totalSteps + 1, lastResult);
+
     statisticsService.markRoundCompleted(level, roundIndex, roundsCount);
 
     const hasNextStep = gameService.nextStep();

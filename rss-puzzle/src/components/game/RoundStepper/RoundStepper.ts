@@ -86,23 +86,21 @@ class RoundStepper extends BaseComponent<HTMLDivElement> {
         styles.connectorIdle
       );
 
-      const leftIndex = index - 1;
-      const rightIndex = index;
+      const leftIsDone = index < current - PREVIOUS_STEP_OFFSET;
+      const leftIsCurrent = index === current - PREVIOUS_STEP_OFFSET;
 
-      const leftResult = leftIndex >= 0 ? this.results[leftIndex] : null;
-      const rightResult = rightIndex < this.results.length ? this.results[rightIndex] : null;
-
-      const leftDone = index < current - 1;
-      const leftCurrent = index === current - 1;
-
-      if (!leftDone && !leftCurrent) {
-        connector.classList.add(styles.connectorIdle);
-      } else if (leftCurrent) {
+      if (leftIsCurrent) {
         connector.classList.add(styles.connectorCurrent);
-      } else if (leftResult === 'skipped' || rightResult === 'skipped') {
-        connector.classList.add(styles.connectorSkipped);
+      } else if (leftIsDone) {
+        const leftResult = this.results[index];
+        const rightResult = this.results[index + 1];
+        if (leftResult === 'skipped' || rightResult === 'skipped') {
+          connector.classList.add(styles.connectorSkipped);
+        } else {
+          connector.classList.add(styles.connectorDone);
+        }
       } else {
-        connector.classList.add(styles.connectorDone);
+        connector.classList.add(styles.connectorIdle);
       }
     });
   }
