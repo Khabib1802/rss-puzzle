@@ -51,6 +51,8 @@ class GamePage extends BaseComponent<HTMLDivElement> {
 
   private roundStepper: RoundStepper | null = null;
 
+  private lastSentenceSkipped = false;
+
   constructor() {
     super('div', [styles.gameWrapper]);
 
@@ -150,7 +152,9 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     this.hintPanel.setAudioSource(gameService.getCurrentSentenceAudio());
 
     const sentenceNumber = gameService.gameState.sentenceIndex + 1;
-    this.roundStepper?.setStep(sentenceNumber);
+    const lastResult = this.lastSentenceSkipped ? 'skipped' : 'done';
+    this.roundStepper?.setStep(sentenceNumber, sentenceNumber > 1 ? lastResult : undefined);
+    this.lastSentenceSkipped = false;
 
     const words = splitIntoWords(this.correctSentence);
     this.renderSourcePuzzles(words);
@@ -300,8 +304,8 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     if (gameService.gameState.isChecked) return;
 
     const correctWords = splitIntoWords(this.correctSentence);
-
     this.puzzleBoardController.autoComplete(correctWords);
+    this.lastSentenceSkipped = true;
 
     gameService.setChecked(true);
     gameService.recordSentenceResult(this.correctSentence, false, gameService.getCurrentSentenceAudio());

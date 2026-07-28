@@ -2,12 +2,18 @@ import { CheckCheck, createElement } from 'lucide';
 import BaseComponent from '@/components/BaseComponent';
 import styles from './RoundStepper.module.scss';
 
+type StepResult = 'done' | 'skipped';
+
+const PREVIOUS_STEP_OFFSET = 2;
+
 class RoundStepper extends BaseComponent<HTMLDivElement> {
   private readonly steps: HTMLElement[];
 
   private readonly finalStep: HTMLElement;
 
   private readonly connectors: HTMLElement[];
+
+  private readonly results: (StepResult | null)[];
 
   constructor(totalSteps: number) {
     super('div', [styles.stepper]);
@@ -43,14 +49,21 @@ class RoundStepper extends BaseComponent<HTMLDivElement> {
     this.finalStep.classList.add(styles.step, styles.final, styles.idle);
     this.finalStep.append(checkIcon);
     this.element.append(this.finalStep);
+
+    this.results = Array.from({ length: totalSteps }, () => null);
   }
 
-  public setStep(current: number): void {
+  public setStep(current: number, lastResult?: StepResult): void {
+    if (lastResult !== undefined && current >= PREVIOUS_STEP_OFFSET) {
+      this.results[current - PREVIOUS_STEP_OFFSET] = lastResult;
+    }
+
     this.steps.forEach((step, index) => {
-      step.classList.remove(styles.done, styles.current, styles.idle);
+      step.classList.remove(styles.done, styles.skipped, styles.current, styles.idle);
 
       if (index < current - 1) {
-        step.classList.add(styles.done);
+        const result = this.results[index];
+        step.classList.add(result === 'skipped' ? styles.skipped : styles.done);
       } else if (index === current - 1) {
         step.classList.add(styles.current);
       } else {
@@ -66,18 +79,30 @@ class RoundStepper extends BaseComponent<HTMLDivElement> {
 
   private updateConnectors(current: number): void {
     this.connectors.forEach((connector, index) => {
-      connector.classList.remove(styles.connectorDone, styles.connectorCurrent, styles.connectorIdle);
+      connector.classList.remove(
+        styles.connectorDone,
+        styles.connectorSkipped,
+        styles.connectorCurrent,
+        styles.connectorIdle
+      );
 
-      const leftIsDone = index < current - 1;
-      const leftIsCurrent = index === current - 1;
-      const rightIsDone = index < current - 1;
+      const leftIndex = index - 1;
+      const rightIndex = index;
 
-      if (leftIsDone && rightIsDone) {
-        connector.classList.add(styles.connectorDone);
-      } else if (leftIsCurrent || (leftIsDone && !rightIsDone)) {
-        connector.classList.add(styles.connectorCurrent);
-      } else {
+      const leftResult = leftIndex >= 0 ? this.results[leftIndex] : null;
+      const rightResult = rightIndex < this.results.length ? this.results[rightIndex] : null;
+
+      const leftDone = index < current - 1;
+      const leftCurrent = index === current - 1;
+
+      if (!leftDone && !leftCurrent) {
         connector.classList.add(styles.connectorIdle);
+      } else if (leftCurrent) {
+        connector.classList.add(styles.connectorCurrent);
+      } else if (leftResult === 'skipped' || rightResult === 'skipped') {
+        connector.classList.add(styles.connectorSkipped);
+      } else {
+        connector.classList.add(styles.connectorDone);
       }
     });
   }

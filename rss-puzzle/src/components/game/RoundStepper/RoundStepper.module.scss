@@ -69,3 +69,13 @@
 .connectorDone {
   background-color: var(--color-success);
 }
+
+.step.skipped {
+  background-color: var(--color-danger);
+  color: var(--color-on-primary);
+  box-shadow: none;
+}
+
+.connectorSkipped {
+  background-color: var(--color-danger);
+}
