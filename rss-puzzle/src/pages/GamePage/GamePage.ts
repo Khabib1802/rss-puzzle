@@ -108,7 +108,9 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     gameService.resetRoundResults();
     this.sentenceBoard.clearPicture();
     this.sentenceBoard.showControls();
-    this.hintPanel.element.style.display = '';
+
+    this.hintPanel.setHintVisible(HINT_KINDS.PRONUNCIATION, true);
+    this.hintPanel.setHintVisible(HINT_KINDS.PRONUNCIATION, true);
 
     this.currentRoundGeometry = await this.computeGeometryForCurrentRound();
     this.sentenceBoard.setBoardWidth(this.currentRoundGeometry.boardWidth);
@@ -353,7 +355,10 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     this.roundStepper?.setStep(totalSteps + 1, lastResult);
 
     this.sentenceBoard.hideControls();
-    this.hintPanel.element.style.display = 'none';
+
+    this.hintPanel.setHintVisible(HINT_KINDS.PRONUNCIATION, false);
+    this.hintPanel.setHintVisible(HINT_KINDS.TRANSLATION, false);
+
     this.gameActions.setVisibility({ check: false, continue: false, autoComplete: false });
 
     this.puzzleBoardController.revealRoundImage();
