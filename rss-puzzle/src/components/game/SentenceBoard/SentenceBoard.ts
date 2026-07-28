@@ -79,6 +79,10 @@ class SentenceBoard extends BaseComponent<HTMLDivElement> {
   public setCurrentRowNumber(n: number): void {
     this.resultBlock.element.dataset['row'] = String(n);
   }
+
+  public setCardHeight(px: number): void {
+    this.element.style.setProperty('--card-height', `${String(px)}px`);
+  }
 }
 
 export default SentenceBoard;
