@@ -6,6 +6,7 @@ import HintPanel from '@/components/game/hints/HintPanel/HintPanel.ts';
 import Header from '@/components/game/Header/Header.ts';
 import SentenceBoard from '@/components/game/SentenceBoard/SentenceBoard.ts';
 import { HINT_KINDS } from '@/constants.ts';
+import RoundStepper from '@/components/game/RoundStepper/RoundStepper';
 import type { HintKind, LastCompletedRound } from '@/types/game.ts';
 import type { RoundGeometry } from '@/utils/puzzleGeometry.ts';
 import statisticsService from '@/services/statisticsService';
@@ -47,6 +48,8 @@ class GamePage extends BaseComponent<HTMLDivElement> {
   private currentImageAspectRatio: number | null = null;
 
   private resizeTimeoutId: number | undefined;
+
+  private roundStepper: RoundStepper | null = null;
 
   constructor() {
     super('div', [styles.gameWrapper]);
@@ -108,6 +111,11 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     const { rowHeight } = this.currentRoundGeometry;
     this.sentenceBoard.reservePictureHeight(rowHeight);
 
+    const totalSteps = gameService.getSentenceCountInCurrentRound();
+    this.roundStepper?.element.remove();
+    this.roundStepper = new RoundStepper(totalSteps);
+    this.mainBlock.element.prepend(this.roundStepper.element);
+
     this.clearContainers();
     this.renderNextSentence();
   }
@@ -142,7 +150,7 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     this.hintPanel.setAudioSource(gameService.getCurrentSentenceAudio());
 
     const sentenceNumber = gameService.gameState.sentenceIndex + 1;
-    this.sentenceBoard.setCurrentRowNumber(sentenceNumber);
+    this.roundStepper?.setStep(sentenceNumber);
 
     const words = splitIntoWords(this.correctSentence);
     this.renderSourcePuzzles(words);
@@ -334,6 +342,9 @@ class GamePage extends BaseComponent<HTMLDivElement> {
 
     this.gameActions.setVisibility({ check: false, continue: false, autoComplete: false });
     this.puzzleBoardController.revealRoundImage();
+
+    this.roundStepper?.setStep(gameService.getSentenceCountInCurrentRound() + 1);
+
     this.showRoundCompletePanel(imageInfo, hasNextStep);
   }
 
