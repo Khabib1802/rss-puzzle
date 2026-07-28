@@ -182,11 +182,7 @@ class GamePage extends BaseComponent<HTMLDivElement> {
   private renderActionsState(): void {
     const isSentenceChecked = gameService.gameState.isChecked;
 
-    this.gameActions.setVisibility({
-      check: !isSentenceChecked,
-      continue: isSentenceChecked,
-      autoComplete: !isSentenceChecked,
-    });
+    this.gameActions.setChecked(isSentenceChecked);
   }
 
   private renderSourcePuzzles(words: string[]): void {
@@ -282,7 +278,9 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     if (isSentenceCorrect(resultSentence, this.correctSentence)) {
       gameService.setChecked(true);
       gameService.recordSentenceResult(this.correctSentence, true, gameService.getCurrentSentenceAudio());
-      this.renderState();
+      this.gameActions.playCheckSuccess(() => {
+        this.renderState();
+      });
     }
   }
 
@@ -359,7 +357,7 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     this.hintPanel.setHintVisible(HINT_KINDS.PRONUNCIATION, false);
     this.hintPanel.setHintVisible(HINT_KINDS.TRANSLATION, false);
 
-    this.gameActions.setVisibility({ check: false, continue: false, autoComplete: false });
+    this.gameActions.hideAll();
 
     this.puzzleBoardController.revealRoundImage();
     this.showRoundCompletePanel(imageInfo, hasNextStep);

@@ -1,12 +1,51 @@
-@use '@styles/variables.scss' as *;
-
 .actions {
+  display: grid;
+  justify-items: center;
+}
+
+.group {
+  grid-area: 1 / 1;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: var(--space-sm);
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
 }
 
-.hidden {
-  display: none;
+.group.hidden {
+  pointer-events: none;
+  opacity: 0;
+  transform: scale(0.9);
+}
+
+@keyframes checkPop {
+  0% {
+    transform: scale(1);
+  }
+
+  40% {
+    transform: scale(1.12);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes checkGlow {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-success) 55%, transparent);
+  }
+
+  100% {
+    box-shadow: 0 0 0 14px color-mix(in srgb, var(--color-success) 0%, transparent);
+  }
+}
+
+.checkSuccess {
+  animation:
+    checkPop 0.45s ease,
+    checkGlow 0.45s ease;
 }
