@@ -6,6 +6,7 @@ import HintPanel from '@/components/game/hints/HintPanel/HintPanel.ts';
 import Header from '@/components/game/Header/Header.ts';
 import SentenceBoard from '@/components/game/SentenceBoard/SentenceBoard.ts';
 import { HINT_KINDS } from '@/constants.ts';
+import RoundStepper from '@/components/game/RoundStepper/RoundStepper';
 import type { HintKind, LastCompletedRound } from '@/types/game.ts';
 import type { RoundGeometry } from '@/utils/puzzleGeometry.ts';
 import statisticsService from '@/services/statisticsService';
@@ -47,6 +48,10 @@ class GamePage extends BaseComponent<HTMLDivElement> {
   private currentImageAspectRatio: number | null = null;
 
   private resizeTimeoutId: number | undefined;
+
+  private roundStepper: RoundStepper | null = null;
+
+  private lastSentenceSkipped = false;
 
   constructor() {
     super('div', [styles.gameWrapper]);
@@ -102,10 +107,19 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     this.puzzleBoardController.resetRound();
     gameService.resetRoundResults();
     this.sentenceBoard.clearPicture();
+    this.sentenceBoard.showControls();
+    this.hintPanel.element.style.display = '';
+
     this.currentRoundGeometry = await this.computeGeometryForCurrentRound();
     this.sentenceBoard.setBoardWidth(this.currentRoundGeometry.boardWidth);
-    const pictureHeight = this.currentRoundGeometry.rowHeight * gameService.getSentenceCountInCurrentRound();
-    this.sentenceBoard.reservePictureHeight(pictureHeight);
+
+    const { rowHeight } = this.currentRoundGeometry;
+    this.sentenceBoard.reservePictureHeight(rowHeight);
+
+    const totalSteps = gameService.getSentenceCountInCurrentRound();
+    this.roundStepper?.element.remove();
+    this.roundStepper = new RoundStepper(totalSteps);
+    this.mainBlock.element.prepend(this.roundStepper.element);
 
     this.clearContainers();
     this.renderNextSentence();
@@ -118,8 +132,15 @@ class GamePage extends BaseComponent<HTMLDivElement> {
   }
 
   private advanceToNextSentence(): void {
+    const { rowHeight } = this.currentRoundGeometry ?? {};
+
     this.puzzleBoardController.freezeResultRow();
     this.sentenceBoard.freezeCurrentResultRow();
+
+    if (rowHeight) {
+      this.sentenceBoard.growPictureHeight(rowHeight);
+    }
+
     this.clearContainers();
     this.renderNextSentence();
   }
@@ -132,6 +153,11 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     const currentTranslation = gameService.getCurrentSentenceTranslation();
     this.renderHint(currentTranslation);
     this.hintPanel.setAudioSource(gameService.getCurrentSentenceAudio());
+
+    const sentenceNumber = gameService.gameState.sentenceIndex + 1;
+    const lastResult = this.lastSentenceSkipped ? 'skipped' : 'done';
+    this.roundStepper?.setStep(sentenceNumber, sentenceNumber > 1 ? lastResult : undefined);
+    this.lastSentenceSkipped = false;
 
     const words = splitIntoWords(this.correctSentence);
     this.renderSourcePuzzles(words);
@@ -193,6 +219,7 @@ class GamePage extends BaseComponent<HTMLDivElement> {
 
   private recomputeGeometryOnResize(): void {
     if (this.currentImageAspectRatio === null) return;
+    if (this.roundCompletePanel) return;
 
     const sentences = gameService.getSentencesInCurrentRound().map((sentence) => splitIntoWords(sentence));
     const referenceWidth = this.sentenceBoard.getReferenceWidth();
@@ -202,7 +229,9 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     this.currentRoundGeometry = newGeometry;
 
     this.sentenceBoard.setBoardWidth(newGeometry.boardWidth);
-    const pictureHeight = newGeometry.rowHeight * gameService.getSentenceCountInCurrentRound();
+
+    const completedSentences = gameService.gameState.sentenceIndex;
+    const pictureHeight = newGeometry.rowHeight * (completedSentences + 1);
     this.sentenceBoard.reservePictureHeight(pictureHeight);
 
     this.puzzleBoardController.rescale(newGeometry);
@@ -278,8 +307,8 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     if (gameService.gameState.isChecked) return;
 
     const correctWords = splitIntoWords(this.correctSentence);
-
     this.puzzleBoardController.autoComplete(correctWords);
+    this.lastSentenceSkipped = true;
 
     gameService.setChecked(true);
     gameService.recordSentenceResult(this.correctSentence, false, gameService.getCurrentSentenceAudio());
@@ -318,7 +347,15 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     const hasNextStep = gameService.nextStep();
     gameService.setRoundHasNextStep(hasNextStep);
 
+    const totalSteps = gameService.getSentenceCountInCurrentRound();
+    const lastResult = this.lastSentenceSkipped ? 'skipped' : 'done';
+    this.lastSentenceSkipped = false;
+    this.roundStepper?.setStep(totalSteps + 1, lastResult);
+
+    this.sentenceBoard.hideControls();
+    this.hintPanel.element.style.display = 'none';
     this.gameActions.setVisibility({ check: false, continue: false, autoComplete: false });
+
     this.puzzleBoardController.revealRoundImage();
     this.showRoundCompletePanel(imageInfo, hasNextStep);
   }

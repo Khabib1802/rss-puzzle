@@ -36,6 +36,12 @@ class SentenceBoard extends BaseComponent<HTMLDivElement> {
     this.pictureArea.element.style.minHeight = `${String(px)}px`;
   }
 
+  public growPictureHeight(px: number): void {
+    const current = this.pictureArea.element.style.minHeight;
+    const currentPx = current ? parseFloat(current) : 0;
+    this.pictureArea.element.style.minHeight = `${String(currentPx + px)}px`;
+  }
+
   public freezeCurrentResultRow(): void {
     if (this.resultBlock.element.children.length === 0) return;
 
@@ -67,6 +73,24 @@ class SentenceBoard extends BaseComponent<HTMLDivElement> {
       { id: 'source', rect: this.sourceBlock.element.getBoundingClientRect() },
       { id: 'result', rect: this.resultBlock.element.getBoundingClientRect() },
     ];
+  }
+
+  public setCurrentRowNumber(n: number): void {
+    this.resultBlock.element.dataset['row'] = String(n);
+  }
+
+  public setCardHeight(px: number): void {
+    this.element.style.setProperty('--card-height', `${String(px)}px`);
+  }
+
+  public hideControls(): void {
+    this.sourceBlock.element.style.display = 'none';
+    this.resultBlock.element.style.display = 'none';
+  }
+
+  public showControls(): void {
+    this.sourceBlock.element.style.display = '';
+    this.resultBlock.element.style.display = '';
   }
 }
 

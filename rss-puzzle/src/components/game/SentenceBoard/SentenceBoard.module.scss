@@ -22,6 +22,20 @@
   margin: 0 auto;
 }
 
+.result {
+  align-items: start;
+  min-height: calc(var(--card-height, 64px));
+  box-shadow:
+    0 0 0 2px var(--color-primary) inset,
+    var(--shadow-md);
+  position: relative;
+}
+
+.source::before,
+.result::before {
+  display: none;
+}
+
 .source,
 .result {
   display: flex;
@@ -30,27 +44,43 @@
   width: var(--board-width, 100%);
   max-width: 100%;
   margin: 0 auto;
-  margin-bottom: 10px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: var(--space-md);
+
+  background-color: var(--color-background);
+  transition:
+    box-shadow 0.5s ease,
+    border-color 0.5s ease,
+    background-color 0.15s ease;
 }
 
 .source {
-  min-height: 20%;
+  position: relative;
+  padding: var(--space-lg);
+  min-height: calc((var(--card-height, 64px) + var(--space-xs)) * 2 + var(--space-lg) * 2);
   align-items: center;
+  gap: var(--space-xl) var(--space-4xl);
+  border: 1px solid var(--color-border);
 }
 
 .result {
   align-items: start;
-  margin-bottom: 10px;
-  height: 80%;
-}
-
-.source,
-.result {
-  transition: box-shadow 0.15s ease;
+  min-height: calc(var(--card-height, 64px));
+  box-shadow:
+    0 0 0 2px var(--color-primary) inset,
+    var(--shadow-md);
+  position: relative;
 }
 
 .dropTarget {
-  box-shadow: 0 0 0 2px $c-hover inset;
+  box-shadow:
+    0 0 0 2px var(--color-primary) inset,
+    0 0 16px 0 color-mix(in srgb, var(--color-primary) 30%, transparent);
+  background-color: color-mix(in srgb, var(--color-primary) 6%, var(--color-background));
+}
+
+.result.dropTarget {
+  box-shadow:
+    0 0 0 2px var(--color-primary) inset,
+    0 0 20px 0 color-mix(in srgb, var(--color-primary) 40%, transparent),
+    var(--shadow-md);
 }

@@ -5,7 +5,7 @@
   display: inline-flex;
   cursor: grab;
 
-  --card-height: 44px;
+  --card-height: 64px;
   --tab-radius: clamp(8px, calc(var(--card-height) * 0.18), 20px);
   --tab-offset: calc(var(--tab-radius) + 4px);
   --notch-depth: calc(var(--tab-radius) * 0.4);

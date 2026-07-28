@@ -34,6 +34,8 @@ class PuzzleBoardController {
   public initSentence(words: string[], roundGeometry: RoundGeometry): void {
     this.roundGeometry = roundGeometry;
 
+    this.sentenceBoard.setCardHeight(roundGeometry.rowHeight);
+
     const shuffledIndexes = shuffleArray(words.map((_, index) => index));
 
     const orderedPuzzles: WordPuzzle[] = [];
@@ -249,6 +251,8 @@ class PuzzleBoardController {
   }
 
   public rescale(newGeometry: RoundGeometry): void {
+    this.sentenceBoard.setCardHeight(newGeometry.rowHeight);
+
     const { rowHeight, backgroundSize, cardWidthsBySentence } = newGeometry;
     const imageUrl = gameService.getCurrentImageSource();
 

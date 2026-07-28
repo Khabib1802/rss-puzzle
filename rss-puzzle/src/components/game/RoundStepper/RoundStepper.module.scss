@@ -1,0 +1,81 @@
+.stepper {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: var(--space-sm) 0;
+  user-select: none;
+}
+
+.step {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease,
+    box-shadow 0.3s ease;
+  position: relative;
+  z-index: 1;
+}
+
+.step.idle {
+  background-color: var(--color-background);
+  color: var(--color-text-muted);
+  box-shadow: 0 0 0 2px var(--color-border);
+}
+
+.step.current {
+  background-color: var(--color-primary);
+  color: var(--color-on-primary);
+  box-shadow:
+    0 0 0 3px var(--color-surface),
+    0 0 0 5px var(--color-primary);
+}
+
+.step.done {
+  background-color: var(--color-success);
+  color: var(--color-on-primary);
+  box-shadow: none;
+}
+
+.final {
+  svg {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+.connector {
+  flex: 1;
+  height: 2px;
+  border-radius: var(--radius-full);
+  transition: background-color 0.4s ease;
+}
+
+.connectorIdle {
+  background-color: var(--color-border);
+}
+
+.connectorCurrent {
+  background-color: var(--color-primary);
+}
+
+.connectorDone {
+  background-color: var(--color-success);
+}
+
+.step.skipped {
+  background-color: var(--color-danger);
+  color: var(--color-on-primary);
+  box-shadow: none;
+}
+
+.connectorSkipped {
+  background-color: var(--color-danger);
+}
