@@ -1,27 +1,36 @@
-@use '@styles/variables.scss' as *;
+@keyframes panelGlow {
+  0% {
+    box-shadow:
+      0 0 0 0 color-mix(in srgb, var(--color-primary) 45%, transparent),
+      var(--shadow-lg);
+  }
+
+  100% {
+    box-shadow:
+      0 0 0 18px color-mix(in srgb, var(--color-primary) 0%, transparent),
+      var(--shadow-lg);
+  }
+}
 
 .panel {
   position: fixed;
   left: 50%;
-  bottom: 24px;
-  transform: translate(-50%, 12px);
-  z-index: 10;
-
+  bottom: var(--space-xl);
+  z-index: 200;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
-
-  padding: 16px 24px;
-  max-width: 90vw;
-
-  // background-color: rgba(34, 34, 34, 0.72);
-  border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
-  backdrop-filter: blur(4px);
-
+  gap: var(--space-xs);
+  width: min(360px, 90vw);
+  padding: var(--space-lg) var(--space-xl);
+  background-color: var(--color-surface);
+  border-top: 3px solid var(--color-primary);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  text-align: center;
   opacity: 0;
   pointer-events: none;
+  transform: translate(-50%, 16px) scale(0.96);
   transition:
     opacity 0.4s ease,
     transform 0.4s ease;
@@ -30,26 +39,50 @@
 .panel.visible {
   opacity: 1;
   pointer-events: auto;
-  transform: translate(-50%, 0);
+  transform: translate(-50%, 0) scale(1);
+  animation: panelGlow 0.8s ease-out;
+}
+
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  margin: 0;
+  color: var(--color-primary);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.eyebrowIcon {
+  width: 14px;
+  height: 14px;
 }
 
 .title {
   margin: 0;
-  color: $c-light;
-  font-size: 18px;
-  font-weight: 600;
-  text-align: center;
+  color: var(--color-text);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
 }
 
 .meta {
   margin: 0;
-  color: rgba(221, 242, 247, 0.8);
-  font-size: 14px;
-  text-align: center;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.divider {
+  width: 32px;
+  height: 2px;
+  margin: var(--space-xs) 0;
+  background-color: var(--color-primary);
+  border-radius: var(--radius-full);
 }
 
 .buttonRow {
   display: flex;
-  gap: 10px;
-  margin-top: 10px;
+  gap: var(--space-sm);
+  margin-top: var(--space-sm);
 }

@@ -29,12 +29,6 @@ class PronunciationHint extends BaseComponent<HTMLDivElement> {
       additionalClasses: [styles.playButton, styles[size]],
     });
 
-    const wave1 = document.createElement('div');
-    wave1.classList.add(styles.wave);
-    const wave2 = document.createElement('div');
-    wave2.classList.add(styles.wave);
-    this.playButton.element.append(wave1, wave2);
-
     this.playButton.handleClick(() => {
       this.play();
     });
@@ -47,7 +41,7 @@ class PronunciationHint extends BaseComponent<HTMLDivElement> {
   }
 
   public setVisible(show: boolean): void {
-    this.element.classList.toggle(styles.hidden, !show);
+    this.element.classList.toggle(styles.visible, show);
   }
 
   public stop(): void {

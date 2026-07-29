@@ -1,8 +1,7 @@
-@use '@styles/variables.scss' as *;
-
 .panel {
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 10px;
+  justify-content: center;
+  gap: var(--space-sm);
 }

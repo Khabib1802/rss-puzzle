@@ -20,7 +20,7 @@ class TranslationHint extends BaseComponent<HTMLDivElement> {
   }
 
   public setVisible(show: boolean): void {
-    this.element.classList.toggle(styles.hidden, !show);
+    this.element.classList.toggle(styles.visible, show);
   }
 }
 

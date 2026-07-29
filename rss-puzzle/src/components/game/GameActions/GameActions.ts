@@ -4,11 +4,7 @@ import BaseComponent from '@/components/BaseComponent';
 import { ArrowRight, SquareCheckBig, X } from 'lucide';
 import styles from './GameActions.module.scss';
 
-interface GameActionsVisibilityState {
-  check: boolean;
-  continue: boolean;
-  autoComplete: boolean;
-}
+const CHECK_SUCCESS_DURATION_MS = 450;
 
 class GameActions extends BaseComponent<HTMLDivElement> {
   public readonly checkButton: Button;
@@ -16,6 +12,10 @@ class GameActions extends BaseComponent<HTMLDivElement> {
   public readonly autoCompleteButton: Button;
 
   public readonly continueButton: Button;
+
+  private readonly preCheckGroup: BaseComponent<HTMLDivElement>;
+
+  private readonly postCheckGroup: BaseComponent<HTMLDivElement>;
 
   constructor() {
     super('div', [styles.actions]);
@@ -39,17 +39,36 @@ class GameActions extends BaseComponent<HTMLDivElement> {
       iconPosition: 'right',
     });
 
-    this.append(this.autoCompleteButton, this.checkButton, this.continueButton);
+    this.preCheckGroup = new BaseComponent('div', [styles.group]);
+    this.preCheckGroup.append(this.autoCompleteButton, this.checkButton);
+
+    this.postCheckGroup = new BaseComponent('div', [styles.group, styles.hidden]);
+    this.postCheckGroup.append(this.continueButton);
+
+    this.append(this.preCheckGroup, this.postCheckGroup);
   }
 
   public setCheckDisabled(state: boolean): void {
     this.checkButton.setDisabled(state);
   }
 
-  public setVisibility({ check, continue: showContinue, autoComplete }: GameActionsVisibilityState): void {
-    this.checkButton.element.classList.toggle(styles.hidden, !check);
-    this.continueButton.element.classList.toggle(styles.hidden, !showContinue);
-    this.autoCompleteButton.element.classList.toggle(styles.hidden, !autoComplete);
+  public setChecked(isChecked: boolean): void {
+    this.preCheckGroup.element.classList.toggle(styles.hidden, isChecked);
+    this.postCheckGroup.element.classList.toggle(styles.hidden, !isChecked);
+  }
+
+  public hideAll(): void {
+    this.preCheckGroup.element.classList.add(styles.hidden);
+    this.postCheckGroup.element.classList.add(styles.hidden);
+  }
+
+  public playCheckSuccess(onComplete: () => void): void {
+    this.checkButton.element.classList.add(styles.checkSuccess);
+
+    window.setTimeout(() => {
+      this.checkButton.element.classList.remove(styles.checkSuccess);
+      onComplete();
+    }, CHECK_SUCCESS_DURATION_MS);
   }
 }
 

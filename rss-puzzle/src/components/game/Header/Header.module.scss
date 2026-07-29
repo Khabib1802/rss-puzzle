@@ -2,22 +2,86 @@
 
 .header {
   display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  width: 100%;
+}
+
+.navRow {
+  display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-md);
-  width: 100%;
-
-  @include respond.respond-below('sm') {
-    flex-direction: column;
-    align-items: stretch;
-  }
+  padding-bottom: var(--space-md);
+  border-bottom: 1px solid var(--color-border);
 }
 
-.logout {
-  margin-right: var(--space-lg);
+.selectGroup {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  background-color: var(--color-background);
+  border-radius: var(--radius-md);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.fieldLabel {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.fieldDivider {
+  width: 1px;
+  height: 28px;
+  background-color: var(--color-border);
 }
 
 .select {
   min-width: 120px;
+}
+
+.navActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.progressRow {
+  width: 100%;
+}
+
+.hintsRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  background-color: var(--color-background);
+  border-radius: var(--radius-md);
+}
+
+@include respond.respond-below('sm') {
+  .navRow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .selectGroup {
+    justify-content: center;
+  }
+
+  .navActions {
+    justify-content: center;
+  }
 }

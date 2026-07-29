@@ -5,8 +5,22 @@
   align-items: center;
   justify-content: center;
 
-  &.hidden {
-    visibility: hidden;
+  opacity: 0;
+  transform: translateY(-4px);
+  visibility: hidden;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease,
+    visibility 0s linear 0.2s;
+
+  &.visible {
+    opacity: 1;
+    transform: translateY(0);
+    visibility: visible;
+    transition:
+      opacity 0.25s ease,
+      transform 0.25s ease,
+      visibility 0s linear 0s;
   }
 }
 
@@ -15,13 +29,46 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  color: var(--color-primary);
+  background-color: transparent;
+  border-color: transparent;
   border-radius: 50%;
   cursor: pointer;
-  transition: transform 0.1s ease;
+  transition:
+    color 0.2s ease,
+    transform 0.15s ease;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    z-index: 1;
+    border-radius: 50%;
+    background: radial-gradient(circle, color-mix(in srgb, var(--color-primary) 15%, transparent), transparent 70%);
+    opacity: 0;
+    filter: blur(2px);
+    transition: opacity 0.2s ease;
+    pointer-events: none;
+  }
 
   &:active {
-    transform: scale(0.95);
+    transform: scale(0.94);
   }
+}
+
+.playButton:hover:not(:disabled) {
+  border-color: transparent;
+  background-color: transparent;
+  color: var(--color-primary-hover);
+
+  &::before {
+    opacity: 1;
+  }
+}
+
+.playButton svg {
+  position: relative;
+  z-index: 2;
 }
 
 .md {
@@ -36,43 +83,32 @@
   font-size: 18px;
 }
 
-.speakerIcon {
-  width: 28px;
-  height: 28px;
-  z-index: 2;
-}
-
-.wave {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  border: 2px solid currentColor;
-  border-radius: 50%;
-  opacity: 0;
-  pointer-events: none;
-  z-index: 1;
-}
-
 .isPlaying {
-  .wave {
-    animation: duoWave 1.2s infinite linear;
+  color: var(--color-primary);
 
-    &:nth-of-type(2) {
-      animation-delay: 0.6s;
-    }
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -6px;
+    z-index: 0;
+    border-radius: 50%;
+    background: radial-gradient(
+      circle,
+      color-mix(in srgb, var(--color-primary) var(--glow-start, 35%), transparent),
+      transparent var(--glow-end, 70%)
+    );
+    filter: blur(4px);
+    animation: glowPulse 1s ease-in-out infinite;
   }
 }
 
-@keyframes duoWave {
-  0% {
-    transform: scale(1);
-    opacity: 0.6;
+@keyframes glowPulse {
+  0%,
+  100% {
+    opacity: 0;
   }
 
-  100% {
-    transform: scale(1.6);
-    opacity: 0;
+  50% {
+    opacity: 0.6;
   }
 }
