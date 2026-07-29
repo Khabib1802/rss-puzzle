@@ -2,11 +2,9 @@ import BaseComponent from '@/components/BaseComponent.ts';
 import { checkUserWordOrder, isSentenceCorrect, splitIntoWords } from '@/utils/sentenceUtils.ts';
 import gameService from '@/services/gameService.ts';
 import GameActions from '@/components/game/GameActions/GameActions.ts';
-import HintPanel from '@/components/game/hints/HintPanel/HintPanel.ts';
 import Header from '@/components/game/Header/Header.ts';
 import SentenceBoard from '@/components/game/SentenceBoard/SentenceBoard.ts';
 import { HINT_KINDS } from '@/constants.ts';
-import RoundStepper from '@/components/game/RoundStepper/RoundStepper';
 import type { HintKind, LastCompletedRound } from '@/types/game.ts';
 import type { RoundGeometry } from '@/utils/puzzleGeometry.ts';
 import statisticsService from '@/services/statisticsService';
@@ -23,8 +21,6 @@ const RESIZE_DEBOUNCE_MS = 200;
 const ALL_HINT_KINDS = Object.values(HINT_KINDS);
 
 class GamePage extends BaseComponent<HTMLDivElement> {
-  private hintPanel: HintPanel;
-
   private header: Header;
 
   private mainBlock: BaseComponent<HTMLDivElement>;
@@ -49,8 +45,6 @@ class GamePage extends BaseComponent<HTMLDivElement> {
 
   private resizeTimeoutId: number | undefined;
 
-  private roundStepper: RoundStepper | null = null;
-
   private lastSentenceSkipped = false;
 
   constructor() {
@@ -69,7 +63,6 @@ class GamePage extends BaseComponent<HTMLDivElement> {
       pronunciation: gameService.settings.pronunciation,
       image: gameService.settings.image,
     });
-    this.hintPanel = new HintPanel();
 
     if (this.resumedFrom) {
       this.resumeBanner = new ResumeBanner(this.resumedFrom.level, this.resumedFrom.roundIndex + 1);
@@ -82,7 +75,7 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     window.addEventListener('resize', this.handleWindowResize);
 
     const children: (BaseComponent | HTMLElement)[] = this.resumeBanner ? [this.resumeBanner] : [];
-    this.append(...children, this.header, this.hintPanel, this.mainBlock, this.gameActions);
+    this.append(...children, this.header, this.mainBlock, this.gameActions);
 
     this.init().catch((error: unknown) => {
       throw new Error(`Critical error during game initialization. Reason: ${String(error)}`);
@@ -109,8 +102,7 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     this.sentenceBoard.clearPicture();
     this.sentenceBoard.showControls();
 
-    this.hintPanel.setHintVisible(HINT_KINDS.PRONUNCIATION, true);
-    this.hintPanel.setHintVisible(HINT_KINDS.PRONUNCIATION, true);
+    this.header.hintPanel.element.style.display = '';
 
     this.currentRoundGeometry = await this.computeGeometryForCurrentRound();
     this.sentenceBoard.setBoardWidth(this.currentRoundGeometry.boardWidth);
@@ -119,9 +111,7 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     this.sentenceBoard.reservePictureHeight(rowHeight);
 
     const totalSteps = gameService.getSentenceCountInCurrentRound();
-    this.roundStepper?.element.remove();
-    this.roundStepper = new RoundStepper(totalSteps);
-    this.mainBlock.element.prepend(this.roundStepper.element);
+    this.header.setRoundSteps(totalSteps);
 
     this.clearContainers();
     this.renderNextSentence();
@@ -148,17 +138,17 @@ class GamePage extends BaseComponent<HTMLDivElement> {
   }
 
   private renderNextSentence(): void {
-    this.hintPanel.stopAudio();
+    this.header.hintPanel.stopAudio();
     gameService.setChecked(false);
     this.correctSentence = gameService.getCurrentSentence();
 
     const currentTranslation = gameService.getCurrentSentenceTranslation();
     this.renderHint(currentTranslation);
-    this.hintPanel.setAudioSource(gameService.getCurrentSentenceAudio());
+    this.header.hintPanel.setAudioSource(gameService.getCurrentSentenceAudio());
 
     const sentenceNumber = gameService.gameState.sentenceIndex + 1;
     const lastResult = this.lastSentenceSkipped ? 'skipped' : 'done';
-    this.roundStepper?.setStep(sentenceNumber, sentenceNumber > 1 ? lastResult : undefined);
+    this.header.roundStepper?.setStep(sentenceNumber, sentenceNumber > 1 ? lastResult : undefined);
     this.lastSentenceSkipped = false;
 
     const words = splitIntoWords(this.correctSentence);
@@ -168,7 +158,7 @@ class GamePage extends BaseComponent<HTMLDivElement> {
   }
 
   private renderHint(currentTranslation: string): void {
-    this.hintPanel.setTranslation(currentTranslation);
+    this.header.hintPanel.setTranslation(currentTranslation);
   }
 
   private renderState(): void {
@@ -290,7 +280,7 @@ class GamePage extends BaseComponent<HTMLDivElement> {
       return;
     }
 
-    this.hintPanel.setHintVisible(kind, gameService.shouldRevealHint(kind));
+    this.header.hintPanel.setHintVisible(kind, gameService.shouldRevealHint(kind));
   }
 
   private renderImageHintVisibility(): void {
@@ -350,13 +340,10 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     const totalSteps = gameService.getSentenceCountInCurrentRound();
     const lastResult = this.lastSentenceSkipped ? 'skipped' : 'done';
     this.lastSentenceSkipped = false;
-    this.roundStepper?.setStep(totalSteps + 1, lastResult);
+    this.header.roundStepper?.setStep(totalSteps + 1, lastResult);
 
     this.sentenceBoard.hideControls();
-
-    this.hintPanel.setHintVisible(HINT_KINDS.PRONUNCIATION, false);
-    this.hintPanel.setHintVisible(HINT_KINDS.TRANSLATION, false);
-
+    this.header.hintPanel.element.style.display = 'none';
     this.gameActions.hideAll();
 
     this.puzzleBoardController.revealRoundImage();
