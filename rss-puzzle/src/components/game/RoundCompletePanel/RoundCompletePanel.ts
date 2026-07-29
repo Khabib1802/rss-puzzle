@@ -1,4 +1,4 @@
-import { ClipboardList, type IconNode } from 'lucide';
+import { ClipboardList, createElement, Sparkles, type IconNode } from 'lucide';
 import BaseComponent from '@/components/BaseComponent';
 import Button from '@/components/ui/Button/Button.ts';
 
@@ -18,13 +18,24 @@ class RoundCompletePanel extends BaseComponent<HTMLDivElement> {
   constructor(imageInfo: ImageInfo, actionText: string, actionIcon: IconNode) {
     super('div', [styles.panel]);
 
+    const eyebrowIcon = createElement(Sparkles);
+    eyebrowIcon.classList.add(styles.eyebrowIcon);
+    const eyebrowText = document.createElement('span');
+    eyebrowText.textContent = 'Round complete';
+    const eyebrow = document.createElement('p');
+    eyebrow.classList.add(styles.eyebrow);
+    eyebrow.append(eyebrowIcon, eyebrowText);
+
     const title = document.createElement('p');
     title.classList.add(styles.title);
     title.textContent = imageInfo.name;
 
     const meta = document.createElement('p');
     meta.classList.add(styles.meta);
-    meta.textContent = `${imageInfo.author}, ${imageInfo.year}`;
+    meta.textContent = `${imageInfo.author} · ${imageInfo.year}`;
+
+    const divider = document.createElement('div');
+    divider.classList.add(styles.divider);
 
     const buttonRow = new BaseComponent('div', [styles.buttonRow]);
     this.resultsButton = new Button({
@@ -41,7 +52,7 @@ class RoundCompletePanel extends BaseComponent<HTMLDivElement> {
     });
     buttonRow.append(this.resultsButton, this.actionButton);
 
-    this.append(title, meta, buttonRow);
+    this.append(eyebrow, title, meta, divider, buttonRow);
 
     requestAnimationFrame(() => {
       this.element.classList.add(styles.visible);
