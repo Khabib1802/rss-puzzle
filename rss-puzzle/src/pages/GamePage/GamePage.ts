@@ -266,6 +266,7 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     const resultSentence = this.puzzleBoardController.getResultSentence();
 
     if (isSentenceCorrect(resultSentence, this.correctSentence)) {
+      this.puzzleBoardController.finalizeCorrectOrder();
       gameService.setChecked(true);
       gameService.recordSentenceResult(this.correctSentence, true, gameService.getCurrentSentenceAudio());
       this.gameActions.playCheckSuccess(() => {
