@@ -83,6 +83,13 @@ class Header extends BaseComponent<HTMLDivElement> {
     this.progressRow.append(this.roundStepper);
   }
 
+  public syncSelection(): void {
+    this.levelSelect.setValue(String(gameService.gameState.level));
+    this.refreshRoundOptions().catch((error: unknown) => {
+      throw new Error(`Failed to load rounds list. Reason: ${String(error)}`);
+    });
+  }
+
   public onSelectionChange(callback: () => void): void {
     this.onSelectionChangeCallback = callback;
   }
