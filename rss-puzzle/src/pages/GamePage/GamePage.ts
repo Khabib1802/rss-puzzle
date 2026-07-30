@@ -165,6 +165,7 @@ class GamePage extends BaseComponent<HTMLDivElement> {
     this.renderActionsState();
     ALL_HINT_KINDS.forEach((kind) => {
       this.renderHintKindVisibility(kind);
+      this.header.hintControls.setToggleDisabled(kind, gameService.gameState.isChecked);
     });
     this.renderCheckButtonState();
   }
