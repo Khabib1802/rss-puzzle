@@ -338,6 +338,7 @@ class GamePage extends BaseComponent<HTMLDivElement> {
 
     const hasNextStep = gameService.nextStep();
     gameService.setRoundHasNextStep(hasNextStep);
+    this.header.syncSelection();
 
     const totalSteps = gameService.getSentenceCountInCurrentRound();
     const lastResult = this.lastSentenceSkipped ? 'skipped' : 'done';
