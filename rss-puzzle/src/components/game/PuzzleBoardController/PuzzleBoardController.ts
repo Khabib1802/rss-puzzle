@@ -277,6 +277,10 @@ class PuzzleBoardController {
 
     this.roundGeometry = newGeometry;
   }
+
+  public finalizeCorrectOrder(): void {
+    this.applyImageSegments(this.resultPuzzles);
+  }
 }
 
 export default PuzzleBoardController;
