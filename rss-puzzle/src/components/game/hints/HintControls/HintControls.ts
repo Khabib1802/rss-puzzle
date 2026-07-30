@@ -40,7 +40,6 @@ class HintControls extends BaseComponent<HTMLDivElement> {
       active: initialState,
       variant: 'secondary',
       ariaLabel: TOGGLE_LABELS[kind],
-      additionalClasses: [styles.toggleButton],
     });
   }
 
@@ -50,6 +49,10 @@ class HintControls extends BaseComponent<HTMLDivElement> {
 
   public setToggleState(kind: HintKind, isEnabled: boolean): void {
     this.toggleButtons[kind].setActive(isEnabled);
+  }
+
+  public setToggleDisabled(kind: HintKind, isDisabled: boolean): void {
+    this.toggleButtons[kind].setDisabled(isDisabled);
   }
 }
 
